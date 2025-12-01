@@ -4,6 +4,7 @@ import { useTransactions, useCategories, useSettings } from '@/lib/hooks';
 import { TransactionList } from '@/components/transactions/transaction-list';
 import { SummaryCard } from '@/components/dashboard/summary-card';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import {
   PieChart,
   Pie,
@@ -12,7 +13,8 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Plus } from 'lucide-react';
+import Link from 'next/link';
 
 export default function ExpensesPage() {
   const { data: transactions = [], isLoading } = useTransactions();
@@ -70,9 +72,17 @@ export default function ExpensesPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Expenses</h1>
-        <p className="text-muted-foreground">Track and analyze your spending</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Expenses</h1>
+          <p className="text-muted-foreground">Track and analyze your spending</p>
+        </div>
+        <Link href="/transactions/add">
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Expense
+          </Button>
+        </Link>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">

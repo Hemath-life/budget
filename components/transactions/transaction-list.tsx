@@ -36,7 +36,6 @@ import {
   Pencil,
   Trash2,
   Search,
-  Plus,
   Loader2,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -158,12 +157,6 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
                   ))}
                 </SelectContent>
               </Select>
-              <Link href="/transactions/add">
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Transaction
-                </Button>
-              </Link>
             </div>
           )}
 
