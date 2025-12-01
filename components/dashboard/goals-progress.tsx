@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppSelector } from '@/store/hooks';
-import { formatCurrency, calculatePercentage } from '@/lib/utils';
+import { formatCurrency, formatDate, calculatePercentage } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import Link from 'next/link';
 import { Target } from 'lucide-react';
@@ -43,7 +43,7 @@ export function GoalsProgress() {
                       <div>
                         <p className="text-sm font-medium">{goal.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          Due: {new Date(goal.deadline).toLocaleDateString()}
+                          Due: {formatDate(goal.deadline)}
                         </p>
                       </div>
                     </div>

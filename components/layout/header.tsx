@@ -2,6 +2,7 @@
 
 import { useTheme } from "next-themes";
 import { useAppSelector } from "@/store/hooks";
+import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -68,7 +69,7 @@ export function Header() {
                     >
                       <span className="font-medium">{reminder.title}</span>
                       <span className="text-xs text-muted-foreground">
-                        Due: {new Date(reminder.dueDate).toLocaleDateString()} -
+                        Due: {formatDate(reminder.dueDate)} -
                         ${reminder.amount}
                       </span>
                     </Link>

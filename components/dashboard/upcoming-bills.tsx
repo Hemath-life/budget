@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppSelector } from '@/store/hooks';
-import { formatCurrency, getDaysUntil, isOverdue } from '@/lib/utils';
+import { formatCurrency, formatDate, getDaysUntil, isOverdue } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { AlertTriangle, Clock, CheckCircle } from 'lucide-react';
@@ -66,7 +66,7 @@ export function UpcomingBills() {
                 <div>
                   <p className="font-medium">{bill.title}</p>
                   <p className="text-sm text-muted-foreground">
-                    Due: {new Date(bill.dueDate).toLocaleDateString()}
+                    Due: {formatDate(bill.dueDate)}
                   </p>
                 </div>
                 <div className="text-right space-y-1">

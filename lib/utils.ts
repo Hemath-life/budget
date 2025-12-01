@@ -37,6 +37,7 @@ export function formatDate(date: string | Date, format: string = 'MMM dd, yyyy')
     .replace('dd', String(day).padStart(2, '0'))
     .replace('d', String(day))
     .replace('yyyy', String(year))
+    .replace("'yy", "'" + String(year).slice(-2))
     .replace('yy', String(year).slice(-2));
 }
 

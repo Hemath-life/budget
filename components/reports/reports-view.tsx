@@ -141,7 +141,7 @@ export function ReportsView() {
     return Object.entries(months)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([month, data]) => ({
-        month: new Date(month + '-01').toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
+        month: formatDate(month + '-01', "MMM 'yy"),
         ...data,
         net: data.income - data.expenses,
       }));
