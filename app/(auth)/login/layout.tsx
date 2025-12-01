@@ -9,7 +9,7 @@ export default function AuthLayout({
   return (
     <div className="min-h-screen w-full grid lg:grid-cols-2">
       {/* Left Side - Gradient Background with Features */}
-      <div className="hidden lg:flex flex-col justify-center p-12 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
+      <div className="hidden lg:flex flex-col justify-center p-12 bg-linear-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
         {/* Subtle grid pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.02)_1px,transparent_1px)] bg-[size:50px_50px]" />
         
@@ -20,7 +20,7 @@ export default function AuthLayout({
         <div className="relative z-10 max-w-md mx-auto">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 mb-12">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg shadow-emerald-500/25">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-emerald-400 to-teal-500 shadow-lg shadow-emerald-500/25">
               <Wallet className="h-6 w-6 text-white" />
             </div>
             <span className="font-bold text-2xl">BudgetApp</span>
@@ -75,7 +75,7 @@ export default function AuthLayout({
           {/* Mobile Logo */}
           <div className="lg:hidden flex justify-center mb-8">
             <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25">
                 <Wallet className="h-5 w-5" />
               </div>
               <span className="font-bold text-xl">BudgetApp</span>
