@@ -6,6 +6,13 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatCurrency(amount: number, currency: string = 'USD'): string {
+  // If currency is empty or invalid, just return the number formatted
+  if (!currency) {
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  }
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: currency,

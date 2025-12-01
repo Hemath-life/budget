@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { setDefaultCurrency, updateCurrencyRate, addCurrency } from '@/store/slices/settingsSlice';
 import { formatCurrency } from '@/lib/utils';
+import { Currency } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -266,7 +267,7 @@ export function CurrencySettings() {
   );
 }
 
-function CurrencyConverter({ currencies }: { currencies: typeof import('@/lib/types').Currency[] }) {
+function CurrencyConverter({ currencies }: { currencies: Currency[] }) {
   const [amount, setAmount] = useState('100');
   const [fromCurrency, setFromCurrency] = useState('USD');
   const [toCurrency, setToCurrency] = useState('EUR');

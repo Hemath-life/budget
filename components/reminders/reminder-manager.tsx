@@ -68,7 +68,7 @@ export function ReminderManager() {
   const [category, setCategory] = useState('');
   const [dueDate, setDueDate] = useState<Date>(new Date());
   const [isRecurring, setIsRecurring] = useState(false);
-  const [frequency, setFrequency] = useState<'monthly' | 'weekly' | 'biweekly' | 'quarterly' | 'yearly'>('monthly');
+  const [frequency, setFrequency] = useState<'daily' | 'monthly' | 'weekly' | 'biweekly' | 'quarterly' | 'yearly'>('monthly');
   const [notifyBefore, setNotifyBefore] = useState('3');
 
   const upcomingReminders = reminders.filter((r) => !r.isPaid);
