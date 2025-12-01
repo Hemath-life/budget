@@ -134,6 +134,9 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
 
   const uniqueCategories = categories.map((c) => ({ id: c.id, name: c.name }));
 
+  // Fixed table height - 500px allows scrolling when content exceeds
+  const TABLE_HEIGHT = 500;
+
   if (isLoading) {
     return (
       <Card>
@@ -209,96 +212,107 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
               </div>
             ) : (
               <>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Description</TableHead>
-                      <TableHead>Category</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead className="text-right">Amount</TableHead>
-                      <TableHead className="w-[50px]"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {transactions.map((transaction) => (
-                      <TableRow key={transaction.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-3">
-                            <div
-                              className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                <div className="rounded-md border">
+                  {/* Fixed Header */}
+                  <Table>
+                    <TableHeader className="bg-background">
+                      <TableRow>
+                        <TableHead className="w-[35%]">Description</TableHead>
+                        <TableHead className="w-[15%]">Category</TableHead>
+                        <TableHead className="w-[15%]">Date</TableHead>
+                        <TableHead className="w-[20%] text-right">Amount</TableHead>
+                        <TableHead className="w-[50px]"></TableHead>
+                      </TableRow>
+                    </TableHeader>
+                  </Table>
+                  {/* Scrollable Body */}
+                  <div 
+                    className="overflow-y-auto"
+                    style={{ height: TABLE_HEIGHT }}
+                  >
+                    <Table>
+                      <TableBody>
+                        {transactions.map((transaction) => (
+                          <TableRow key={transaction.id}>
+                            <TableCell className="w-[35%]">
+                              <div className="flex items-center gap-3">
+                                <div
+                                  className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                                    transaction.type === 'income'
+                                      ? 'bg-green-100 dark:bg-green-900/20'
+                                      : 'bg-red-100 dark:bg-red-900/20'
+                                  }`}
+                                >
+                                  {transaction.type === 'income' ? (
+                                    <ArrowUpRight className="h-4 w-4 text-green-600" />
+                                  ) : (
+                                    <ArrowDownRight className="h-4 w-4 text-red-600" />
+                                  )}
+                                </div>
+                                <div>
+                                  <p className="font-medium">{transaction.description}</p>
+                                  {transaction.isRecurring && (
+                                    <Badge variant="outline" className="text-xs mt-1">
+                                      Recurring
+                                    </Badge>
+                                  )}
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="w-[15%]">
+                              <Badge
+                                variant="outline"
+                                style={{
+                                  borderColor: getCategoryColor(transaction.category),
+                                  color: getCategoryColor(transaction.category),
+                                }}
+                              >
+                                {getCategoryName(transaction.category)}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="w-[15%] text-muted-foreground">
+                              {formatDate(transaction.date)}
+                            </TableCell>
+                            <TableCell
+                              className={`w-[20%] text-right font-semibold ${
                                 transaction.type === 'income'
-                                  ? 'bg-green-100 dark:bg-green-900/20'
-                                  : 'bg-red-100 dark:bg-red-900/20'
+                                  ? 'text-green-600 dark:text-green-400'
+                                  : 'text-red-600 dark:text-red-400'
                               }`}
                             >
-                              {transaction.type === 'income' ? (
-                                <ArrowUpRight className="h-4 w-4 text-green-600" />
-                              ) : (
-                                <ArrowDownRight className="h-4 w-4 text-red-600" />
-                              )}
-                            </div>
-                            <div>
-                              <p className="font-medium">{transaction.description}</p>
-                              {transaction.isRecurring && (
-                                <Badge variant="outline" className="text-xs mt-1">
-                                  Recurring
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="outline"
-                            style={{
-                              borderColor: getCategoryColor(transaction.category),
-                              color: getCategoryColor(transaction.category),
-                            }}
-                          >
-                            {getCategoryName(transaction.category)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {formatDate(transaction.date)}
-                        </TableCell>
-                        <TableCell
-                          className={`text-right font-semibold ${
-                            transaction.type === 'income'
-                              ? 'text-green-600 dark:text-green-400'
-                              : 'text-red-600 dark:text-red-400'
-                          }`}
-                        >
-                          {transaction.type === 'income' ? '+' : '-'}
-                          {formatCurrency(transaction.amount, transaction.currency || settings?.defaultCurrency || 'INR')}
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon">
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem asChild>
-                                <Link href={`/transactions/${transaction.id}`}>
-                                  <Pencil className="h-4 w-4 mr-2" />
-                                  Edit
-                                </Link>
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                className="text-red-600"
-                                onClick={() => setDeleteId(transaction.id)}
-                              >
-                                <Trash2 className="h-4 w-4 mr-2" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                              {transaction.type === 'income' ? '+' : '-'}
+                              {formatCurrency(transaction.amount, transaction.currency || settings?.defaultCurrency || 'INR')}
+                            </TableCell>
+                            <TableCell className="w-[50px]">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon">
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem asChild>
+                                    <Link href={`/transactions/${transaction.id}`}>
+                                      <Pencil className="h-4 w-4 mr-2" />
+                                      Edit
+                                    </Link>
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    className="text-red-600"
+                                    onClick={() => setDeleteId(transaction.id)}
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
 
                 {/* Pagination */}
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
