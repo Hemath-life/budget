@@ -3,11 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Transaction, TransactionType, Category, Currency } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import {
   Select,
@@ -19,7 +17,7 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn, formatDate } from '@/lib/utils';
-import { CalendarIcon, ArrowLeft, Loader2 } from 'lucide-react';
+import { CalendarIcon, ArrowLeft, Loader2, TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
@@ -49,6 +47,7 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchData = async () => {
@@ -78,6 +77,7 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
   };
 
   const filteredCategories = categories.filter((c) => c.type === type);
+  const selectedCurrency = currencies.find(c => c.code === currency);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -148,199 +148,199 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
 
   if (loading) {
     return (
-      <Card className="max-w-2xl mx-auto">
-        <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-6 w-6 animate-spin text-green-500" />
+      </div>
     );
   }
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <div className="flex items-center gap-4">
-          <Link href="/transactions">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
-          <CardTitle>
-            {mode === 'add' ? 'Add Transaction' : 'Edit Transaction'}
-          </CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Type Selection */}
-          <div className="grid grid-cols-2 gap-4">
-            <Button
-              type="button"
-              variant={type === 'income' ? 'default' : 'outline'}
-              className={cn(
-                'h-12',
-                type === 'income' && 'bg-green-600 hover:bg-green-700'
-              )}
-              onClick={() => {
-                setType('income');
-                setCategory('');
-              }}
-            >
-              Income
-            </Button>
-            <Button
-              type="button"
-              variant={type === 'expense' ? 'default' : 'outline'}
-              className={cn(
-                'h-12',
-                type === 'expense' && 'bg-red-600 hover:bg-red-700'
-              )}
-              onClick={() => {
-                setType('expense');
-                setCategory('');
-              }}
-            >
-              Expense
-            </Button>
-          </div>
+    <div className="max-w-md mx-auto">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <Link href="/transactions">
+          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg">
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+        </Link>
+        <h1 className="text-lg font-semibold">
+          {mode === 'add' ? 'New Transaction' : 'Edit Transaction'}
+        </h1>
+      </div>
 
-          {/* Amount and Currency */}
-          <div className="grid grid-cols-3 gap-4">
-            <div className="col-span-2 space-y-2">
-              <Label htmlFor="amount">Amount</Label>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Type Selection */}
+        <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
+          <button
+            type="button"
+            onClick={() => { setType('income'); setCategory(''); }}
+            className={cn(
+              'flex items-center justify-center gap-1.5 py-2 text-sm font-medium rounded-md transition-all',
+              type === 'income'
+                ? 'bg-white dark:bg-gray-900 text-green-600 shadow-sm'
+                : 'text-gray-500'
+            )}
+          >
+            <TrendingUp className="h-4 w-4" />
+            Income
+          </button>
+          <button
+            type="button"
+            onClick={() => { setType('expense'); setCategory(''); }}
+            className={cn(
+              'flex items-center justify-center gap-1.5 py-2 text-sm font-medium rounded-md transition-all',
+              type === 'expense'
+                ? 'bg-white dark:bg-gray-900 text-red-600 shadow-sm'
+                : 'text-gray-500'
+            )}
+          >
+            <TrendingDown className="h-4 w-4" />
+            Expense
+          </button>
+        </div>
+
+        {/* Amount & Currency */}
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <Label className="text-xs text-muted-foreground mb-1.5 block">Amount</Label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
+                {selectedCurrency?.symbol || '₹'}
+              </span>
               <Input
-                id="amount"
                 type="number"
                 step="0.01"
                 min="0"
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="text-lg"
+                className="pl-8 h-10 rounded-lg"
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="currency">Currency</Label>
-              <Select value={currency} onValueChange={setCurrency}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Currency" />
-                </SelectTrigger>
-                <SelectContent>
-                  {currencies.map((c) => (
-                    <SelectItem key={c.code} value={c.code}>
-                      {c.code} ({c.symbol})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
           </div>
-
-          {/* Category */}
-          <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
+          <div className="w-24">
+            <Label className="text-xs text-muted-foreground mb-1.5 block">Currency</Label>
+            <Select value={currency} onValueChange={setCurrency}>
+              <SelectTrigger className="h-10 rounded-lg">
+                <SelectValue placeholder="INR" />
               </SelectTrigger>
               <SelectContent>
-                {filteredCategories.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="h-3 w-3 rounded-full"
-                        style={{ backgroundColor: c.color }}
-                      />
-                      {c.name}
-                    </div>
+                {currencies.map((c) => (
+                  <SelectItem key={c.code} value={c.code}>
+                    {c.code}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
+        </div>
 
-          {/* Description */}
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              placeholder="Enter a description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={3}
-            />
-          </div>
+        {/* Category */}
+        <div>
+          <Label className="text-xs text-muted-foreground mb-1.5 block">Category</Label>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger className="h-10 rounded-lg">
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent>
+              {filteredCategories.length === 0 ? (
+                <div className="p-2 text-center text-xs text-muted-foreground">
+                  No categories for {type}
+                </div>
+              ) : (
+                filteredCategories.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    <div className="flex items-center gap-2">
+                      <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: c.color }} />
+                      {c.name}
+                    </div>
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+        </div>
 
-          {/* Date */}
-          <div className="space-y-2">
-            <Label>Date</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    'w-full justify-start text-left font-normal',
-                    !date && 'text-muted-foreground'
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? formatDate(date) : 'Pick a date'}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={(d) => d && setDate(d)}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
+        {/* Description */}
+        <div>
+          <Label className="text-xs text-muted-foreground mb-1.5 block">Description</Label>
+          <Input
+            placeholder="What's this for?"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="h-10 rounded-lg"
+          />
+        </div>
 
-          {/* Tags */}
-          <div className="space-y-2">
-            <Label htmlFor="tags">Tags (comma-separated)</Label>
-            <Input
-              id="tags"
-              placeholder="e.g., work, personal, urgent"
-              value={tags}
-              onChange={(e) => setTags(e.target.value)}
-            />
-          </div>
+        {/* Date */}
+        <div>
+          <Label className="text-xs text-muted-foreground mb-1.5 block">Date</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full h-10 justify-start font-normal rounded-lg"
+              >
+                <CalendarIcon className="mr-2 h-4 w-4 text-muted-foreground" />
+                {date ? formatDate(date) : 'Pick a date'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar mode="single" selected={date} onSelect={(d) => d && setDate(d)} initialFocus />
+            </PopoverContent>
+          </Popover>
+        </div>
 
-          {/* Recurring */}
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <Label htmlFor="recurring">Recurring Transaction</Label>
-              <p className="text-sm text-muted-foreground">
-                Mark this as a recurring transaction
-              </p>
-            </div>
-            <Switch
-              id="recurring"
-              checked={isRecurring}
-              onCheckedChange={setIsRecurring}
-            />
-          </div>
+        {/* Tags */}
+        <div>
+          <Label className="text-xs text-muted-foreground mb-1.5 block">
+            Tags <span className="opacity-50">(optional)</span>
+          </Label>
+          <Input
+            placeholder="work, personal..."
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            className="h-10 rounded-lg"
+          />
+        </div>
 
-          {/* Submit Buttons */}
-          <div className="flex gap-4 pt-4">
-            <Button type="submit" className="flex-1" disabled={submitting}>
-              {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              {mode === 'add' ? 'Add Transaction' : 'Update Transaction'}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.push('/transactions')}
-              disabled={submitting}
-            >
-              Cancel
-            </Button>
+        {/* Recurring */}
+        <div className="flex items-center justify-between py-2">
+          <div className="flex items-center gap-2">
+            <RefreshCw className="h-4 w-4 text-muted-foreground" />
+            <span className="text-sm">Recurring</span>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+          <Switch
+            checked={isRecurring}
+            onCheckedChange={setIsRecurring}
+            className="data-[state=checked]:bg-green-500"
+          />
+        </div>
+
+        {/* Submit */}
+        <div className="flex gap-2 pt-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push('/transactions')}
+            disabled={submitting}
+            className="flex-1 h-10 rounded-lg"
+          >
+            Cancel
+          </Button>
+          <Button 
+            type="submit" 
+            disabled={submitting}
+            className={cn(
+              'flex-1 h-10 rounded-lg font-medium',
+              type === 'income' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'
+            )}
+          >
+            {submitting && <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />}
+            {mode === 'add' ? 'Add' : 'Save'}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }
