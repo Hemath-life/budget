@@ -1,6 +1,6 @@
 'use client';
 
-import { useAppSelector } from '@/store/hooks';
+import { useTransactions, useSettings } from '@/lib/hooks';
 import { SummaryCard } from '@/components/dashboard/summary-card';
 import { RecentTransactions } from '@/components/dashboard/recent-transactions';
 import { BudgetOverview } from '@/components/dashboard/budget-overview';
@@ -8,12 +8,12 @@ import { GoalsProgress } from '@/components/dashboard/goals-progress';
 import { ExpenseChart } from '@/components/dashboard/expense-chart';
 import { UpcomingBills } from '@/components/dashboard/upcoming-bills';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DashboardPage() {
-  const transactions = useAppSelector((state) => state.transactions.items);
-  const settings = useAppSelector((state) => state.settings);
+  const { data: transactions = [], isLoading } = useTransactions();
+  const { data: settings } = useSettings();
 
   // Calculate summary data
   const now = new Date();
@@ -58,6 +58,16 @@ export default function DashboardPage() {
   const balance = totalIncome - totalExpenses;
   const savings = currentIncome - currentExpenses;
 
+  const currency = settings?.defaultCurrency || 'USD';
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -82,26 +92,26 @@ export default function DashboardPage() {
           title="Total Income"
           value={currentIncome}
           previousValue={lastMonthIncome}
-          currency={settings.defaultCurrency}
+          currency={currency}
           type="income"
         />
         <SummaryCard
           title="Total Expenses"
           value={currentExpenses}
           previousValue={lastMonthExpenses}
-          currency={settings.defaultCurrency}
+          currency={currency}
           type="expense"
         />
         <SummaryCard
           title="Balance"
           value={balance}
-          currency={settings.defaultCurrency}
+          currency={currency}
           type="balance"
         />
         <SummaryCard
           title="Monthly Savings"
           value={savings}
-          currency={settings.defaultCurrency}
+          currency={currency}
           type="savings"
         />
       </div>

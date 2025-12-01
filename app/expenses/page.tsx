@@ -1,6 +1,6 @@
 'use client';
 
-import { useAppSelector } from '@/store/hooks';
+import { useTransactions, useCategories, useSettings } from '@/lib/hooks';
 import { TransactionList } from '@/components/transactions/transaction-list';
 import { SummaryCard } from '@/components/dashboard/summary-card';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,12 +12,14 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+import { Loader2 } from 'lucide-react';
 
 export default function ExpensesPage() {
-  const transactions = useAppSelector((state) => state.transactions.items);
-  const categories = useAppSelector((state) => state.categories.items);
-  const settings = useAppSelector((state) => state.settings);
+  const { data: transactions = [], isLoading } = useTransactions();
+  const { data: categories = [] } = useCategories();
+  const { data: settings } = useSettings();
 
+  const currency = settings?.defaultCurrency || 'USD';
   const expenseTransactions = transactions.filter((t) => t.type === 'expense');
   const totalExpenses = expenseTransactions.reduce((sum, t) => sum + t.amount, 0);
 
@@ -58,6 +60,14 @@ export default function ExpensesPage() {
     };
   });
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -69,14 +79,14 @@ export default function ExpensesPage() {
         <SummaryCard
           title="Total Expenses"
           value={totalExpenses}
-          currency={settings.defaultCurrency}
+          currency={currency}
           type="expense"
         />
         <SummaryCard
           title="This Month"
           value={currentMonthExpenses}
           previousValue={lastMonthExpenses}
-          currency={settings.defaultCurrency}
+          currency={currency}
           type="expense"
         />
         <SummaryCard

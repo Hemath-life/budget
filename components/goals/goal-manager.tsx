@@ -113,7 +113,10 @@ export function GoalManager() {
         });
         toast.success('Goal updated');
       } else {
-        await createGoal.mutateAsync(goalData as Omit<Goal, 'id' | 'isCompleted'>);
+        await createGoal.mutateAsync({
+          ...goalData,
+          isCompleted: goalData.currentAmount >= goalData.targetAmount
+        } as Omit<Goal, 'id' | 'createdAt'>);
         toast.success('Goal created');
       }
       setIsDialogOpen(false);
