@@ -1,0 +1,170 @@
+import type { Plan } from './types';
+
+export const PLANS: Plan[] = [
+  {
+    id: 'free',
+    name: 'Free',
+    tier: 'free',
+    price: 0,
+    currency: 'INR',
+    interval: 'monthly',
+    features: [
+      'Up to 50 transactions/month',
+      '3 budget categories',
+      '2 savings goals',
+      'Basic reports',
+      'Mobile friendly',
+    ],
+    limits: {
+      transactions: 50,
+      budgets: 3,
+      goals: 2,
+      categories: 10,
+      exports: false,
+      reports: false,
+      multiCurrency: false,
+      recurring: false,
+      reminders: false,
+      prioritySupport: false,
+    },
+  },
+  {
+    id: 'pro-monthly',
+    name: 'Pro',
+    tier: 'pro',
+    price: 199,
+    currency: 'INR',
+    interval: 'monthly',
+    isPopular: true,
+    features: [
+      'Unlimited transactions',
+      'Unlimited budgets',
+      '10 savings goals',
+      'Advanced reports',
+      'Export to CSV/PDF',
+      'Recurring transactions',
+      'Bill reminders',
+      'Email support',
+    ],
+    limits: {
+      transactions: -1, // unlimited
+      budgets: -1,
+      goals: 10,
+      categories: 50,
+      exports: true,
+      reports: true,
+      multiCurrency: false,
+      recurring: true,
+      reminders: true,
+      prioritySupport: false,
+    },
+  },
+  {
+    id: 'pro-yearly',
+    name: 'Pro',
+    tier: 'pro',
+    price: 1990,
+    currency: 'INR',
+    interval: 'yearly',
+    isPopular: true,
+    features: [
+      'Unlimited transactions',
+      'Unlimited budgets',
+      '10 savings goals',
+      'Advanced reports',
+      'Export to CSV/PDF',
+      'Recurring transactions',
+      'Bill reminders',
+      'Email support',
+    ],
+    limits: {
+      transactions: -1,
+      budgets: -1,
+      goals: 10,
+      categories: 50,
+      exports: true,
+      reports: true,
+      multiCurrency: false,
+      recurring: true,
+      reminders: true,
+      prioritySupport: false,
+    },
+  },
+  {
+    id: 'premium-monthly',
+    name: 'Premium',
+    tier: 'premium',
+    price: 499,
+    currency: 'INR',
+    interval: 'monthly',
+    features: [
+      'Everything in Pro',
+      'Unlimited goals',
+      'Multi-currency support',
+      'Custom categories',
+      'Priority support',
+      'Advanced analytics',
+      'Data backup',
+      'API access',
+    ],
+    limits: {
+      transactions: -1,
+      budgets: -1,
+      goals: -1,
+      categories: -1,
+      exports: true,
+      reports: true,
+      multiCurrency: true,
+      recurring: true,
+      reminders: true,
+      prioritySupport: true,
+    },
+  },
+  {
+    id: 'premium-yearly',
+    name: 'Premium',
+    tier: 'premium',
+    price: 4990,
+    currency: 'INR',
+    interval: 'yearly',
+    features: [
+      'Everything in Pro',
+      'Unlimited goals',
+      'Multi-currency support',
+      'Custom categories',
+      'Priority support',
+      'Advanced analytics',
+      'Data backup',
+      'API access',
+    ],
+    limits: {
+      transactions: -1,
+      budgets: -1,
+      goals: -1,
+      categories: -1,
+      exports: true,
+      reports: true,
+      multiCurrency: true,
+      recurring: true,
+      reminders: true,
+      prioritySupport: true,
+    },
+  },
+];
+
+export function getPlanById(id: string): Plan | undefined {
+  return PLANS.find((plan) => plan.id === id);
+}
+
+export function getPlansByInterval(interval: 'monthly' | 'yearly'): Plan[] {
+  return PLANS.filter((plan) => plan.interval === interval || plan.tier === 'free');
+}
+
+export function formatPrice(price: number, currency: string = 'INR'): string {
+  return new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(price);
+}

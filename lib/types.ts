@@ -128,3 +128,61 @@ export interface FilterOptions {
   maxAmount?: number;
   search?: string;
 }
+
+// ============ SUBSCRIPTION & PLAN TYPES ============
+
+export type PlanTier = 'free' | 'pro' | 'premium';
+
+export interface Plan {
+  id: string;
+  name: string;
+  tier: PlanTier;
+  price: number;
+  currency: string;
+  interval: 'monthly' | 'yearly';
+  features: string[];
+  limits: {
+    transactions: number;
+    budgets: number;
+    goals: number;
+    categories: number;
+    exports: boolean;
+    reports: boolean;
+    multiCurrency: boolean;
+    recurring: boolean;
+    reminders: boolean;
+    prioritySupport: boolean;
+  };
+  isPopular?: boolean;
+}
+
+export interface Subscription {
+  id: string;
+  userId: string;
+  planId: string;
+  plan: Plan;
+  status: 'active' | 'cancelled' | 'expired' | 'past_due' | 'trialing';
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  cancelAtPeriodEnd: boolean;
+  trialEnd?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  avatar?: string;
+  subscription?: Subscription;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SubscriptionCheckout {
+  planId: string;
+  interval: 'monthly' | 'yearly';
+  successUrl?: string;
+  cancelUrl?: string;
+}
