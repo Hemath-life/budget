@@ -1,20 +1,31 @@
-import { Sidebar } from "@/components/layout/sidebar";
+'use client';
+
+import { Sidebar, useSidebar, SidebarContext } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
+import { useState } from "react";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   return (
-    <div className="h-screen overflow-hidden bg-background">
-      <Sidebar />
-      <div className="lg:pl-64 h-full flex flex-col">
-        <Header />
-        <main className="flex-1 overflow-auto p-4 lg:p-6">
-          {children}
-        </main>
+    <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed }}>
+      <div className="h-screen overflow-hidden bg-background">
+        <Sidebar />
+        <div 
+          className={`h-full flex flex-col transition-[padding] duration-300 ease-in-out ${
+            isCollapsed ? 'lg:pl-[70px]' : 'lg:pl-64'
+          }`}
+        >
+          <Header />
+          <main className="flex-1 overflow-auto p-4 lg:p-6">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarContext.Provider>
   );
 }

@@ -10,16 +10,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MobileSidebar } from "./sidebar";
-import { Moon, Sun, Bell, Settings, LogOut } from "lucide-react";
+import { MobileSidebar, useSidebar } from "./sidebar";
+import { Moon, Sun, Bell, Settings, LogOut, PanelLeftClose, PanelLeft } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
 export function Header() {
   const { setTheme } = useTheme();
   const { data: reminders = [] } = useReminders();
   const { data: settings } = useSettings();
+  const { isCollapsed, setIsCollapsed } = useSidebar();
 
   const upcomingReminders = reminders.filter((r) => {
     const dueDate = new Date(r.dueDate);
@@ -34,6 +36,29 @@ export function Header() {
     <header className="shrink-0 z-40 border-b bg-background">
       <div className="flex h-16 items-center gap-4 px-4 lg:px-6">
         <MobileSidebar />
+        
+        {/* Sidebar Toggle - Desktop */}
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="hidden lg:flex"
+              >
+                {isCollapsed ? (
+                  <PanelLeft className="h-5 w-5" />
+                ) : (
+                  <PanelLeftClose className="h-5 w-5" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              {isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
         <div className="flex-1" />
 
