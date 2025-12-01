@@ -51,10 +51,14 @@ function NavLinks({ onNavigate, isCollapsed }: { onNavigate?: () => void; isColl
 
   return (
     <TooltipProvider delayDuration={0}>
-      <nav className={cn(
-        "space-y-1 transition-all duration-300 ease-in-out",
-        isCollapsed ? "px-2" : "px-3"
-      )}>
+      <nav 
+        className="space-y-1"
+        style={{
+          paddingLeft: isCollapsed ? '8px' : '12px',
+          paddingRight: isCollapsed ? '8px' : '12px',
+          transition: 'padding 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
+      >
         {navigation.map((item) => {
           const isActive = pathname === item.href || 
             (item.href !== '/' && pathname.startsWith(item.href));
@@ -65,19 +69,29 @@ function NavLinks({ onNavigate, isCollapsed }: { onNavigate?: () => void; isColl
               href={item.href}
               onClick={onNavigate}
               className={cn(
-                'flex items-center rounded-lg text-sm font-medium transition-all duration-300 ease-in-out overflow-hidden',
-                isCollapsed ? 'justify-center w-11 h-11 px-0 mx-auto' : 'gap-3 px-3 py-2.5',
+                'flex items-center rounded-lg text-sm font-medium overflow-hidden',
                 isActive
                   ? 'bg-primary text-primary-foreground'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               )}
+              style={{
+                justifyContent: isCollapsed ? 'center' : 'flex-start',
+                width: isCollapsed ? '44px' : '100%',
+                height: '44px',
+                padding: isCollapsed ? '0' : '0 12px',
+                gap: isCollapsed ? '0' : '12px',
+                margin: isCollapsed ? '0 auto' : '0',
+                transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+              }}
             >
-              <item.icon className="h-5 w-5 shrink-0 transition-transform duration-300" />
+              <item.icon className="h-5 w-5 shrink-0" />
               <span 
-                className={cn(
-                  "truncate transition-all duration-300 ease-in-out",
-                  isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
-                )}
+                className="truncate"
+                style={{
+                  width: isCollapsed ? '0px' : 'auto',
+                  opacity: isCollapsed ? 0 : 1,
+                  transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+                }}
               >
                 {item.name}
               </span>
@@ -109,25 +123,31 @@ export function Sidebar() {
 
   return (
     <aside 
-      className={cn(
-        "hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 border-r bg-card z-50",
-        "transition-[width] duration-300 ease-in-out",
-        isCollapsed ? "lg:w-[70px]" : "lg:w-64"
-      )}
+      className="hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 border-r bg-card z-50"
+      style={{
+        width: isCollapsed ? '70px' : '256px',
+        transition: 'width 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+      }}
     >
       {/* Logo */}
-      <div className={cn(
-        "flex h-16 items-center border-b shrink-0",
-        "transition-all duration-300 ease-in-out",
-        isCollapsed ? "justify-center px-2" : "px-6"
-      )}>
+      <div 
+        className="flex h-16 items-center border-b shrink-0"
+        style={{
+          justifyContent: isCollapsed ? 'center' : 'flex-start',
+          paddingLeft: isCollapsed ? '8px' : '24px',
+          paddingRight: isCollapsed ? '8px' : '24px',
+          transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
+      >
         <Link href="/dashboard" className="flex items-center gap-2 overflow-hidden">
-          <PiggyBank className="h-8 w-8 text-primary shrink-0 transition-transform duration-300" />
+          <PiggyBank className="h-8 w-8 text-primary shrink-0" />
           <span 
-            className={cn(
-              "text-xl font-bold whitespace-nowrap transition-all duration-300 ease-in-out",
-              isCollapsed ? "w-0 opacity-0 scale-95" : "w-auto opacity-100 scale-100"
-            )}
+            className="text-xl font-bold whitespace-nowrap overflow-hidden"
+            style={{
+              width: isCollapsed ? '0px' : 'auto',
+              opacity: isCollapsed ? 0 : 1,
+              transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+            }}
           >
             BudgetApp
           </span>

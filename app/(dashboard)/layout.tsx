@@ -16,9 +16,11 @@ export default function DashboardLayout({
       <div className="h-screen overflow-hidden bg-background">
         <Sidebar />
         <div 
-          className={`h-full flex flex-col transition-[padding] duration-300 ease-in-out ${
-            isCollapsed ? 'lg:pl-[70px]' : 'lg:pl-64'
-          }`}
+          className="h-full flex flex-col"
+          style={{
+            paddingLeft: isCollapsed ? '70px' : '256px',
+            transition: 'padding-left 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+          }}
         >
           <Header />
           <main className="flex-1 overflow-auto p-2 lg:p-4">
