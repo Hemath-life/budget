@@ -8,6 +8,17 @@ interface PageTransitionProps {
   children: ReactNode;
 }
 
+// Smooth spring easing - feels more natural
+const smoothSpring = {
+  type: "spring" as const,
+  stiffness: 100,
+  damping: 20,
+  mass: 0.5,
+};
+
+// Ultra smooth cubic bezier
+const ultraSmooth: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
 // Fade and slide up transition
 export function PageTransition({ children }: PageTransitionProps) {
   const pathname = usePathname();
@@ -16,12 +27,12 @@ export function PageTransition({ children }: PageTransitionProps) {
     <AnimatePresence mode="wait">
       <motion.div
         key={pathname}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: 12, filter: "blur(4px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        exit={{ opacity: 0, y: -8, filter: "blur(2px)" }}
         transition={{
-          duration: 0.3,
-          ease: [0.25, 0.46, 0.45, 0.94], // Custom easing for smooth feel
+          duration: 0.4,
+          ease: ultraSmooth,
         }}
       >
         {children}
@@ -42,8 +53,8 @@ export function FadeTransition({ children }: PageTransitionProps) {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{
-          duration: 0.2,
-          ease: "easeInOut",
+          duration: 0.35,
+          ease: ultraSmooth,
         }}
       >
         {children}
@@ -60,12 +71,12 @@ export function ScaleTransition({ children }: PageTransitionProps) {
     <AnimatePresence mode="wait">
       <motion.div
         key={pathname}
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 1.02 }}
+        initial={{ opacity: 0, scale: 0.96, filter: "blur(4px)" }}
+        animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+        exit={{ opacity: 0, scale: 0.98, filter: "blur(2px)" }}
         transition={{
-          duration: 0.25,
-          ease: [0.25, 0.1, 0.25, 1],
+          ...smoothSpring,
+          opacity: { duration: 0.3, ease: ultraSmooth },
         }}
       >
         {children}
@@ -82,12 +93,12 @@ export function SlideTransition({ children }: PageTransitionProps) {
     <AnimatePresence mode="wait">
       <motion.div
         key={pathname}
-        initial={{ opacity: 0, x: 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -30 }}
+        initial={{ opacity: 0, x: 20, filter: "blur(4px)" }}
+        animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+        exit={{ opacity: 0, x: -15, filter: "blur(2px)" }}
         transition={{
-          duration: 0.3,
-          ease: [0.25, 0.46, 0.45, 0.94],
+          duration: 0.45,
+          ease: ultraSmooth,
         }}
       >
         {children}
