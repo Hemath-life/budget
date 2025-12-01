@@ -7,44 +7,63 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
-      {/* Left Side - Branding & Visuals (Hidden on mobile) */}
-      <div className="hidden relative lg:flex h-full flex-col bg-zinc-900 p-10 text-white dark:border-r">
-        <div className="absolute inset-0 bg-zinc-900" />
-        <div className="relative z-20 flex items-center text-lg font-medium">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+    <div className="min-h-screen w-full flex">
+      {/* Left Side - Branding (Hidden on mobile) */}
+      <div className="hidden lg:flex lg:w-1/2 relative flex-col justify-between p-10 bg-emerald-600 text-white overflow-hidden">
+        {/* Decorative circles */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500 rounded-full -translate-y-1/3 translate-x-1/3 opacity-50" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-teal-500 rounded-full translate-y-1/3 -translate-x-1/3 opacity-50" />
+        
+        {/* Logo */}
+        <div className="relative z-10">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/20">
               <Wallet className="h-5 w-5" />
             </div>
             <span className="font-bold text-xl">BudgetApp</span>
           </Link>
         </div>
-        <div className="relative z-20 mt-auto">
-          <blockquote className="space-y-2">
-            <p className="text-lg">
-              &ldquo;This budget app has completely transformed how I manage my
-              finances. The insights are incredible and it's so easy to
-              use.&rdquo;
-            </p>
-            <footer className="text-sm text-zinc-400">Sofia Davis</footer>
-          </blockquote>
+        
+        {/* Center Content */}
+        <div className="relative z-10">
+          <h1 className="text-3xl font-bold mb-3">
+            Take control of your finances
+          </h1>
+          <p className="text-white/80 text-lg">
+            Track expenses, set budgets, and achieve your financial goals.
+          </p>
+        </div>
+        
+        {/* Testimonial */}
+        <div className="relative z-10 bg-white/10 rounded-xl p-5">
+          <p className="italic mb-3">
+            &ldquo;This app transformed how I manage my money!&rdquo;
+          </p>
+          <p className="text-sm text-white/70">— Sofia Davis</p>
         </div>
       </div>
 
-      {/* Right Side - Form Content */}
-      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background">
-        <div className="mx-auto w-full max-w-[400px] space-y-6">
-          {/* Mobile Logo (Visible only on mobile) */}
+      {/* Right Side - Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-background">
+        <div className="w-full max-w-sm">
+          {/* Mobile Logo */}
           <div className="lg:hidden flex justify-center mb-8">
             <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                <Wallet className="h-6 w-6" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-600 text-white">
+                <Wallet className="h-5 w-5" />
               </div>
               <span className="font-bold text-xl">BudgetApp</span>
             </Link>
           </div>
           
           {children}
+          
+          {/* Back link */}
+          <p className="text-center mt-6">
+            <Link href="/" className="text-sm text-muted-foreground hover:text-foreground">
+              ← Back to home
+            </Link>
+          </p>
         </div>
       </div>
     </div>
