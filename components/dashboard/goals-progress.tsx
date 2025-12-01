@@ -1,17 +1,27 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAppSelector } from '@/store/hooks';
+import { useGoals, useSettings } from '@/lib/hooks';
 import { formatCurrency, formatDate, calculatePercentage } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import Link from 'next/link';
-import { Target } from 'lucide-react';
+import { Target, Loader2 } from 'lucide-react';
 
 export function GoalsProgress() {
-  const goals = useAppSelector((state) => state.goals.items);
-  const settings = useAppSelector((state) => state.settings);
+  const { data: goals = [], isLoading: goalsLoading } = useGoals();
+  const { data: settings } = useSettings();
 
   const activeGoals = goals.filter((g) => !g.isCompleted);
+
+  if (goalsLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -53,8 +63,8 @@ export function GoalsProgress() {
                   </div>
                   <Progress value={percentage} className="h-2" />
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{formatCurrency(goal.currentAmount, goal.currency || settings.defaultCurrency)}</span>
-                    <span>{formatCurrency(goal.targetAmount, goal.currency || settings.defaultCurrency)}</span>
+                    <span>{formatCurrency(goal.currentAmount, goal.currency || settings?.defaultCurrency || 'USD')}</span>
+                    <span>{formatCurrency(goal.targetAmount, goal.currency || settings?.defaultCurrency || 'USD')}</span>
                   </div>
                 </div>
               );

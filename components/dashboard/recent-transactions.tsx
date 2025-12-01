@@ -1,17 +1,17 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAppSelector } from '@/store/hooks';
+import { useTransactions, useCategories, useSettings } from '@/lib/hooks';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Link from 'next/link';
-import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, Loader2 } from 'lucide-react';
 
 export function RecentTransactions() {
-  const transactions = useAppSelector((state) => state.transactions.items);
-  const categories = useAppSelector((state) => state.categories.items);
-  const settings = useAppSelector((state) => state.settings);
+  const { data: transactions = [], isLoading: transLoading } = useTransactions();
+  const { data: categories = [] } = useCategories();
+  const { data: settings } = useSettings();
 
   const recentTransactions = [...transactions]
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -26,6 +26,16 @@ export function RecentTransactions() {
     const category = categories.find((c) => c.id === categoryId);
     return category?.color || '#6B7280';
   };
+
+  if (transLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -85,7 +95,7 @@ export function RecentTransactions() {
                     }`}
                   >
                     {transaction.type === 'income' ? '+' : '-'}
-                    {formatCurrency(transaction.amount, transaction.currency || settings.defaultCurrency)}
+                    {formatCurrency(transaction.amount, transaction.currency || settings?.defaultCurrency || 'USD')}
                   </div>
                 </div>
               ))

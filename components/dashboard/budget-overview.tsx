@@ -1,15 +1,16 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAppSelector } from '@/store/hooks';
+import { useBudgets, useCategories, useSettings } from '@/lib/hooks';
 import { formatCurrency, calculatePercentage } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import Link from 'next/link';
+import { Loader2 } from 'lucide-react';
 
 export function BudgetOverview() {
-  const budgets = useAppSelector((state) => state.budgets.items);
-  const categories = useAppSelector((state) => state.categories.items);
-  const settings = useAppSelector((state) => state.settings);
+  const { data: budgets = [], isLoading: budgetsLoading } = useBudgets();
+  const { data: categories = [] } = useCategories();
+  const { data: settings } = useSettings();
 
   const getCategoryName = (categoryId: string) => {
     const category = categories.find((c) => c.id === categoryId);
@@ -26,6 +27,16 @@ export function BudgetOverview() {
     if (percentage >= 80) return 'bg-yellow-500';
     return 'bg-green-500';
   };
+
+  if (budgetsLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
@@ -57,7 +68,7 @@ export function BudgetOverview() {
                       </span>
                     </div>
                     <span className="text-sm text-muted-foreground">
-                      {formatCurrency(budget.spent, budget.currency || settings.defaultCurrency)} / {formatCurrency(budget.amount, budget.currency || settings.defaultCurrency)}
+                      {formatCurrency(budget.spent, budget.currency || settings?.defaultCurrency || 'USD')} / {formatCurrency(budget.amount, budget.currency || settings?.defaultCurrency || 'USD')}
                     </span>
                   </div>
                   <div className="relative">
@@ -70,7 +81,7 @@ export function BudgetOverview() {
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>{percentage}% used</span>
                     <span>
-                      {formatCurrency(Math.max(budget.amount - budget.spent, 0), budget.currency || settings.defaultCurrency)} remaining
+                      {formatCurrency(Math.max(budget.amount - budget.spent, 0), budget.currency || settings?.defaultCurrency || 'USD')} remaining
                     </span>
                   </div>
                 </div>
