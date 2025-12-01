@@ -20,7 +20,15 @@ import {
   ChevronRight,
   Check,
   Star,
-  Sparkles
+  Sparkles,
+  LayoutDashboard,
+  Receipt,
+  FolderOpen,
+  Repeat,
+  FileText,
+  Download,
+  Settings,
+  CircleDollarSign
 } from 'lucide-react';
 
 export function LandingHeader() {
