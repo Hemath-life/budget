@@ -120,7 +120,7 @@ export function HeroSection() {
     <section className="relative pt-32 pb-20 overflow-hidden">
       {/* Background gradient */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background" />
+        <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-background to-background" />
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl" />
       </div>
@@ -167,7 +167,7 @@ export function HeroSection() {
                 {[1, 2, 3, 4, 5].map((i) => (
                   <div
                     key={i}
-                    className="h-8 w-8 rounded-full bg-gradient-to-br from-primary to-primary/60 border-2 border-background flex items-center justify-center text-xs font-bold text-primary-foreground"
+                    className="h-8 w-8 rounded-full bg-linear-to-br from-primary to-primary/60 border-2 border-background flex items-center justify-center text-xs font-bold text-primary-foreground"
                   >
                     {String.fromCharCode(64 + i)}
                   </div>
@@ -195,7 +195,7 @@ export function HeroSection() {
         <div className="mt-16 relative">
           <div className="relative mx-auto max-w-5xl">
             {/* Browser frame */}
-            <div className="rounded-2xl bg-gradient-to-b from-muted/50 to-muted p-2 shadow-2xl ring-1 ring-border">
+            <div className="rounded-2xl bg-linear-to-b from-muted/50 to-muted p-2 shadow-2xl ring-1 ring-border">
               <div className="flex items-center gap-2 px-4 py-2 border-b">
                 <div className="flex gap-1.5">
                   <div className="h-3 w-3 rounded-full bg-red-500" />
