@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { usePaginatedTransactions, useCategories, useSettings, useDeleteTransaction } from '@/lib/hooks';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -134,25 +133,19 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
 
   const uniqueCategories = categories.map((c) => ({ id: c.id, name: c.name }));
 
-  // Fixed table height - 500px allows scrolling when content exceeds
-  const TABLE_HEIGHT = 500;
-
   if (isLoading) {
     return (
-      <Card>
-        <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
     );
   }
 
   return (
     <>
-      <Card>
-        <CardContent className="pt-6">
-          {showFilters && (
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="flex flex-col h-full">
+        {showFilters && (
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -172,64 +165,61 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
                   <SelectItem value="expense">Expense</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {uniqueCategories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {uniqueCategories.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        <div className="relative flex-1 flex flex-col min-h-0">
+          {isFetching && !isLoading && (
+            <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
+              <Loader2 className="h-6 w-6 animate-spin" />
             </div>
           )}
-
-          <div className="relative min-h-[400px]">
-            {isFetching && !isLoading && (
-              <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
-                <Loader2 className="h-6 w-6 animate-spin" />
-              </div>
-            )}
-            
-            {transactions.length === 0 && total === 0 ? (
-              <EmptyState
-                title="No transactions yet"
-                description="Start tracking your finances by adding your first transaction, or load sample data to explore the app."
-                actionLabel="Add Transaction"
-                actionHref="/transactions/add"
-                icon={<ArrowUpRight className="h-12 w-12 text-muted-foreground/50" />}
-              />
-            ) : transactions.length === 0 ? (
-              <div className="text-center py-12 text-muted-foreground">
-                <p>No transactions match your filters</p>
-                <Button variant="link" onClick={() => { setSearchTerm(''); setTypeFilter('all'); setCategoryFilter('all'); }}>
-                  Clear filters
-                </Button>
-              </div>
-            ) : (
-              <>
-                <div className="rounded-md border">
-                  {/* Fixed Header */}
-                  <Table>
-                    <TableHeader className="bg-background">
-                      <TableRow>
-                        <TableHead className="w-[35%]">Description</TableHead>
-                        <TableHead className="w-[15%]">Category</TableHead>
-                        <TableHead className="w-[15%]">Date</TableHead>
-                        <TableHead className="w-[20%] text-right">Amount</TableHead>
-                        <TableHead className="w-[50px]"></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                  </Table>
-                  {/* Scrollable Body */}
-                  <div 
-                    className="overflow-y-auto"
-                    style={{ height: TABLE_HEIGHT }}
-                  >
+          
+          {transactions.length === 0 && total === 0 ? (
+            <EmptyState
+              title="No transactions yet"
+              description="Start tracking your finances by adding your first transaction, or load sample data to explore the app."
+              actionLabel="Add Transaction"
+              actionHref="/transactions/add"
+              icon={<ArrowUpRight className="h-12 w-12 text-muted-foreground/50" />}
+            />
+          ) : transactions.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <p>No transactions match your filters</p>
+              <Button variant="link" onClick={() => { setSearchTerm(''); setTypeFilter('all'); setCategoryFilter('all'); }}>
+                Clear filters
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div className="rounded-md border">
+                {/* Fixed Header */}
+                <Table>
+                  <TableHeader className="bg-background">
+                    <TableRow>
+                      <TableHead className="w-[35%]">Description</TableHead>
+                      <TableHead className="w-[15%]">Category</TableHead>
+                      <TableHead className="w-[15%]">Date</TableHead>
+                      <TableHead className="w-[20%] text-right">Amount</TableHead>
+                      <TableHead className="w-[50px]"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                </Table>
+                {/* Scrollable Body - Fixed height 400px */}
+                <div className="overflow-y-auto" style={{ height: 400 }}>
                     <Table>
                       <TableBody>
                         {transactions.map((transaction) => (
@@ -377,8 +367,7 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
               </>
             )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
