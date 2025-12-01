@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { addReminder, updateReminder, deleteReminder, markAsPaid, markAsUnpaid } from '@/store/slices/remindersSlice';
+import { useReminders, useCategories, useSettings, useCreateReminder, useUpdateReminder, useDeleteReminder, useMarkReminderPaid, useMarkReminderUnpaid } from '@/lib/hooks';
 import { Reminder } from '@/lib/types';
 import { formatCurrency, getDaysUntil, isOverdue, formatDate } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -40,6 +39,7 @@ import {
   X,
   AlertTriangle,
   Clock,
+  Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -54,10 +54,14 @@ import {
 } from '@/components/ui/alert-dialog';
 
 export function ReminderManager() {
-  const dispatch = useAppDispatch();
-  const reminders = useAppSelector((state) => state.reminders.items);
-  const categories = useAppSelector((state) => state.categories.items);
-  const settings = useAppSelector((state) => state.settings);
+  const { data: reminders = [], isLoading } = useReminders();
+  const { data: categories = [] } = useCategories();
+  const { data: settings } = useSettings();
+  const createReminder = useCreateReminder();
+  const updateReminderMutation = useUpdateReminder();
+  const deleteReminderMutation = useDeleteReminder();
+  const markPaid = useMarkReminderPaid();
+  const markUnpaid = useMarkReminderUnpaid();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editReminder, setEditReminder] = useState<Reminder | null>(null);
@@ -116,10 +120,11 @@ export function ReminderManager() {
       return;
     }
 
+    const currency = settings?.defaultCurrency || 'USD';
     const reminderData = {
       title: title.trim(),
       amount: parseFloat(amount),
-      currency: settings.defaultCurrency,
+      currency,
       dueDate: dueDate.toISOString().split('T')[0],
       category,
       isRecurring,
@@ -129,22 +134,32 @@ export function ReminderManager() {
     };
 
     if (editReminder) {
-      dispatch(updateReminder({ ...editReminder, ...reminderData }));
-      toast.success('Reminder updated');
+      updateReminderMutation.mutate({ id: editReminder.id, data: reminderData }, {
+        onSuccess: () => {
+          toast.success('Reminder updated');
+          setIsDialogOpen(false);
+          resetForm();
+        },
+      });
     } else {
-      dispatch(addReminder(reminderData));
-      toast.success('Reminder created');
+      createReminder.mutate(reminderData, {
+        onSuccess: () => {
+          toast.success('Reminder created');
+          setIsDialogOpen(false);
+          resetForm();
+        },
+      });
     }
-
-    setIsDialogOpen(false);
-    resetForm();
   };
 
   const handleDelete = () => {
     if (deleteId) {
-      dispatch(deleteReminder(deleteId));
-      toast.success('Reminder deleted');
-      setDeleteId(null);
+      deleteReminderMutation.mutate(deleteId, {
+        onSuccess: () => {
+          toast.success('Reminder deleted');
+          setDeleteId(null);
+        },
+      });
     }
   };
 
@@ -227,7 +242,7 @@ export function ReminderManager() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => dispatch(markAsPaid(reminder.id))}
+              onClick={() => markPaid.mutate(reminder.id)}
               className="text-green-600"
             >
               <Check className="h-4 w-4 mr-1" />
@@ -237,7 +252,7 @@ export function ReminderManager() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => dispatch(markAsUnpaid(reminder.id))}
+              onClick={() => markUnpaid.mutate(reminder.id)}
               className="text-orange-600"
             >
               <X className="h-4 w-4 mr-1" />
@@ -262,6 +277,16 @@ export function ReminderManager() {
       </div>
     </Card>
   );
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center min-h-[200px]">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <>

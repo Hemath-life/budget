@@ -1,15 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { addRecurring, updateRecurring, deleteRecurring, toggleActive } from '@/store/slices/recurringSlice';
+import { useRecurring, useCategories, useSettings, useCreateRecurring, useUpdateRecurring, useDeleteRecurring, useToggleRecurring } from '@/lib/hooks';
 import { RecurringTransaction, TransactionType } from '@/lib/types';
 import { formatCurrency, formatDate, getNextRecurringDate } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -40,6 +38,7 @@ import {
   ArrowDownRight,
   Pause,
   Play,
+  Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -54,10 +53,13 @@ import {
 } from '@/components/ui/alert-dialog';
 
 export function RecurringManager() {
-  const dispatch = useAppDispatch();
-  const recurring = useAppSelector((state) => state.recurring.items);
-  const categories = useAppSelector((state) => state.categories.items);
-  const settings = useAppSelector((state) => state.settings);
+  const { data: recurring = [], isLoading } = useRecurring();
+  const { data: categories = [] } = useCategories();
+  const { data: settings } = useSettings();
+  const createRecurring = useCreateRecurring();
+  const updateRecurringMutation = useUpdateRecurring();
+  const deleteRecurringMutation = useDeleteRecurring();
+  const toggleActive = useToggleRecurring();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<RecurringTransaction | null>(null);
@@ -121,11 +123,12 @@ export function RecurringManager() {
       return;
     }
 
+    const currency = settings?.defaultCurrency || 'USD';
     const startDateStr = startDate.toISOString().split('T')[0];
     const itemData = {
       type,
       amount: parseFloat(amount),
-      currency: settings.defaultCurrency,
+      currency,
       category,
       description: description.trim(),
       frequency,
@@ -135,22 +138,32 @@ export function RecurringManager() {
     };
 
     if (editItem) {
-      dispatch(updateRecurring({ ...editItem, ...itemData }));
-      toast.success('Recurring transaction updated');
+      updateRecurringMutation.mutate({ ...editItem, ...itemData }, {
+        onSuccess: () => {
+          toast.success('Recurring transaction updated');
+          setIsDialogOpen(false);
+          resetForm();
+        },
+      });
     } else {
-      dispatch(addRecurring(itemData));
-      toast.success('Recurring transaction created');
+      createRecurring.mutate(itemData, {
+        onSuccess: () => {
+          toast.success('Recurring transaction created');
+          setIsDialogOpen(false);
+          resetForm();
+        },
+      });
     }
-
-    setIsDialogOpen(false);
-    resetForm();
   };
 
   const handleDelete = () => {
     if (deleteId) {
-      dispatch(deleteRecurring(deleteId));
-      toast.success('Recurring transaction deleted');
-      setDeleteId(null);
+      deleteRecurringMutation.mutate(deleteId, {
+        onSuccess: () => {
+          toast.success('Recurring transaction deleted');
+          setDeleteId(null);
+        },
+      });
     }
   };
 
@@ -214,7 +227,7 @@ export function RecurringManager() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => dispatch(toggleActive(item.id))}
+            onClick={() => toggleActive.mutate(item.id)}
           >
             {item.isActive ? (
               <Pause className="h-4 w-4 text-yellow-600" />
@@ -240,6 +253,16 @@ export function RecurringManager() {
       </div>
     </Card>
   );
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center min-h-[200px]">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <>
