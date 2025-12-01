@@ -2,7 +2,7 @@
 
 import { Sidebar, SidebarContext } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function DashboardLayout({
   children,
@@ -10,6 +10,17 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 1024); // lg breakpoint
+    };
+    
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   return (
     <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed }}>
@@ -18,7 +29,7 @@ export default function DashboardLayout({
         <div 
           className="h-full flex flex-col"
           style={{
-            paddingLeft: isCollapsed ? '70px' : '256px',
+            paddingLeft: isLargeScreen ? (isCollapsed ? '70px' : '256px') : '0px',
             transition: 'padding-left 300ms cubic-bezier(0.4, 0, 0.2, 1)',
           }}
         >
