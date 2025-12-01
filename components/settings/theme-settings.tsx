@@ -93,6 +93,41 @@ const colorThemes = [
     darkColor: 'oklch(0.7 0.08 45)',
     isFullTheme: true,
   },
+  {
+    value: 'slate',
+    label: 'Slate',
+    color: 'oklch(0.45 0.03 250)',
+    darkColor: 'oklch(0.65 0.04 250)',
+    isFullTheme: true,
+  },
+  {
+    value: 'midnight',
+    label: 'Midnight',
+    color: 'oklch(0.35 0.08 270)',
+    darkColor: 'oklch(0.55 0.15 270)',
+    isFullTheme: true,
+  },
+  {
+    value: 'obsidian',
+    label: 'Obsidian',
+    color: 'oklch(0.25 0.02 280)',
+    darkColor: 'oklch(0.6 0.2 280)',
+    isFullTheme: true,
+  },
+  {
+    value: 'carbon',
+    label: 'Carbon',
+    color: 'oklch(0.3 0.01 0)',
+    darkColor: 'oklch(0.5 0.15 200)',
+    isFullTheme: true,
+  },
+  {
+    value: 'charcoal',
+    label: 'Charcoal',
+    color: 'oklch(0.35 0.015 60)',
+    darkColor: 'oklch(0.7 0.1 45)',
+    isFullTheme: true,
+  },
 ];
 
 export function ThemeSettings() {
