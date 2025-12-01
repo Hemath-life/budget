@@ -15,13 +15,12 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn, formatDate } from '@/lib/utils';
-import { Plus, Pencil, Trash2, CalendarIcon, Target, Trophy, PlusCircle, Loader2 } from 'lucide-react';
+import { Pencil, Trash2, CalendarIcon, Target, Trophy, PlusCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -39,7 +38,12 @@ const COLORS = [
   '#EC4899', '#06B6D4', '#84CC16', '#F97316', '#6366F1',
 ];
 
-export function GoalManager() {
+interface GoalManagerProps {
+  isDialogOpen: boolean;
+  setIsDialogOpen: (open: boolean) => void;
+}
+
+export function GoalManager({ isDialogOpen, setIsDialogOpen }: GoalManagerProps) {
   const { data: goals = [], isLoading: goalsLoading } = useGoals();
   const { data: settings } = useSettings();
   const createGoal = useCreateGoal();
@@ -47,7 +51,6 @@ export function GoalManager() {
   const deleteGoalMutation = useDeleteGoal();
   const contributeToGoal = useContributeToGoal();
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isContributeOpen, setIsContributeOpen] = useState(false);
   const [editGoal, setEditGoal] = useState<Goal | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -257,146 +260,134 @@ export function GoalManager() {
 
   return (
     <>
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex justify-end mb-4">
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
-            setIsDialogOpen(open);
-            if (!open) resetForm();
-          }}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Goal
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  {editGoal ? 'Edit Goal' : 'Create Goal'}
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Goal Name</Label>
-                  <Input
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="e.g., Emergency Fund"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="target">Target Amount</Label>
-                    <Input
-                      id="target"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={targetAmount}
-                      onChange={(e) => setTargetAmount(e.target.value)}
-                      placeholder="0.00"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="current">Current Amount</Label>
-                    <Input
-                      id="current"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={currentAmount}
-                      onChange={(e) => setCurrentAmount(e.target.value)}
-                      placeholder="0.00"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label>Deadline</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          'w-full justify-start text-left font-normal',
-                          !deadline && 'text-muted-foreground'
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {deadline ? formatDate(deadline) : 'Pick a date'}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={deadline}
-                        onSelect={(d) => d && setDeadline(d)}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div className="space-y-2">
-                  <Label>Color</Label>
-                  <div className="flex flex-wrap gap-2">
-                    {COLORS.map((c) => (
-                      <button
-                        key={c}
-                        type="button"
-                        className={`h-8 w-8 rounded-full transition-transform ${
-                          color === c ? 'ring-2 ring-offset-2 ring-primary scale-110' : ''
-                        }`}
-                        style={{ backgroundColor: c }}
-                        onClick={() => setColor(c)}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSubmit}>
-                  {editGoal ? 'Update' : 'Create'}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-          </div>
-          {goals.length === 0 ? (
+      {goals.length === 0 ? (
+        <Card>
+          <CardContent className="pt-6">
             <div className="text-center py-12 text-muted-foreground">
               <Target className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>No goals set yet</p>
               <p className="text-sm">Create a goal to start saving</p>
             </div>
-          ) : (
-            <div className="space-y-6">
-              {activeGoals.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Active Goals</h3>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {activeGoals.map((goal) => (
-                      <GoalCard key={goal.id} goal={goal} />
-                    ))}
-                  </div>
-                </div>
-              )}
-              {completedGoals.length > 0 && (
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Completed Goals</h3>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {completedGoals.map((goal) => (
-                      <GoalCard key={goal.id} goal={goal} />
-                    ))}
-                  </div>
-                </div>
-              )}
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-6">
+          {activeGoals.length > 0 && (
+            <div className="grid gap-4 md:grid-cols-2">
+              {activeGoals.map((goal) => (
+                <GoalCard key={goal.id} goal={goal} />
+              ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+          {completedGoals.length > 0 && (
+            <div className="grid gap-4 md:grid-cols-2">
+              {completedGoals.map((goal) => (
+                <GoalCard key={goal.id} goal={goal} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Goal Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={(open) => {
+        setIsDialogOpen(open);
+        if (!open) resetForm();
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editGoal ? 'Edit Goal' : 'Create Goal'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Goal Name</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Emergency Fund"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="target">Target Amount</Label>
+                <Input
+                  id="target"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={targetAmount}
+                  onChange={(e) => setTargetAmount(e.target.value)}
+                  placeholder="0.00"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="current">Current Amount</Label>
+                <Input
+                  id="current"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={currentAmount}
+                  onChange={(e) => setCurrentAmount(e.target.value)}
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Deadline</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      'w-full justify-start text-left font-normal',
+                      !deadline && 'text-muted-foreground'
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {deadline ? formatDate(deadline) : 'Pick a date'}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={deadline}
+                    onSelect={(d) => d && setDeadline(d)}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="space-y-2">
+              <Label>Color</Label>
+              <div className="flex flex-wrap gap-2">
+                {COLORS.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    className={`h-8 w-8 rounded-full transition-transform ${
+                      color === c ? 'ring-2 ring-offset-2 ring-primary scale-110' : ''
+                    }`}
+                    style={{ backgroundColor: c }}
+                    onClick={() => setColor(c)}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit}>
+              {editGoal ? 'Update' : 'Create'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Contribute Dialog */}
       <Dialog open={isContributeOpen} onOpenChange={setIsContributeOpen}>

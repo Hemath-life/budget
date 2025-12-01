@@ -268,17 +268,23 @@ export function RecurringManager() {
     <>
       <Card>
         <CardContent className="pt-6">
-          <div className="flex justify-end mb-4">
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
-            setIsDialogOpen(open);
-            if (!open) resetForm();
-          }}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Recurring
-              </Button>
-            </DialogTrigger>
+          <Tabs defaultValue="all">
+            <div className="flex items-center justify-between mb-4">
+              <TabsList>
+                <TabsTrigger value="all">All ({recurring.length})</TabsTrigger>
+                <TabsTrigger value="income">Income ({incomeItems.length})</TabsTrigger>
+                <TabsTrigger value="expense">Expense ({expenseItems.length})</TabsTrigger>
+              </TabsList>
+              <Dialog open={isDialogOpen} onOpenChange={(open) => {
+                setIsDialogOpen(open);
+                if (!open) resetForm();
+              }}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Recurring
+                  </Button>
+                </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
@@ -404,13 +410,7 @@ export function RecurringManager() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          </div>
-          <Tabs defaultValue="all">
-            <TabsList className="mb-4">
-              <TabsTrigger value="all">All ({recurring.length})</TabsTrigger>
-              <TabsTrigger value="income">Income ({incomeItems.length})</TabsTrigger>
-              <TabsTrigger value="expense">Expense ({expenseItems.length})</TabsTrigger>
-            </TabsList>
+            </div>
             <TabsContent value="all">
               {recurring.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">

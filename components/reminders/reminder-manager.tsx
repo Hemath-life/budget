@@ -292,17 +292,22 @@ export function ReminderManager() {
     <>
       <Card>
         <CardContent className="pt-6">
-          <div className="flex justify-end mb-4">
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
-            setIsDialogOpen(open);
-            if (!open) resetForm();
-          }}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Reminder
-              </Button>
-            </DialogTrigger>
+          <Tabs defaultValue="upcoming">
+            <div className="flex items-center justify-between mb-4">
+              <TabsList>
+                <TabsTrigger value="upcoming">Upcoming ({upcomingReminders.length})</TabsTrigger>
+                <TabsTrigger value="paid">Paid ({paidReminders.length})</TabsTrigger>
+              </TabsList>
+              <Dialog open={isDialogOpen} onOpenChange={(open) => {
+                setIsDialogOpen(open);
+                if (!open) resetForm();
+              }}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Reminder
+                  </Button>
+                </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
@@ -426,16 +431,7 @@ export function ReminderManager() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          </div>
-          <Tabs defaultValue="upcoming">
-            <TabsList className="mb-4">
-              <TabsTrigger value="upcoming">
-                Upcoming ({upcomingReminders.length})
-              </TabsTrigger>
-              <TabsTrigger value="paid">
-                Paid ({paidReminders.length})
-              </TabsTrigger>
-            </TabsList>
+            </div>
             <TabsContent value="upcoming">
               {upcomingReminders.length === 0 ? (
                 <div className="text-center py-12 text-muted-foreground">

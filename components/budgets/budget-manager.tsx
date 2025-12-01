@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useBudgets, useCategories, useSettings, useCreateBudget, useUpdateBudget, useDeleteBudget } from '@/lib/hooks';
 import { Budget } from '@/lib/types';
 import { formatCurrency, calculatePercentage } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -149,18 +149,18 @@ export function BudgetManager() {
   return (
     <>
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Budget Planning</CardTitle>
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
-            setIsDialogOpen(open);
-            if (!open) resetForm();
-          }}>
-            <DialogTrigger asChild>
-              <Button disabled={availableCategories.length === 0}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Budget
-              </Button>
-            </DialogTrigger>
+        <CardContent className="pt-6">
+          <div className="flex justify-end mb-6">
+            <Dialog open={isDialogOpen} onOpenChange={(open) => {
+              setIsDialogOpen(open);
+              if (!open) resetForm();
+            }}>
+              <DialogTrigger asChild>
+                <Button disabled={availableCategories.length === 0}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Budget
+                </Button>
+              </DialogTrigger>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>
@@ -226,8 +226,7 @@ export function BudgetManager() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </CardHeader>
-        <CardContent>
+          </div>
           {budgets.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <p>No budgets set yet</p>
