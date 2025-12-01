@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useAppSelector } from '@/store/hooks';
+import { useTransactions, useCategories, useSettings } from '@/lib/hooks';
 import { formatCurrency, formatDate, calculatePercentage } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,14 +30,14 @@ import {
   AreaChart,
   Area,
 } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, Percent } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Percent, Loader2 } from 'lucide-react';
 
 type TimeRange = 'week' | 'month' | 'quarter' | 'year' | 'all';
 
 export function ReportsView() {
-  const transactions = useAppSelector((state) => state.transactions.items);
-  const categories = useAppSelector((state) => state.categories.items);
-  const settings = useAppSelector((state) => state.settings);
+  const { data: transactions = [], isLoading: transLoading } = useTransactions();
+  const { data: categories = [] } = useCategories();
+  const { data: settings } = useSettings();
 
   const [timeRange, setTimeRange] = useState<TimeRange>('month');
 
@@ -76,6 +76,16 @@ export function ReportsView() {
 
   const netSavings = totalIncome - totalExpenses;
   const savingsRate = totalIncome > 0 ? calculatePercentage(netSavings, totalIncome) : 0;
+
+  const currency = settings?.defaultCurrency || 'USD';
+
+  if (transLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   // Category breakdown for expenses
   const expensesByCategory = useMemo(() => {
@@ -194,7 +204,7 @@ export function ReportsView() {
               <div>
                 <p className="text-sm text-muted-foreground">Total Income</p>
                 <p className="text-2xl font-bold text-green-600">
-                  {formatCurrency(totalIncome, settings.defaultCurrency)}
+                  {formatCurrency(totalIncome, currency)}
                 </p>
               </div>
               <TrendingUp className="h-8 w-8 text-green-500 opacity-50" />
@@ -207,7 +217,7 @@ export function ReportsView() {
               <div>
                 <p className="text-sm text-muted-foreground">Total Expenses</p>
                 <p className="text-2xl font-bold text-red-600">
-                  {formatCurrency(totalExpenses, settings.defaultCurrency)}
+                  {formatCurrency(totalExpenses, currency)}
                 </p>
               </div>
               <TrendingDown className="h-8 w-8 text-red-500 opacity-50" />
@@ -220,7 +230,7 @@ export function ReportsView() {
               <div>
                 <p className="text-sm text-muted-foreground">Net Savings</p>
                 <p className={`text-2xl font-bold ${netSavings >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {formatCurrency(Math.abs(netSavings), settings.defaultCurrency)}
+                  {formatCurrency(Math.abs(netSavings), currency)}
                 </p>
               </div>
               <DollarSign className="h-8 w-8 text-primary opacity-50" />
@@ -321,7 +331,7 @@ export function ReportsView() {
                         border: '1px solid hsl(var(--border))',
                         borderRadius: '8px',
                       }}
-                      formatter={(value: number) => [formatCurrency(value, settings.defaultCurrency), 'Amount']}
+                      formatter={(value: number) => [formatCurrency(value, currency), 'Amount']}
                     />
                     <Legend />
                   </PieChart>
@@ -354,7 +364,7 @@ export function ReportsView() {
                         border: '1px solid hsl(var(--border))',
                         borderRadius: '8px',
                       }}
-                      formatter={(value: number) => [formatCurrency(value, settings.defaultCurrency), 'Amount']}
+                      formatter={(value: number) => [formatCurrency(value, currency), 'Amount']}
                     />
                     <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                       {incomeByCategory.map((entry, index) => (
@@ -391,7 +401,7 @@ export function ReportsView() {
                         border: '1px solid hsl(var(--border))',
                         borderRadius: '8px',
                       }}
-                      formatter={(value: number) => [formatCurrency(value, settings.defaultCurrency), 'Spent']}
+                      formatter={(value: number) => [formatCurrency(value, currency), 'Spent']}
                     />
                     <Line
                       type="monotone"
@@ -425,7 +435,7 @@ export function ReportsView() {
                   <div className="flex justify-between mb-1">
                     <span className="font-medium">{category.name}</span>
                     <span className="text-muted-foreground">
-                      {formatCurrency(category.value, settings.defaultCurrency)} ({category.percentage}%)
+                      {formatCurrency(category.value, currency)} ({category.percentage}%)
                     </span>
                   </div>
                   <div className="h-2 rounded-full bg-muted overflow-hidden">

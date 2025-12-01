@@ -1,7 +1,8 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAppSelector } from '@/store/hooks';
+import { useTransactions, useCategories } from '@/lib/hooks';
+import { formatDate } from '@/lib/utils';
 import {
   BarChart,
   Bar,
@@ -18,10 +19,11 @@ import {
   Line,
 } from 'recharts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Loader2 } from 'lucide-react';
 
 export function ExpenseChart() {
-  const transactions = useAppSelector((state) => state.transactions.items);
-  const categories = useAppSelector((state) => state.categories.items);
+  const { data: transactions = [], isLoading } = useTransactions();
+  const { data: categories = [] } = useCategories();
 
   // Get expense transactions for the current month
   const now = new Date();
@@ -54,7 +56,7 @@ export function ExpenseChart() {
   for (let i = 5; i >= 0; i--) {
     const date = new Date();
     date.setMonth(date.getMonth() - i);
-    const month = date.toLocaleString('default', { month: 'short' });
+    const month = formatDate(date, 'MMM');
     
     const monthTransactions = transactions.filter((t) => {
       const tDate = new Date(t.date);
@@ -72,6 +74,16 @@ export function ExpenseChart() {
       .reduce((sum, t) => sum + t.amount, 0);
     
     monthlyData.push({ month, income, expenses });
+  }
+
+  if (isLoading) {
+    return (
+      <Card className="col-span-full">
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </CardContent>
+      </Card>
+    );
   }
 
   return (

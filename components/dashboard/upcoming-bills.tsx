@@ -1,15 +1,15 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAppSelector } from '@/store/hooks';
+import { useReminders, useSettings } from '@/lib/hooks';
 import { formatCurrency, formatDate, getDaysUntil, isOverdue } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { AlertTriangle, Clock, CheckCircle } from 'lucide-react';
+import { AlertTriangle, Clock, CheckCircle, Loader2 } from 'lucide-react';
 
 export function UpcomingBills() {
-  const reminders = useAppSelector((state) => state.reminders.items);
-  const settings = useAppSelector((state) => state.settings);
+  const { data: reminders = [], isLoading } = useReminders();
+  const { data: settings } = useSettings();
 
   const upcomingBills = [...reminders]
     .filter((r) => !r.isPaid)
@@ -42,6 +42,16 @@ export function UpcomingBills() {
     );
   };
 
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-6 w-6 animate-spin" />
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -71,7 +81,7 @@ export function UpcomingBills() {
                 </div>
                 <div className="text-right space-y-1">
                   <p className="font-semibold">
-                    {formatCurrency(bill.amount, bill.currency || settings.defaultCurrency)}
+                    {formatCurrency(bill.amount, bill.currency || settings?.defaultCurrency || 'USD')}
                   </p>
                   {getStatusBadge(bill.dueDate)}
                 </div>

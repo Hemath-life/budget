@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useAppSelector } from "@/store/hooks";
+import { useReminders, useSettings } from "@/lib/hooks";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,8 +18,8 @@ import Link from "next/link";
 
 export function Header() {
   const { setTheme } = useTheme();
-  const reminders = useAppSelector((state) => state.reminders.items);
-  const settings = useAppSelector((state) => state.settings);
+  const { data: reminders = [] } = useReminders();
+  const { data: settings } = useSettings();
 
   const upcomingReminders = reminders.filter((r) => {
     const dueDate = new Date(r.dueDate);
@@ -40,7 +40,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           {/* Currency Display */}
           <Badge variant="outline" className="hidden sm:flex">
-            {settings.defaultCurrency}
+            {settings?.defaultCurrency || 'USD'}
           </Badge>
 
           {/* Notifications */}
