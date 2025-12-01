@@ -271,7 +271,7 @@ export function CurrencySettings() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <CurrencyConverter currencies={settings.currencies} />
+          <CurrencyConverter currencies={currencies} />
         </CardContent>
       </Card>
     </div>
