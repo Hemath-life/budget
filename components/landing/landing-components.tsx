@@ -15,10 +15,7 @@ import {
   Smartphone,
   Zap,
   TrendingUp,
-  PieChart,
-  CreditCard,
   ChevronRight,
-  Check,
   Star,
   Sparkles,
   LayoutDashboard,
@@ -163,79 +160,186 @@ export function HeroSection() {
           </div>
 
           {/* Social proof */}
-          <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm">
-            <div className="flex items-center gap-2">
+          <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-8 text-sm">
+            <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
               <div className="flex -space-x-2">
-                {[0, 1, 2, 3].map((i) => (
+                {['bg-gradient-to-br from-violet-500 to-purple-600', 'bg-gradient-to-br from-blue-500 to-cyan-500', 'bg-gradient-to-br from-green-500 to-emerald-500', 'bg-gradient-to-br from-orange-500 to-red-500'].map((gradient, i) => (
                   <div
                     key={i}
-                    className="h-8 w-8 rounded-full border-2 border-white dark:border-black bg-gray-200 dark:bg-gray-800"
-                  />
+                    className={`h-8 w-8 rounded-full border-2 border-white dark:border-gray-900 ${gradient} flex items-center justify-center text-white text-xs font-bold shadow-lg`}
+                  >
+                    {String.fromCharCode(65 + i)}
+                  </div>
                 ))}
+                <div className="h-8 w-8 rounded-full border-2 border-white dark:border-gray-900 bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
+                  +50k
+                </div>
               </div>
-              <span className="text-gray-600 dark:text-gray-400 ml-1">50,000+ users</span>
+              <span className="text-gray-700 dark:text-gray-300 font-medium">50,000+ happy users</span>
             </div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
               <div className="flex">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <Star key={i} className="h-4 w-4 text-yellow-500 fill-yellow-500" />
+                  <Star key={i} className="h-4 w-4 text-yellow-500 fill-yellow-500 drop-shadow-sm" />
                 ))}
               </div>
-              <span className="text-gray-600 dark:text-gray-400">4.9/5 rating</span>
+              <span className="text-gray-700 dark:text-gray-300 font-medium">4.9/5 rating</span>
+              <span className="text-gray-400 text-xs">(2.5k reviews)</span>
             </div>
           </div>
         </div>
 
         {/* Dashboard Preview */}
         <div className="mt-16 relative">
-          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 p-1.5 shadow-xl">
+          {/* Glow effects */}
+          <div className="absolute -inset-4 bg-gradient-to-r from-green-500/20 via-emerald-500/30 to-teal-500/20 rounded-3xl blur-2xl opacity-70 animate-pulse" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-green-600/10 to-transparent rounded-2xl" />
+          
+          <div className="relative rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-1.5 shadow-2xl shadow-green-500/10">
             {/* Browser bar */}
-            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-gray-200 dark:border-gray-800">
+            <div className="flex items-center gap-2 px-4 py-2.5 border-b border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-black/50 rounded-t-xl">
               <div className="flex gap-1.5">
-                <div className="h-3 w-3 rounded-full bg-gray-300 dark:bg-gray-700" />
-                <div className="h-3 w-3 rounded-full bg-gray-300 dark:bg-gray-700" />
-                <div className="h-3 w-3 rounded-full bg-gray-300 dark:bg-gray-700" />
+                <div className="h-3 w-3 rounded-full bg-red-400 hover:bg-red-500 transition-colors cursor-pointer" />
+                <div className="h-3 w-3 rounded-full bg-yellow-400 hover:bg-yellow-500 transition-colors cursor-pointer" />
+                <div className="h-3 w-3 rounded-full bg-green-400 hover:bg-green-500 transition-colors cursor-pointer" />
               </div>
               <div className="flex-1 flex justify-center">
-                <div className="px-4 py-1 rounded-md bg-white dark:bg-black text-xs text-gray-500 dark:text-gray-500 border border-gray-200 dark:border-gray-800">
-                  app.budget.com
+                <div className="px-4 py-1.5 rounded-lg bg-white dark:bg-black text-xs text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700 flex items-center gap-2 shadow-sm">
+                  <span className="text-green-500">🔒</span>
+                  <span>app.budget.com/dashboard</span>
                 </div>
               </div>
+              <div className="w-16" />
             </div>
+            
             {/* Dashboard content */}
             <div className="rounded-b-xl bg-white dark:bg-black p-6">
               {/* Stats row */}
               <div className="grid gap-4 sm:grid-cols-4">
                 {[
-                  { label: 'Income', value: '₹1,25,000', change: '+12%', positive: true },
-                  { label: 'Expenses', value: '₹78,500', change: '-8%', positive: true },
-                  { label: 'Balance', value: '₹46,500', change: '+23%', positive: true },
-                  { label: 'Savings', value: '₹12,000', change: '+5%', positive: true },
+                  { label: 'Total Income', value: '₹1,25,000', change: '+12%', icon: '📈', color: 'from-green-500 to-emerald-600' },
+                  { label: 'Expenses', value: '₹78,500', change: '-8%', icon: '💳', color: 'from-orange-500 to-red-500' },
+                  { label: 'Balance', value: '₹46,500', change: '+23%', icon: '💰', color: 'from-blue-500 to-indigo-600' },
+                  { label: 'Savings', value: '₹12,000', change: '+5%', icon: '🎯', color: 'from-purple-500 to-pink-500' },
                 ].map((stat) => (
-                  <div key={stat.label} className="rounded-xl border border-gray-100 dark:border-gray-800 p-4">
-                    <p className="text-sm text-gray-500 dark:text-gray-500">{stat.label}</p>
-                    <p className="text-xl font-semibold text-black dark:text-white mt-1">{stat.value}</p>
-                    <p className={`text-xs mt-1 ${stat.positive ? 'text-green-600' : 'text-red-600'}`}>
-                      {stat.change} from last month
-                    </p>
+                  <div 
+                    key={stat.label} 
+                    className="group relative rounded-xl border border-gray-100 dark:border-gray-800 p-4 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50 hover:border-green-500/50 hover:shadow-lg hover:shadow-green-500/5 transition-all duration-300 hover:-translate-y-0.5"
+                  >
+                    <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-5 transition-opacity`} />
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{stat.label}</p>
+                        <span className="text-lg">{stat.icon}</span>
+                      </div>
+                      <p className="text-2xl font-bold text-black dark:text-white">{stat.value}</p>
+                      <div className="flex items-center gap-1 mt-1">
+                        <span className={`text-xs font-semibold ${stat.change.startsWith('+') ? 'text-green-600' : 'text-red-500'}`}>
+                          {stat.change}
+                        </span>
+                        <span className="text-xs text-gray-400">vs last month</span>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
+              
               {/* Chart area */}
-              <div className="mt-4 rounded-xl border border-gray-100 dark:border-gray-800 p-6">
-                <div className="flex items-end justify-between h-32 gap-2">
-                  {[40, 65, 45, 80, 55, 70, 85, 60, 75, 90, 50, 95].map((height, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
+              <div className="mt-4 rounded-xl border border-gray-100 dark:border-gray-800 p-5 bg-gradient-to-br from-white to-gray-50/30 dark:from-gray-900 dark:to-gray-800/30">
+                <div className="flex items-center justify-between mb-5">
+                  <div>
+                    <h3 className="text-sm font-semibold text-black dark:text-white">Monthly Overview</h3>
+                    <p className="text-xs text-gray-500 mt-0.5">Income vs Expenses</p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-2.5 w-2.5 rounded-full bg-gradient-to-r from-green-500 to-emerald-500" />
+                      <span className="text-xs text-gray-500">Income</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="h-2.5 w-2.5 rounded-full bg-gradient-to-r from-emerald-300 to-teal-300" />
+                      <span className="text-xs text-gray-500">Expenses</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-end justify-between h-32 gap-1">
+                  {[
+                    { income: 60, expense: 40 },
+                    { income: 75, expense: 50 },
+                    { income: 65, expense: 45 },
+                    { income: 90, expense: 55 },
+                    { income: 70, expense: 48 },
+                    { income: 85, expense: 52 },
+                    { income: 95, expense: 60 },
+                    { income: 78, expense: 50 },
+                    { income: 88, expense: 55 },
+                    { income: 100, expense: 65 },
+                    { income: 72, expense: 48 },
+                    { income: 92, expense: 58 },
+                  ].map((data, i) => (
+                    <div key={i} className="flex-1 flex gap-0.5 items-end group cursor-pointer">
                       <div 
-                        className="w-full bg-green-500 dark:bg-green-600 rounded-sm transition-all hover:bg-green-600 dark:hover:bg-green-500"
-                        style={{ height: `${height}%` }}
+                        className="flex-1 bg-gradient-to-t from-green-600 to-green-400 rounded-t transition-all duration-300 group-hover:from-green-500 group-hover:to-green-300 group-hover:shadow-lg group-hover:shadow-green-500/20"
+                        style={{ height: `${data.income}%` }}
+                      />
+                      <div 
+                        className="flex-1 bg-gradient-to-t from-emerald-400 to-teal-300 rounded-t transition-all duration-300 group-hover:from-emerald-300 group-hover:to-teal-200"
+                        style={{ height: `${data.expense}%` }}
                       />
                     </div>
                   ))}
                 </div>
-                <div className="flex justify-between mt-3 text-xs text-gray-400">
-                  <span>Jan</span>
-                  <span>Dec</span>
+                
+                <div className="flex justify-between mt-3 text-[10px] text-gray-400 font-medium">
+                  {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map(m => (
+                    <span key={m}>{m}</span>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Quick actions */}
+              <div className="mt-4 grid grid-cols-4 gap-3">
+                {[
+                  { icon: '➕', label: 'Add', desc: 'Transaction' },
+                  { icon: '📊', label: 'Reports', desc: 'View all' },
+                  { icon: '🎯', label: 'Goals', desc: 'Track' },
+                  { icon: '⚙️', label: 'Settings', desc: 'Configure' },
+                ].map((action) => (
+                  <div key={action.label} className="group rounded-xl border border-gray-100 dark:border-gray-800 p-3 text-center hover:border-green-500/50 hover:bg-green-50/50 dark:hover:bg-green-950/20 transition-all cursor-pointer">
+                    <span className="text-xl group-hover:scale-110 inline-block transition-transform">{action.icon}</span>
+                    <p className="text-xs font-medium text-black dark:text-white mt-1">{action.label}</p>
+                    <p className="text-[10px] text-gray-400">{action.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          {/* Floating elements */}
+          <div className="absolute -right-4 top-20 hidden lg:block animate-bounce" style={{ animationDuration: '3s' }}>
+            <div className="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-3 shadow-xl shadow-green-500/10">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center">
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-green-600">+23%</p>
+                  <p className="text-[10px] text-gray-500">Savings up!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="absolute -left-4 bottom-32 hidden lg:block animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }}>
+            <div className="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-3 shadow-xl shadow-purple-500/10">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-full bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center">
+                  <Target className="h-4 w-4 text-purple-600" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-purple-600">Goal: 80%</p>
+                  <p className="text-[10px] text-gray-500">New Car</p>
                 </div>
               </div>
             </div>
@@ -475,7 +579,7 @@ export function TestimonialsSection() {
 
   return (
     <section id="testimonials" className="py-24 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-emerald-50/30 dark:via-emerald-950/10 to-background -z-10" />
+      <div className="absolute inset-0 bg-linear-to-b from-background via-emerald-50/30 dark:via-emerald-950/10 to-background -z-10" />
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-4 py-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400 mb-4">
@@ -484,7 +588,7 @@ export function TestimonialsSection() {
           </div>
           <h2 className="text-4xl font-bold tracking-tight sm:text-5xl">
             Loved by
-            <span className="block bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">thousands of users</span>
+            <span className="block bg-linear-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">thousands of users</span>
           </h2>
           <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
             See what our users have to say about their experience with BudgetApp.
@@ -497,7 +601,7 @@ export function TestimonialsSection() {
               key={testimonial.author}
               className="relative group rounded-3xl border bg-card/50 backdrop-blur-sm p-8 hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-500 hover:-translate-y-2"
             >
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute inset-0 rounded-3xl bg-linear-to-br from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative">
                 <div className="flex gap-1 mb-6">
                   {[1, 2, 3, 4, 5].map((i) => (
@@ -512,7 +616,7 @@ export function TestimonialsSection() {
                 </div>
                 <p className="text-foreground leading-relaxed text-lg">&ldquo;{testimonial.content}&rdquo;</p>
                 <div className="mt-8 flex items-center gap-4">
-                  <div className={`h-14 w-14 rounded-2xl bg-gradient-to-br ${testimonial.gradient} flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
+                  <div className={`h-14 w-14 rounded-2xl bg-linear-to-br ${testimonial.gradient} flex items-center justify-center text-white font-bold text-lg shadow-lg`}>
                     {testimonial.avatar}
                   </div>
                   <div>
