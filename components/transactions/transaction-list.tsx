@@ -82,7 +82,7 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const pageSize = 10;
+  const [pageSize, setPageSize] = useState(10);
 
   // Debounce search term
   const debouncedSearch = useDebounceValue(searchTerm, 300);
@@ -91,7 +91,7 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPage(1);
-  }, [typeFilter, categoryFilter, debouncedSearch]);
+  }, [typeFilter, categoryFilter, debouncedSearch, pageSize]);
 
   // Fetch paginated transactions
   const { data, isLoading, isFetching } = usePaginatedTransactions({
@@ -301,9 +301,25 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
                 </Table>
 
                 {/* Pagination */}
-                <div className="flex items-center justify-between mt-6 pt-4 border-t">
-                  <div className="text-sm text-muted-foreground">
-                    Showing {((page - 1) * pageSize) + 1} to {Math.min(page * pageSize, total)} of {total} transactions
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
+                  <div className="flex items-center gap-4">
+                    <div className="text-sm text-muted-foreground">
+                      Showing {((page - 1) * pageSize) + 1} to {Math.min(page * pageSize, total)} of {total} transactions
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">Rows per page:</span>
+                      <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
+                        <SelectTrigger className="w-[70px] h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="10">10</SelectItem>
+                          <SelectItem value="25">25</SelectItem>
+                          <SelectItem value="50">50</SelectItem>
+                          <SelectItem value="100">100</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
