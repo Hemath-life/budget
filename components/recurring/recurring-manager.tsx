@@ -171,10 +171,10 @@ export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringMan
 
   const RecurringCard = ({ item }: { item: RecurringTransaction }) => (
     <Card className="p-4">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div className="flex items-center gap-3">
           <div
-            className={`h-10 w-10 rounded-full flex items-center justify-center ${
+            className={`h-10 w-10 rounded-full flex items-center justify-center shrink-0 ${
               item.type === 'income'
                 ? 'bg-green-100 dark:bg-green-900/20'
                 : 'bg-red-100 dark:bg-red-900/20'
@@ -186,9 +186,9 @@ export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringMan
               <ArrowDownRight className="h-5 w-5 text-red-600" />
             )}
           </div>
-          <div>
-            <p className="font-medium">{item.description}</p>
-            <div className="flex items-center gap-2 mt-1">
+          <div className="min-w-0 flex-1">
+            <p className="font-medium truncate">{item.description}</p>
+            <div className="flex flex-wrap items-center gap-2 mt-1">
               <Badge
                 variant="outline"
                 style={{
@@ -205,9 +205,9 @@ export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringMan
             </div>
           </div>
         </div>
-        <div className="text-right">
+        <div className="sm:text-right flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2">
           <p
-            className={`font-semibold ${
+            className={`font-semibold text-lg ${
               item.type === 'income'
                 ? 'text-green-600 dark:text-green-400'
                 : 'text-red-600 dark:text-red-400'
@@ -216,12 +216,12 @@ export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringMan
             {item.type === 'income' ? '+' : '-'}
             {formatCurrency(item.amount, item.currency)}
           </p>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-muted-foreground">
             Next: {formatDate(item.nextDueDate)}
           </p>
         </div>
       </div>
-      <div className="flex items-center justify-between mt-4">
+      <div className="flex items-center justify-between mt-4 pt-3 border-t">
         <Badge variant={item.isActive ? 'default' : 'secondary'}>
           {item.isActive ? 'Active' : 'Paused'}
         </Badge>
@@ -285,7 +285,7 @@ export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringMan
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               {recurring.map((item) => (
                 <RecurringCard key={item.id} item={item} />
               ))}
@@ -302,7 +302,7 @@ export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringMan
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               {incomeItems.map((item) => (
                 <RecurringCard key={item.id} item={item} />
               ))}
@@ -319,7 +319,7 @@ export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringMan
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               {expenseItems.map((item) => (
                 <RecurringCard key={item.id} item={item} />
               ))}
