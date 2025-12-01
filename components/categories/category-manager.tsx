@@ -11,7 +11,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
 import {
@@ -23,7 +22,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
+import { Pencil, Trash2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -50,12 +49,16 @@ const ICONS = [
   'MoreHorizontal', 'DollarSign', 'Wallet', 'Banknote', 'Coins',
 ];
 
-export function CategoryManager() {
+interface CategoryManagerProps {
+  isDialogOpen: boolean;
+  setIsDialogOpen: (open: boolean) => void;
+}
+
+export function CategoryManager({ isDialogOpen, setIsDialogOpen }: CategoryManagerProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editCategory, setEditCategory] = useState<Category | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -227,89 +230,79 @@ export function CategoryManager() {
 
   return (
     <>
-      <Card>
-        <CardContent className="pt-6">
-          <Tabs defaultValue="expense">
-            <div className="flex items-center justify-between mb-4">
-              <TabsList>
-                <TabsTrigger value="expense">Expense ({expenseCategories.length})</TabsTrigger>
-                <TabsTrigger value="income">Income ({incomeCategories.length})</TabsTrigger>
-              </TabsList>
-              <Dialog open={isDialogOpen} onOpenChange={(open) => {
-                setIsDialogOpen(open);
-                if (!open) resetForm();
-              }}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Category
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>
-                      {editCategory ? 'Edit Category' : 'Add Category'}
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Name</Label>
-                      <Input
-                        id="name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Category name"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Type</Label>
-                      <Select value={type} onValueChange={(v) => setType(v as TransactionType)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="income">Income</SelectItem>
-                          <SelectItem value="expense">Expense</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Color</Label>
-                      <div className="flex flex-wrap gap-2">
-                        {COLORS.map((c) => (
-                          <button
-                            key={c}
-                            type="button"
-                            className={`h-8 w-8 rounded-full transition-transform ${
-                              color === c ? 'ring-2 ring-offset-2 ring-primary scale-110' : ''
-                            }`}
-                            style={{ backgroundColor: c }}
-                            onClick={() => setColor(c)}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button onClick={handleSubmit}>
-                      {editCategory ? 'Update' : 'Add'}
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
+      <Tabs defaultValue="expense">
+        <TabsList className="mb-4">
+          <TabsTrigger value="expense">Expense ({expenseCategories.length})</TabsTrigger>
+          <TabsTrigger value="income">Income ({incomeCategories.length})</TabsTrigger>
+        </TabsList>
+        <TabsContent value="expense">
+          <CategoryGrid items={expenseCategories} />
+        </TabsContent>
+        <TabsContent value="income">
+          <CategoryGrid items={incomeCategories} />
+        </TabsContent>
+      </Tabs>
+
+      {/* Category Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={(open) => {
+        setIsDialogOpen(open);
+        if (!open) resetForm();
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editCategory ? 'Edit Category' : 'Add Category'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Category name"
+              />
             </div>
-            <TabsContent value="expense">
-              <CategoryGrid items={expenseCategories} />
-            </TabsContent>
-            <TabsContent value="income">
-              <CategoryGrid items={incomeCategories} />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+            <div className="space-y-2">
+              <Label>Type</Label>
+              <Select value={type} onValueChange={(v) => setType(v as TransactionType)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="income">Income</SelectItem>
+                  <SelectItem value="expense">Expense</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Color</Label>
+              <div className="flex flex-wrap gap-2">
+                {COLORS.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    className={`h-8 w-8 rounded-full transition-transform ${
+                      color === c ? 'ring-2 ring-offset-2 ring-primary scale-110' : ''
+                    }`}
+                    style={{ backgroundColor: c }}
+                    onClick={() => setColor(c)}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit}>
+              {editCategory ? 'Update' : 'Add'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>

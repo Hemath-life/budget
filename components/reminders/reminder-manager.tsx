@@ -15,7 +15,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
 import {
@@ -30,7 +29,6 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import {
-  Plus,
   Pencil,
   Trash2,
   CalendarIcon,
@@ -53,7 +51,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-export function ReminderManager() {
+interface ReminderManagerProps {
+  isDialogOpen: boolean;
+  setIsDialogOpen: (open: boolean) => void;
+}
+
+export function ReminderManager({ isDialogOpen, setIsDialogOpen }: ReminderManagerProps) {
   const { data: reminders = [], isLoading } = useReminders();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
@@ -63,7 +66,6 @@ export function ReminderManager() {
   const markPaid = useMarkReminderPaid();
   const markUnpaid = useMarkReminderUnpaid();
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editReminder, setEditReminder] = useState<Reminder | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -290,181 +292,179 @@ export function ReminderManager() {
 
   return (
     <>
-      <Card>
-        <CardContent className="pt-6">
-          <Tabs defaultValue="upcoming">
-            <div className="flex items-center justify-between mb-4">
-              <TabsList>
-                <TabsTrigger value="upcoming">Upcoming ({upcomingReminders.length})</TabsTrigger>
-                <TabsTrigger value="paid">Paid ({paidReminders.length})</TabsTrigger>
-              </TabsList>
-              <Dialog open={isDialogOpen} onOpenChange={(open) => {
-                setIsDialogOpen(open);
-                if (!open) resetForm();
-              }}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Reminder
-                  </Button>
-                </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  {editReminder ? 'Edit Reminder' : 'Create Reminder'}
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Title</Label>
-                  <Input
-                    id="title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g., Rent Payment"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="amount">Amount</Label>
-                    <Input
-                      id="amount"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                      placeholder="0.00"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Category</Label>
-                    <Select value={category} onValueChange={setCategory}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {categories
-                          .filter((c) => c.type === 'expense')
-                          .map((c) => (
-                            <SelectItem key={c.id} value={c.id}>
-                              {c.name}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label>Due Date</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          'w-full justify-start text-left font-normal',
-                          !dueDate && 'text-muted-foreground'
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {dueDate ? formatDate(dueDate) : 'Pick a date'}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={dueDate}
-                        onSelect={(d) => d && setDueDate(d)}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label>Recurring</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Repeat this reminder
-                    </p>
-                  </div>
-                  <Switch
-                    checked={isRecurring}
-                    onCheckedChange={setIsRecurring}
-                  />
-                </div>
-                {isRecurring && (
-                  <div className="space-y-2">
-                    <Label>Frequency</Label>
-                    <Select value={frequency} onValueChange={(v) => setFrequency(v as typeof frequency)}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="weekly">Weekly</SelectItem>
-                        <SelectItem value="biweekly">Bi-weekly</SelectItem>
-                        <SelectItem value="monthly">Monthly</SelectItem>
-                        <SelectItem value="quarterly">Quarterly</SelectItem>
-                        <SelectItem value="yearly">Yearly</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-                <div className="space-y-2">
-                  <Label htmlFor="notify">Notify Before (days)</Label>
-                  <Input
-                    id="notify"
-                    type="number"
-                    min="1"
-                    max="30"
-                    value={notifyBefore}
-                    onChange={(e) => setNotifyBefore(e.target.value)}
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSubmit}>
-                  {editReminder ? 'Update' : 'Create'}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-            </div>
-            <TabsContent value="upcoming">
-              {upcomingReminders.length === 0 ? (
+      <Tabs defaultValue="upcoming">
+        <TabsList className="mb-4">
+          <TabsTrigger value="upcoming">Upcoming ({upcomingReminders.length})</TabsTrigger>
+          <TabsTrigger value="paid">Paid ({paidReminders.length})</TabsTrigger>
+        </TabsList>
+        <TabsContent value="upcoming">
+          {upcomingReminders.length === 0 ? (
+            <Card>
+              <CardContent className="pt-6">
                 <div className="text-center py-12 text-muted-foreground">
                   <Bell className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p>No upcoming reminders</p>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {upcomingReminders
-                    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
-                    .map((reminder) => (
-                      <ReminderCard key={reminder.id} reminder={reminder} />
-                    ))}
-                </div>
-              )}
-            </TabsContent>
-            <TabsContent value="paid">
-              {paidReminders.length === 0 ? (
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {upcomingReminders
+                .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+                .map((reminder) => (
+                  <ReminderCard key={reminder.id} reminder={reminder} />
+                ))}
+            </div>
+          )}
+        </TabsContent>
+        <TabsContent value="paid">
+          {paidReminders.length === 0 ? (
+            <Card>
+              <CardContent className="pt-6">
                 <div className="text-center py-12 text-muted-foreground">
                   <Check className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p>No paid reminders</p>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {paidReminders.map((reminder) => (
-                    <ReminderCard key={reminder.id} reminder={reminder} />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {paidReminders.map((reminder) => (
+                <ReminderCard key={reminder.id} reminder={reminder} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+
+      {/* Reminder Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={(open) => {
+        setIsDialogOpen(open);
+        if (!open) resetForm();
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editReminder ? 'Edit Reminder' : 'Create Reminder'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="e.g., Rent Payment"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="amount">Amount</Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="0.00"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Category</Label>
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories
+                      .filter((c) => c.type === 'expense')
+                      .map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Due Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      'w-full justify-start text-left font-normal',
+                      !dueDate && 'text-muted-foreground'
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dueDate ? formatDate(dueDate) : 'Pick a date'}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={dueDate}
+                    onSelect={(d) => d && setDueDate(d)}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label>Recurring</Label>
+                <p className="text-sm text-muted-foreground">
+                  Repeat this reminder
+                </p>
+              </div>
+              <Switch
+                checked={isRecurring}
+                onCheckedChange={setIsRecurring}
+              />
+            </div>
+            {isRecurring && (
+              <div className="space-y-2">
+                <Label>Frequency</Label>
+                <Select value={frequency} onValueChange={(v) => setFrequency(v as typeof frequency)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="weekly">Weekly</SelectItem>
+                    <SelectItem value="biweekly">Bi-weekly</SelectItem>
+                    <SelectItem value="monthly">Monthly</SelectItem>
+                    <SelectItem value="quarterly">Quarterly</SelectItem>
+                    <SelectItem value="yearly">Yearly</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="notify">Notify Before (days)</Label>
+              <Input
+                id="notify"
+                type="number"
+                min="1"
+                max="30"
+                value={notifyBefore}
+                onChange={(e) => setNotifyBefore(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit}>
+              {editReminder ? 'Update' : 'Create'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>

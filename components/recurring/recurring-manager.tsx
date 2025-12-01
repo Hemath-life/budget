@@ -15,7 +15,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
 import {
@@ -29,7 +28,6 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import {
-  Plus,
   Pencil,
   Trash2,
   CalendarIcon,
@@ -52,7 +50,12 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 
-export function RecurringManager() {
+interface RecurringManagerProps {
+  isDialogOpen: boolean;
+  setIsDialogOpen: (open: boolean) => void;
+}
+
+export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringManagerProps) {
   const { data: recurring = [], isLoading } = useRecurring();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
@@ -61,7 +64,6 @@ export function RecurringManager() {
   const deleteRecurringMutation = useDeleteRecurring();
   const toggleActive = useToggleRecurring();
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editItem, setEditItem] = useState<RecurringTransaction | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -266,194 +268,196 @@ export function RecurringManager() {
 
   return (
     <>
-      <Card>
-        <CardContent className="pt-6">
-          <Tabs defaultValue="all">
-            <div className="flex items-center justify-between mb-4">
-              <TabsList>
-                <TabsTrigger value="all">All ({recurring.length})</TabsTrigger>
-                <TabsTrigger value="income">Income ({incomeItems.length})</TabsTrigger>
-                <TabsTrigger value="expense">Expense ({expenseItems.length})</TabsTrigger>
-              </TabsList>
-              <Dialog open={isDialogOpen} onOpenChange={(open) => {
-                setIsDialogOpen(open);
-                if (!open) resetForm();
-              }}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Recurring
-                  </Button>
-                </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>
-                  {editItem ? 'Edit Recurring Transaction' : 'Create Recurring Transaction'}
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <Button
-                    type="button"
-                    variant={type === 'income' ? 'default' : 'outline'}
-                    className={cn(
-                      type === 'income' && 'bg-green-600 hover:bg-green-700'
-                    )}
-                    onClick={() => {
-                      setType('income');
-                      setCategory('');
-                    }}
-                  >
-                    Income
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={type === 'expense' ? 'default' : 'outline'}
-                    className={cn(
-                      type === 'expense' && 'bg-red-600 hover:bg-red-700'
-                    )}
-                    onClick={() => {
-                      setType('expense');
-                      setCategory('');
-                    }}
-                  >
-                    Expense
-                  </Button>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Input
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="e.g., Monthly Salary"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="amount">Amount</Label>
-                    <Input
-                      id="amount"
-                      type="number"
-                      step="0.01"
-                      min="0"
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                      placeholder="0.00"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Category</Label>
-                    <Select value={category} onValueChange={setCategory}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {filteredCategories.map((c) => (
-                          <SelectItem key={c.id} value={c.id}>
-                            {c.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label>Frequency</Label>
-                  <Select value={frequency} onValueChange={(v) => setFrequency(v as typeof frequency)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="daily">Daily</SelectItem>
-                      <SelectItem value="weekly">Weekly</SelectItem>
-                      <SelectItem value="biweekly">Bi-weekly</SelectItem>
-                      <SelectItem value="monthly">Monthly</SelectItem>
-                      <SelectItem value="quarterly">Quarterly</SelectItem>
-                      <SelectItem value="yearly">Yearly</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Start Date</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          'w-full justify-start text-left font-normal',
-                          !startDate && 'text-muted-foreground'
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {startDate ? formatDate(startDate) : 'Pick a date'}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={startDate}
-                        onSelect={(d) => d && setStartDate(d)}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleSubmit}>
-                  {editItem ? 'Update' : 'Create'}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-            </div>
-            <TabsContent value="all">
-              {recurring.length === 0 ? (
+      <Tabs defaultValue="all">
+        <TabsList className="mb-4">
+          <TabsTrigger value="all">All ({recurring.length})</TabsTrigger>
+          <TabsTrigger value="income">Income ({incomeItems.length})</TabsTrigger>
+          <TabsTrigger value="expense">Expense ({expenseItems.length})</TabsTrigger>
+        </TabsList>
+        <TabsContent value="all">
+          {recurring.length === 0 ? (
+            <Card>
+              <CardContent className="pt-6">
                 <div className="text-center py-12 text-muted-foreground">
                   <Repeat className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p>No recurring transactions</p>
                 </div>
-              ) : (
-                <div className="grid gap-4 md:grid-cols-2">
-                  {recurring.map((item) => (
-                    <RecurringCard key={item.id} item={item} />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-            <TabsContent value="income">
-              {incomeItems.length === 0 ? (
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {recurring.map((item) => (
+                <RecurringCard key={item.id} item={item} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+        <TabsContent value="income">
+          {incomeItems.length === 0 ? (
+            <Card>
+              <CardContent className="pt-6">
                 <div className="text-center py-12 text-muted-foreground">
                   <p>No recurring income</p>
                 </div>
-              ) : (
-                <div className="grid gap-4 md:grid-cols-2">
-                  {incomeItems.map((item) => (
-                    <RecurringCard key={item.id} item={item} />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-            <TabsContent value="expense">
-              {expenseItems.length === 0 ? (
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {incomeItems.map((item) => (
+                <RecurringCard key={item.id} item={item} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+        <TabsContent value="expense">
+          {expenseItems.length === 0 ? (
+            <Card>
+              <CardContent className="pt-6">
                 <div className="text-center py-12 text-muted-foreground">
                   <p>No recurring expenses</p>
                 </div>
-              ) : (
-                <div className="grid gap-4 md:grid-cols-2">
-                  {expenseItems.map((item) => (
-                    <RecurringCard key={item.id} item={item} />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {expenseItems.map((item) => (
+                <RecurringCard key={item.id} item={item} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+
+      {/* Recurring Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={(open) => {
+        setIsDialogOpen(open);
+        if (!open) resetForm();
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editItem ? 'Edit Recurring Transaction' : 'Create Recurring Transaction'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <Button
+                type="button"
+                variant={type === 'income' ? 'default' : 'outline'}
+                className={cn(
+                  type === 'income' && 'bg-green-600 hover:bg-green-700'
+                )}
+                onClick={() => {
+                  setType('income');
+                  setCategory('');
+                }}
+              >
+                Income
+              </Button>
+              <Button
+                type="button"
+                variant={type === 'expense' ? 'default' : 'outline'}
+                className={cn(
+                  type === 'expense' && 'bg-red-600 hover:bg-red-700'
+                )}
+                onClick={() => {
+                  setType('expense');
+                  setCategory('');
+                }}
+              >
+                Expense
+              </Button>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Input
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="e.g., Monthly Salary"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="amount">Amount</Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="0.00"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Category</Label>
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {filteredCategories.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Frequency</Label>
+              <Select value={frequency} onValueChange={(v) => setFrequency(v as typeof frequency)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="daily">Daily</SelectItem>
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="biweekly">Bi-weekly</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="quarterly">Quarterly</SelectItem>
+                  <SelectItem value="yearly">Yearly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Start Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      'w-full justify-start text-left font-normal',
+                      !startDate && 'text-muted-foreground'
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {startDate ? formatDate(startDate) : 'Pick a date'}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={(d) => d && setStartDate(d)}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSubmit}>
+              {editItem ? 'Update' : 'Create'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
