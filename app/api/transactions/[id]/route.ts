@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { getCurrentUser } from '@/lib/auth';
 
 // GET single transaction
 export async function GET(
@@ -10,7 +11,10 @@ export async function GET(
     const db = getDb();
     const { id } = await params;
     
-    const transaction = db.prepare('SELECT * FROM transactions WHERE id = ?').get(id) as Record<string, unknown> | undefined;
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
+    
+    const transaction = db.prepare('SELECT * FROM transactions WHERE id = ? AND user_id = ?').get(id, userId) as Record<string, unknown> | undefined;
     
     if (!transaction) {
       return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
@@ -42,7 +46,10 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
     
-    const existing = db.prepare('SELECT * FROM transactions WHERE id = ?').get(id) as Record<string, unknown> | undefined;
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
+    
+    const existing = db.prepare('SELECT * FROM transactions WHERE id = ? AND user_id = ?').get(id, userId) as Record<string, unknown> | undefined;
     
     if (!existing) {
       return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
@@ -52,7 +59,7 @@ export async function PUT(
     
     // If it was an expense, subtract from old budget
     if (existing.type === 'expense') {
-      const oldBudget = db.prepare('SELECT * FROM budgets WHERE category = ?').get(existing.category as string) as Record<string, unknown> | undefined;
+      const oldBudget = db.prepare('SELECT * FROM budgets WHERE category = ? AND user_id = ?').get(existing.category as string, userId) as Record<string, unknown> | undefined;
       if (oldBudget) {
         db.prepare('UPDATE budgets SET spent = spent - ? WHERE id = ?').run(existing.amount, oldBudget.id);
       }
@@ -80,7 +87,7 @@ export async function PUT(
     
     // If it's an expense, add to new budget
     if (body.type === 'expense') {
-      const newBudget = db.prepare('SELECT * FROM budgets WHERE category = ?').get(body.category) as Record<string, unknown> | undefined;
+      const newBudget = db.prepare('SELECT * FROM budgets WHERE category = ? AND user_id = ?').get(body.category, userId) as Record<string, unknown> | undefined;
       if (newBudget) {
         db.prepare('UPDATE budgets SET spent = spent + ? WHERE id = ?').run(body.amount, newBudget.id);
       }
@@ -104,7 +111,10 @@ export async function DELETE(
     const db = getDb();
     const { id } = await params;
     
-    const existing = db.prepare('SELECT * FROM transactions WHERE id = ?').get(id) as Record<string, unknown> | undefined;
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
+    
+    const existing = db.prepare('SELECT * FROM transactions WHERE id = ? AND user_id = ?').get(id, userId) as Record<string, unknown> | undefined;
     
     if (!existing) {
       return NextResponse.json({ error: 'Transaction not found' }, { status: 404 });
@@ -112,7 +122,7 @@ export async function DELETE(
     
     // If it was an expense, subtract from budget
     if (existing.type === 'expense') {
-      const budget = db.prepare('SELECT * FROM budgets WHERE category = ?').get(existing.category as string) as Record<string, unknown> | undefined;
+      const budget = db.prepare('SELECT * FROM budgets WHERE category = ? AND user_id = ?').get(existing.category as string, userId) as Record<string, unknown> | undefined;
       if (budget) {
         db.prepare('UPDATE budgets SET spent = spent - ? WHERE id = ?').run(existing.amount, budget.id);
       }

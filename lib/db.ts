@@ -15,6 +15,18 @@ export function getDb(): Database.Database {
 }
 
 function initializeDatabase(db: Database.Database) {
+  // Create users table (FIRST - referenced by other tables)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      avatar TEXT,
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    )
+  `);
+
   // Create categories table
   db.exec(`
     CREATE TABLE IF NOT EXISTS categories (
@@ -31,7 +43,7 @@ function initializeDatabase(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS transactions (
       id TEXT PRIMARY KEY,
-      user_id TEXT NOT NULL DEFAULT 'demo-user',
+      user_id INTEGER NOT NULL,
       type TEXT NOT NULL CHECK (type IN ('income', 'expense')),
       amount REAL NOT NULL,
       currency TEXT NOT NULL DEFAULT 'INR',
@@ -43,22 +55,16 @@ function initializeDatabase(db: Database.Database) {
       tags TEXT,
       created_at TEXT DEFAULT (datetime('now')),
       updated_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (category) REFERENCES categories(id)
+      FOREIGN KEY (category) REFERENCES categories(id),
+      FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
-  
-  // Add user_id column if it doesn't exist (migration)
-  try {
-    db.exec(`ALTER TABLE transactions ADD COLUMN user_id TEXT NOT NULL DEFAULT 'demo-user'`);
-  } catch {
-    // Column already exists
-  }
 
   // Create budgets table
   db.exec(`
     CREATE TABLE IF NOT EXISTS budgets (
       id TEXT PRIMARY KEY,
-      user_id TEXT NOT NULL DEFAULT 'demo-user',
+      user_id INTEGER NOT NULL,
       category TEXT NOT NULL,
       amount REAL NOT NULL,
       currency TEXT NOT NULL DEFAULT 'INR',
@@ -66,21 +72,16 @@ function initializeDatabase(db: Database.Database) {
       spent REAL DEFAULT 0,
       start_date TEXT NOT NULL,
       created_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (category) REFERENCES categories(id)
+      FOREIGN KEY (category) REFERENCES categories(id),
+      FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
-
-  // Add user_id column if it doesn't exist (migration)
-  try {
-    db.exec(`ALTER TABLE budgets ADD COLUMN user_id TEXT NOT NULL DEFAULT 'demo-user'`);
-  } catch {
-    // Column already exists
-  }
 
   // Create goals table
   db.exec(`
     CREATE TABLE IF NOT EXISTS goals (
       id TEXT PRIMARY KEY,
+      user_id INTEGER NOT NULL,
       name TEXT NOT NULL,
       target_amount REAL NOT NULL,
       current_amount REAL DEFAULT 0,
@@ -91,7 +92,8 @@ function initializeDatabase(db: Database.Database) {
       color TEXT NOT NULL,
       is_completed INTEGER DEFAULT 0,
       created_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (category) REFERENCES categories(id)
+      FOREIGN KEY (category) REFERENCES categories(id),
+      FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
 
@@ -99,6 +101,7 @@ function initializeDatabase(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS reminders (
       id TEXT PRIMARY KEY,
+      user_id INTEGER NOT NULL,
       title TEXT NOT NULL,
       amount REAL NOT NULL,
       currency TEXT NOT NULL DEFAULT 'INR',
@@ -109,7 +112,8 @@ function initializeDatabase(db: Database.Database) {
       is_paid INTEGER DEFAULT 0,
       notify_before INTEGER DEFAULT 3,
       created_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (category) REFERENCES categories(id)
+      FOREIGN KEY (category) REFERENCES categories(id),
+      FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
 
@@ -117,6 +121,7 @@ function initializeDatabase(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS recurring_transactions (
       id TEXT PRIMARY KEY,
+      user_id INTEGER NOT NULL,
       type TEXT NOT NULL CHECK (type IN ('income', 'expense')),
       amount REAL NOT NULL,
       currency TEXT NOT NULL DEFAULT 'INR',
@@ -128,7 +133,8 @@ function initializeDatabase(db: Database.Database) {
       next_due_date TEXT NOT NULL,
       is_active INTEGER DEFAULT 1,
       created_at TEXT DEFAULT (datetime('now')),
-      FOREIGN KEY (category) REFERENCES categories(id)
+      FOREIGN KEY (category) REFERENCES categories(id),
+      FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
 
@@ -158,7 +164,7 @@ function initializeDatabase(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS subscriptions (
       id TEXT PRIMARY KEY,
-      user_id TEXT NOT NULL,
+      user_id INTEGER NOT NULL,
       plan_id TEXT NOT NULL,
       status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'cancelled', 'expired', 'past_due', 'trialing')),
       current_period_start TEXT NOT NULL,
@@ -166,19 +172,8 @@ function initializeDatabase(db: Database.Database) {
       cancel_at_period_end INTEGER DEFAULT 0,
       trial_end TEXT,
       created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now'))
-    )
-  `);
-
-  // Create users table
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS users (
-      id TEXT PRIMARY KEY,
-      email TEXT UNIQUE NOT NULL,
-      name TEXT NOT NULL,
-      avatar TEXT,
-      created_at TEXT DEFAULT (datetime('now')),
-      updated_at TEXT DEFAULT (datetime('now'))
+      updated_at TEXT DEFAULT (datetime('now')),
+      FOREIGN KEY (user_id) REFERENCES users(id)
     )
   `);
 
@@ -266,10 +261,19 @@ function seedDummyData(db: Database.Database) {
 
   const generateId = () => Math.random().toString(36).substring(2, 15);
 
+  // ============ DEMO USER (CREATE FIRST) ============
+  const insertUser = db.prepare(`
+    INSERT INTO users (email, name, avatar, created_at, updated_at)
+    VALUES (?, ?, ?, datetime('now'), datetime('now'))
+  `);
+
+  const userResult = insertUser.run('demo@budgetapp.com', 'Demo User', null);
+  const userId = userResult.lastInsertRowid as number; // Use the auto-generated ID
+
   // ============ TRANSACTIONS ============
   const insertTransaction = db.prepare(`
-    INSERT INTO transactions (id, type, amount, currency, category, description, date, is_recurring, tags, created_at, updated_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+    INSERT INTO transactions (id, user_id, type, amount, currency, category, description, date, is_recurring, tags, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
   `);
 
   const transactions = [
@@ -308,13 +312,13 @@ function seedDummyData(db: Database.Database) {
   ];
 
   for (const t of transactions) {
-    insertTransaction.run(generateId(), t.type, t.amount, 'INR', t.category, t.description, t.date, 0, t.tags);
+    insertTransaction.run(generateId(), userId, t.type, t.amount, 'INR', t.category, t.description, t.date, 0, t.tags);
   }
 
   // ============ BUDGETS ============
   const insertBudget = db.prepare(`
-    INSERT INTO budgets (id, category, amount, currency, period, spent, start_date, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    INSERT INTO budgets (id, user_id, category, amount, currency, period, spent, start_date, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
   `);
 
   const budgets = [
@@ -328,13 +332,13 @@ function seedDummyData(db: Database.Database) {
 
   const monthStart = new Date(currentYear, currentMonth, 1).toISOString().split('T')[0];
   for (const b of budgets) {
-    insertBudget.run(generateId(), b.category, b.amount, 'INR', b.period, b.spent, monthStart);
+    insertBudget.run(generateId(), userId, b.category, b.amount, 'INR', b.period, b.spent, monthStart);
   }
 
   // ============ GOALS ============
   const insertGoal = db.prepare(`
-    INSERT INTO goals (id, name, target_amount, current_amount, currency, deadline, icon, color, is_completed, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    INSERT INTO goals (id, user_id, name, target_amount, current_amount, currency, deadline, icon, color, is_completed, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
   `);
 
   const goals = [
@@ -346,13 +350,13 @@ function seedDummyData(db: Database.Database) {
   ];
 
   for (const g of goals) {
-    insertGoal.run(generateId(), g.name, g.target, g.current, 'INR', g.deadline, g.icon, g.color, 0);
+    insertGoal.run(generateId(), userId, g.name, g.target, g.current, 'INR', g.deadline, g.icon, g.color, 0);
   }
 
   // ============ REMINDERS ============
   const insertReminder = db.prepare(`
-    INSERT INTO reminders (id, title, amount, currency, due_date, category, is_recurring, frequency, is_paid, notify_before, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    INSERT INTO reminders (id, user_id, title, amount, currency, due_date, category, is_recurring, frequency, is_paid, notify_before, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
   `);
 
   const reminders = [
@@ -366,13 +370,13 @@ function seedDummyData(db: Database.Database) {
   ];
 
   for (const r of reminders) {
-    insertReminder.run(generateId(), r.title, r.amount, 'INR', r.dueDate, r.category, r.isRecurring, r.frequency, r.isPaid, 3);
+    insertReminder.run(generateId(), userId, r.title, r.amount, 'INR', r.dueDate, r.category, r.isRecurring, r.frequency, r.isPaid, 3);
   }
 
   // ============ RECURRING TRANSACTIONS ============
   const insertRecurring = db.prepare(`
-    INSERT INTO recurring_transactions (id, type, amount, currency, category, description, frequency, start_date, next_due_date, is_active, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    INSERT INTO recurring_transactions (id, user_id, type, amount, currency, category, description, frequency, start_date, next_due_date, is_active, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
   `);
 
   const recurringTransactions = [
@@ -385,16 +389,8 @@ function seedDummyData(db: Database.Database) {
 
   const nextMonth = new Date(currentYear, currentMonth + 1, 1).toISOString().split('T')[0];
   for (const rt of recurringTransactions) {
-    insertRecurring.run(generateId(), rt.type, rt.amount, 'INR', rt.category, rt.description, rt.frequency, rt.startDate, nextMonth, 1);
+    insertRecurring.run(generateId(), userId, rt.type, rt.amount, 'INR', rt.category, rt.description, rt.frequency, rt.startDate, nextMonth, 1);
   }
-
-  // ============ DEMO USER ============
-  const insertUser = db.prepare(`
-    INSERT INTO users (id, email, name, avatar, created_at, updated_at)
-    VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))
-  `);
-
-  insertUser.run('demo-user', 'demo@budgetapp.com', 'Demo User', null);
 
   console.log('✅ Dummy data seeded successfully!');
 }

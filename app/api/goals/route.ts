@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { generateId } from '@/lib/utils';
+import { getCurrentUser } from '@/lib/auth';
 
 // GET all goals
 export async function GET() {
   try {
     const db = getDb();
+    
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
     
     const goals = db.prepare('SELECT * FROM goals ORDER BY deadline ASC').all() as Record<string, unknown>[];
     
@@ -37,16 +41,20 @@ export async function POST(request: NextRequest) {
     const db = getDb();
     const body = await request.json();
     
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
+    
     const id = generateId();
     const now = new Date().toISOString();
     
     const stmt = db.prepare(`
-      INSERT INTO goals (id, name, target_amount, current_amount, currency, deadline, category, icon, color, is_completed, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO goals (id, user_id, name, target_amount, current_amount, currency, deadline, category, icon, color, is_completed, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
     
     stmt.run(
       id,
+      userId,
       body.name,
       body.targetAmount,
       body.currentAmount || 0,

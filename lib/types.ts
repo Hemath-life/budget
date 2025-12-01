@@ -158,7 +158,7 @@ export interface Plan {
 
 export interface Subscription {
   id: string;
-  userId: string;
+  userId: number;
   planId: string;
   plan: Plan;
   status: 'active' | 'cancelled' | 'expired' | 'past_due' | 'trialing';
@@ -171,7 +171,7 @@ export interface Subscription {
 }
 
 export interface User {
-  id: string;
+  id: number;
   email: string;
   name: string;
   avatar?: string;

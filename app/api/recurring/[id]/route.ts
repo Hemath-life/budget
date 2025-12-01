@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { getCurrentUser } from '@/lib/auth';
 
 // GET single recurring transaction
 export async function GET(
@@ -10,7 +11,10 @@ export async function GET(
     const db = getDb();
     const { id } = await params;
     
-    const recurring = db.prepare('SELECT * FROM recurring_transactions WHERE id = ?').get(id) as Record<string, unknown> | undefined;
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
+    
+    const recurring = db.prepare('SELECT * FROM recurring_transactions WHERE id = ? AND user_id = ?').get(id, userId) as Record<string, unknown> | undefined;
     
     if (!recurring) {
       return NextResponse.json({ error: 'Recurring transaction not found' }, { status: 404 });
@@ -48,7 +52,10 @@ export async function PUT(
     const { id } = await params;
     const body = await request.json();
     
-    const existing = db.prepare('SELECT * FROM recurring_transactions WHERE id = ?').get(id);
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
+    
+    const existing = db.prepare('SELECT * FROM recurring_transactions WHERE id = ? AND user_id = ?').get(id, userId);
     
     if (!existing) {
       return NextResponse.json({ error: 'Recurring transaction not found' }, { status: 404 });
@@ -107,7 +114,10 @@ export async function DELETE(
     const db = getDb();
     const { id } = await params;
     
-    const existing = db.prepare('SELECT * FROM recurring_transactions WHERE id = ?').get(id);
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
+    
+    const existing = db.prepare('SELECT * FROM recurring_transactions WHERE id = ? AND user_id = ?').get(id, userId);
     
     if (!existing) {
       return NextResponse.json({ error: 'Recurring transaction not found' }, { status: 404 });
@@ -131,7 +141,10 @@ export async function PATCH(
     const db = getDb();
     const { id } = await params;
     
-    const existing = db.prepare('SELECT * FROM recurring_transactions WHERE id = ?').get(id) as Record<string, unknown> | undefined;
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
+    
+    const existing = db.prepare('SELECT * FROM recurring_transactions WHERE id = ? AND user_id = ?').get(id, userId) as Record<string, unknown> | undefined;
     
     if (!existing) {
       return NextResponse.json({ error: 'Recurring transaction not found' }, { status: 404 });

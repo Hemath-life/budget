@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { generateId } from '@/lib/utils';
+import { getCurrentUser } from '@/lib/auth';
 
 // GET all reminders
 export async function GET(request: NextRequest) {
@@ -9,13 +10,16 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     
-    let query = 'SELECT * FROM reminders';
-    const params: number[] = [];
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
+    
+    let query = 'SELECT * FROM reminders WHERE user_id = ?';
+    const params: (string | number)[] = [userId];
     
     if (status === 'paid') {
-      query += ' WHERE is_paid = 1';
+      query += ' AND is_paid = 1';
     } else if (status === 'unpaid') {
-      query += ' WHERE is_paid = 0';
+      query += ' AND is_paid = 0';
     }
     
     query += ' ORDER BY due_date ASC';
@@ -50,16 +54,20 @@ export async function POST(request: NextRequest) {
     const db = getDb();
     const body = await request.json();
     
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
+    
     const id = generateId();
     const now = new Date().toISOString();
     
     const stmt = db.prepare(`
-      INSERT INTO reminders (id, title, amount, currency, due_date, category, is_recurring, frequency, is_paid, notify_before, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO reminders (id, user_id, title, amount, currency, due_date, category, is_recurring, frequency, is_paid, notify_before, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
     
     stmt.run(
       id,
+      userId,
       body.title,
       body.amount,
       body.currency || 'INR',

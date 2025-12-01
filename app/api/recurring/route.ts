@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { generateId } from '@/lib/utils';
+import { getCurrentUser } from '@/lib/auth';
 
 // GET all recurring transactions
 export async function GET(request: NextRequest) {
@@ -9,17 +10,20 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     
-    let query = 'SELECT * FROM recurring_transactions';
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
+    
+    let query = 'SELECT * FROM recurring_transactions WHERE user_id = ?';
     
     if (status === 'active') {
-      query += ' WHERE is_active = 1';
+      query += ' AND is_active = 1';
     } else if (status === 'inactive') {
-      query += ' WHERE is_active = 0';
+      query += ' AND is_active = 0';
     }
     
     query += ' ORDER BY next_due_date ASC';
     
-    const recurring = db.prepare(query).all() as Record<string, unknown>[];
+    const recurring = db.prepare(query).all(userId) as Record<string, unknown>[];
     
     // Format to match frontend expectations
     const formattedRecurring = recurring.map((r) => ({
@@ -50,16 +54,20 @@ export async function POST(request: NextRequest) {
     const db = getDb();
     const body = await request.json();
     
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
+    
     const id = generateId();
     const now = new Date().toISOString();
     
     const stmt = db.prepare(`
-      INSERT INTO recurring_transactions (id, type, amount, currency, category, description, frequency, start_date, end_date, next_due_date, is_active, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO recurring_transactions (id, user_id, type, amount, currency, category, description, frequency, start_date, end_date, next_due_date, is_active, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
     
     stmt.run(
       id,
+      userId,
       body.type,
       body.amount,
       body.currency || 'INR',

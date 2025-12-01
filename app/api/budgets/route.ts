@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { generateId } from '@/lib/utils';
+import { getCurrentUser } from '@/lib/auth';
 
 // GET all budgets
 export async function GET() {
   try {
     const db = getDb();
     
-    const budgets = db.prepare('SELECT * FROM budgets ORDER BY created_at DESC').all() as Record<string, unknown>[];
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
+    
+    const budgets = db.prepare('SELECT * FROM budgets WHERE user_id = ? ORDER BY created_at DESC').all(userId) as Record<string, unknown>[];
     
     // Format to match frontend expectations
     const formattedBudgets = budgets.map((b) => ({
@@ -34,8 +38,11 @@ export async function POST(request: NextRequest) {
     const db = getDb();
     const body = await request.json();
     
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
+    
     // Check if budget already exists for this category
-    const existing = db.prepare('SELECT * FROM budgets WHERE category = ?').get(body.category);
+    const existing = db.prepare('SELECT * FROM budgets WHERE category = ? AND user_id = ?').get(body.category, userId);
     if (existing) {
       return NextResponse.json({ error: 'Budget already exists for this category' }, { status: 400 });
     }
@@ -44,12 +51,13 @@ export async function POST(request: NextRequest) {
     const now = new Date().toISOString();
     
     const stmt = db.prepare(`
-      INSERT INTO budgets (id, category, amount, currency, period, spent, start_date, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO budgets (id, user_id, category, amount, currency, period, spent, start_date, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
     
     stmt.run(
       id,
+      userId,
       body.category,
       body.amount,
       body.currency || 'INR',

@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { getCurrentUser } from '@/lib/auth';
 
 // GET dashboard summary
 export async function GET() {
   try {
     const db = getDb();
+    
+    const currentUser = getCurrentUser();
+    const userId = currentUser.id;
     
     // Get current month range
     const now = new Date();
@@ -18,58 +22,58 @@ export async function GET() {
     // Calculate totals for current month
     const currentMonthIncome = db.prepare(`
       SELECT COALESCE(SUM(amount), 0) as total FROM transactions 
-      WHERE type = 'income' AND date >= ? AND date <= ?
-    `).get(firstDayOfMonth, lastDayOfMonth) as { total: number };
+      WHERE user_id = ? AND type = 'income' AND date >= ? AND date <= ?
+    `).get(userId, firstDayOfMonth, lastDayOfMonth) as { total: number };
     
     const currentMonthExpenses = db.prepare(`
       SELECT COALESCE(SUM(amount), 0) as total FROM transactions 
-      WHERE type = 'expense' AND date >= ? AND date <= ?
-    `).get(firstDayOfMonth, lastDayOfMonth) as { total: number };
+      WHERE user_id = ? AND type = 'expense' AND date >= ? AND date <= ?
+    `).get(userId, firstDayOfMonth, lastDayOfMonth) as { total: number };
     
     // Calculate totals for last month
     const lastMonthIncome = db.prepare(`
       SELECT COALESCE(SUM(amount), 0) as total FROM transactions 
-      WHERE type = 'income' AND date >= ? AND date <= ?
-    `).get(firstDayOfLastMonth, lastDayOfLastMonth) as { total: number };
+      WHERE user_id = ? AND type = 'income' AND date >= ? AND date <= ?
+    `).get(userId, firstDayOfLastMonth, lastDayOfLastMonth) as { total: number };
     
     const lastMonthExpenses = db.prepare(`
       SELECT COALESCE(SUM(amount), 0) as total FROM transactions 
-      WHERE type = 'expense' AND date >= ? AND date <= ?
-    `).get(firstDayOfLastMonth, lastDayOfLastMonth) as { total: number };
+      WHERE user_id = ? AND type = 'expense' AND date >= ? AND date <= ?
+    `).get(userId, firstDayOfLastMonth, lastDayOfLastMonth) as { total: number };
     
     // Calculate all-time totals
     const allTimeIncome = db.prepare(`
-      SELECT COALESCE(SUM(amount), 0) as total FROM transactions WHERE type = 'income'
-    `).get() as { total: number };
+      SELECT COALESCE(SUM(amount), 0) as total FROM transactions WHERE user_id = ? AND type = 'income'
+    `).get(userId) as { total: number };
     
     const allTimeExpenses = db.prepare(`
-      SELECT COALESCE(SUM(amount), 0) as total FROM transactions WHERE type = 'expense'
-    `).get() as { total: number };
+      SELECT COALESCE(SUM(amount), 0) as total FROM transactions WHERE user_id = ? AND type = 'expense'
+    `).get(userId) as { total: number };
     
     // Get recent transactions
     const recentTransactions = db.prepare(`
-      SELECT * FROM transactions ORDER BY date DESC, created_at DESC LIMIT 5
-    `).all();
+      SELECT * FROM transactions WHERE user_id = ? ORDER BY date DESC, created_at DESC LIMIT 5
+    `).all(userId);
     
     // Get expenses by category for current month
     const expensesByCategory = db.prepare(`
       SELECT category, SUM(amount) as total FROM transactions 
-      WHERE type = 'expense' AND date >= ? AND date <= ?
+      WHERE user_id = ? AND type = 'expense' AND date >= ? AND date <= ?
       GROUP BY category
-    `).all(firstDayOfMonth, lastDayOfMonth);
+    `).all(userId, firstDayOfMonth, lastDayOfMonth);
     
     // Get upcoming reminders
     const upcomingReminders = db.prepare(`
       SELECT * FROM reminders 
-      WHERE is_paid = 0 AND due_date >= date('now')
+      WHERE user_id = ? AND is_paid = 0 AND due_date >= date('now')
       ORDER BY due_date ASC LIMIT 5
-    `).all();
+    `).all(userId);
     
     // Get budgets with progress
-    const budgets = db.prepare('SELECT * FROM budgets').all();
+    const budgets = db.prepare('SELECT * FROM budgets WHERE user_id = ?').all(userId);
     
     // Get active goals
-    const goals = db.prepare('SELECT * FROM goals WHERE is_completed = 0 ORDER BY deadline ASC').all();
+    const goals = db.prepare('SELECT * FROM goals WHERE user_id = ? AND is_completed = 0 ORDER BY deadline ASC').all(userId);
     
     const balance = allTimeIncome.total - allTimeExpenses.total;
     const currentMonthBalance = currentMonthIncome.total - currentMonthExpenses.total;
