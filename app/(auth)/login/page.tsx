@@ -44,7 +44,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="text-center">
         <h1 className="text-2xl font-bold">Welcome back</h1>
         <p className="text-sm text-muted-foreground mt-1">

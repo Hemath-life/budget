@@ -271,7 +271,7 @@ export function GoalManager({ isDialogOpen, setIsDialogOpen }: GoalManagerProps)
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4">
           {activeGoals.length > 0 && (
             <div className="grid gap-4 md:grid-cols-2">
               {activeGoals.map((goal) => (

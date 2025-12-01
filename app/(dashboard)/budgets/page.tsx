@@ -9,10 +9,10 @@ export default function BudgetsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Budgets</h1>
+          <h1 className="text-2xl font-bold">Budgets</h1>
           <p className="text-muted-foreground">Plan and track your spending limits</p>
         </div>
         <Button onClick={() => setIsDialogOpen(true)}>

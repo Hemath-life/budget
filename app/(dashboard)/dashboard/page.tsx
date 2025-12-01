@@ -72,9 +72,9 @@ export default function DashboardPage() {
   // Show empty state if no transactions
   if (transactions.length === 0) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground">
             Welcome! Let&apos;s get started with your financial journey.
           </p>
@@ -96,11 +96,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground">
             Welcome back! Here&apos;s your financial overview.
           </p>
@@ -149,7 +149,7 @@ export default function DashboardPage() {
       {/* Content Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
         <RecentTransactions />
-        <div className="space-y-6">
+        <div className="space-y-4">
           <BudgetOverview />
           <GoalsProgress />
         </div>

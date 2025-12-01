@@ -36,7 +36,7 @@ export function ThemeSettings() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Card>
         <CardHeader>
           <CardTitle>Theme Settings</CardTitle>

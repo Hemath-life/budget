@@ -1,6 +1,6 @@
 'use client';
 
-import { Sidebar, useSidebar, SidebarContext } from "@/components/layout/sidebar";
+import { Sidebar, SidebarContext } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { useState } from "react";
 
@@ -21,7 +21,7 @@ export default function DashboardLayout({
           }`}
         >
           <Header />
-          <main className="flex-1 overflow-auto p-4 lg:p-6">
+          <main className="flex-1 overflow-auto p-2 lg:p-4">
             {children}
           </main>
         </div>

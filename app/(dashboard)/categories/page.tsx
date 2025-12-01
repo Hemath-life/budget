@@ -9,10 +9,10 @@ export default function CategoriesPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Categories</h1>
+          <h1 className="text-2xl font-bold">Categories</h1>
           <p className="text-muted-foreground">Organize your transactions with custom categories</p>
         </div>
         <Button onClick={() => setIsDialogOpen(true)}>

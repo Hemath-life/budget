@@ -219,7 +219,7 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
                   </TableHeader>
                 </Table>
                 {/* Scrollable Body - Fixed height 400px */}
-                <div className="overflow-y-auto" style={{ height: 400 }}>
+                <div className="overflow-y-auto" style={{ height: 405 }}>
                     <Table>
                       <TableBody>
                         {transactions.map((transaction) => (

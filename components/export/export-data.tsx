@@ -181,7 +181,7 @@ export function ExportData() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Card>
         <CardContent className="pt-6 space-y-6">
           {/* Export Type Selection */}
