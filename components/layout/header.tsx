@@ -1,29 +1,31 @@
-'use client';
+"use client";
 
-import { useTheme } from 'next-themes';
-import { useAppSelector } from '@/store/hooks';
-import { Button } from '@/components/ui/button';
+import { useTheme } from "next-themes";
+import { useAppSelector } from "@/store/hooks";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { MobileSidebar } from './sidebar';
-import { Moon, Sun, Bell, User, Settings, LogOut } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
+} from "@/components/ui/dropdown-menu";
+import { MobileSidebar } from "./sidebar";
+import { Moon, Sun, Bell, Settings, LogOut } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 export function Header() {
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
   const reminders = useAppSelector((state) => state.reminders.items);
   const settings = useAppSelector((state) => state.settings);
 
   const upcomingReminders = reminders.filter((r) => {
     const dueDate = new Date(r.dueDate);
     const today = new Date();
-    const daysUntil = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    const daysUntil = Math.ceil(
+      (dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+    );
     return !r.isPaid && daysUntil <= r.notifyBefore && daysUntil >= 0;
   });
 
@@ -31,9 +33,9 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center gap-4 px-4 lg:px-6">
         <MobileSidebar />
-        
+
         <div className="flex-1" />
-        
+
         <div className="flex items-center gap-2">
           {/* Currency Display */}
           <Badge variant="outline" className="hidden sm:flex">
@@ -60,10 +62,14 @@ export function Header() {
               ) : (
                 upcomingReminders.slice(0, 5).map((reminder) => (
                   <DropdownMenuItem key={reminder.id} asChild>
-                    <Link href="/reminders" className="flex flex-col items-start gap-1 p-3">
+                    <Link
+                      href="/reminders"
+                      className="flex flex-col items-start gap-1 p-3"
+                    >
                       <span className="font-medium">{reminder.title}</span>
                       <span className="text-xs text-muted-foreground">
-                        Due: {new Date(reminder.dueDate).toLocaleDateString()} - ${reminder.amount}
+                        Due: {new Date(reminder.dueDate).toLocaleDateString()} -
+                        ${reminder.amount}
                       </span>
                     </Link>
                   </DropdownMenuItem>
@@ -71,7 +77,10 @@ export function Header() {
               )}
               {upcomingReminders.length > 5 && (
                 <DropdownMenuItem asChild>
-                  <Link href="/reminders" className="text-center text-sm text-primary">
+                  <Link
+                    href="/reminders"
+                    className="text-center text-sm text-primary"
+                  >
                     View all reminders
                   </Link>
                 </DropdownMenuItem>
@@ -89,15 +98,15 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setTheme('light')}>
+              <DropdownMenuItem onClick={() => setTheme("light")}>
                 <Sun className="mr-2 h-4 w-4" />
                 Light
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme('dark')}>
+              <DropdownMenuItem onClick={() => setTheme("dark")}>
                 <Moon className="mr-2 h-4 w-4" />
                 Dark
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setTheme('system')}>
+              <DropdownMenuItem onClick={() => setTheme("system")}>
                 <Settings className="mr-2 h-4 w-4" />
                 System
               </DropdownMenuItem>
