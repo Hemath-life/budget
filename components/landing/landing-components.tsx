@@ -311,6 +311,143 @@ export function FeaturesSection() {
   );
 }
 
+export function PagesOutlineSection() {
+  const pages = [
+    {
+      icon: LayoutDashboard,
+      title: 'Dashboard',
+      description: 'Get a complete overview of your finances at a glance',
+      features: ['Income & Expense Summary', 'Recent Transactions', 'Budget Progress', 'Goals Overview'],
+    },
+    {
+      icon: Receipt,
+      title: 'Transactions',
+      description: 'Track every transaction with detailed categorization',
+      features: ['Add/Edit Transactions', 'Filter & Search', 'Category Tags', 'Date Range Views'],
+    },
+    {
+      icon: CircleDollarSign,
+      title: 'Budgets',
+      description: 'Create and manage budgets for different categories',
+      features: ['Monthly Budgets', 'Category Limits', 'Progress Tracking', 'Overspending Alerts'],
+    },
+    {
+      icon: FolderOpen,
+      title: 'Categories',
+      description: 'Organize your transactions with custom categories',
+      features: ['Custom Categories', 'Color Coding', 'Icons Selection', 'Category Stats'],
+    },
+    {
+      icon: Target,
+      title: 'Goals',
+      description: 'Set and track your financial goals',
+      features: ['Savings Goals', 'Target Dates', 'Progress Tracking', 'Milestone Alerts'],
+    },
+    {
+      icon: TrendingUp,
+      title: 'Income',
+      description: 'Track all your income sources',
+      features: ['Multiple Sources', 'Recurring Income', 'Income History', 'Growth Analytics'],
+    },
+    {
+      icon: Repeat,
+      title: 'Recurring',
+      description: 'Manage recurring transactions automatically',
+      features: ['Auto-scheduling', 'Frequency Options', 'Skip/Pause', 'History Log'],
+    },
+    {
+      icon: Bell,
+      title: 'Reminders',
+      description: 'Never miss a bill or payment deadline',
+      features: ['Bill Reminders', 'Custom Alerts', 'Email Notifications', 'Due Date Tracking'],
+    },
+    {
+      icon: FileText,
+      title: 'Reports',
+      description: 'Detailed financial reports and insights',
+      features: ['Monthly Reports', 'Category Analysis', 'Trend Charts', 'Comparison Views'],
+    },
+    {
+      icon: Download,
+      title: 'Export',
+      description: 'Export your data in multiple formats',
+      features: ['CSV Export', 'PDF Reports', 'Date Range Selection', 'Custom Fields'],
+    },
+    {
+      icon: Settings,
+      title: 'Settings',
+      description: 'Customize your app experience',
+      features: ['Currency Settings', 'Theme Options', 'Profile Management', 'Notifications'],
+    },
+  ];
+
+  return (
+    <section className="py-20 bg-white dark:bg-black">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="text-center max-w-2xl mx-auto">
+          <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 px-4 py-1.5 text-sm mb-6">
+            <span className="text-gray-600 dark:text-gray-400">Complete Feature Set</span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-black dark:text-white">
+            Explore all pages
+          </h2>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">
+            A comprehensive suite of tools to manage every aspect of your finances.
+          </p>
+        </div>
+
+        <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {pages.map((page, index) => (
+            <div
+              key={page.title}
+              className="group relative rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-950 p-5 hover:border-green-500 dark:hover:border-green-500 transition-all hover:shadow-lg"
+            >
+              {/* Page number */}
+              <div className="absolute top-4 right-4 text-xs font-mono text-gray-300 dark:text-gray-700">
+                {String(index + 1).padStart(2, '0')}
+              </div>
+              
+              {/* Icon and Title */}
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-800 group-hover:border-green-500 group-hover:bg-green-50 dark:group-hover:bg-green-950/30 transition-colors">
+                  <page.icon className="h-5 w-5 text-gray-600 dark:text-gray-400 group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-black dark:text-white group-hover:text-green-600 dark:group-hover:text-green-500 transition-colors">
+                    {page.title}
+                  </h3>
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-500 leading-relaxed">
+                    {page.description}
+                  </p>
+                </div>
+              </div>
+
+              {/* Features list */}
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {page.features.map((feature) => (
+                  <span
+                    key={feature}
+                    className="inline-flex items-center rounded-full bg-white dark:bg-black border border-gray-200 dark:border-gray-800 px-2.5 py-0.5 text-xs text-gray-600 dark:text-gray-400"
+                  >
+                    {feature}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Navigation hint */}
+        <div className="mt-12 text-center">
+          <p className="text-sm text-gray-500 dark:text-gray-500">
+            All pages are accessible from the sidebar after you sign up
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function TestimonialsSection() {
   const testimonials = [
     {

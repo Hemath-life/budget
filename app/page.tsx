@@ -1,7 +1,8 @@
 import { 
   LandingHeader, 
   HeroSection, 
-  FeaturesSection, 
+  FeaturesSection,
+  PagesOutlineSection,
   TestimonialsSection, 
   FAQSection, 
   CTASection, 
@@ -16,6 +17,7 @@ export default function LandingPage() {
       <main>
         <HeroSection />
         <FeaturesSection />
+        <PagesOutlineSection />
         <PricingSection />
         <TestimonialsSection />
         <FAQSection />
