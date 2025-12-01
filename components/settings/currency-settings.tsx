@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { setDefaultCurrency, updateCurrencyRate, addCurrency } from '@/store/slices/settingsSlice';
+import { useSettings, useCurrencies, useCreateCurrency, useUpdateCurrency, usePatchSettings } from '@/lib/hooks';
 import { formatCurrency } from '@/lib/utils';
 import { Currency } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -26,12 +25,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Check, Plus, RefreshCw } from 'lucide-react';
+import { Check, Plus, RefreshCw, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function CurrencySettings() {
-  const dispatch = useAppDispatch();
-  const settings = useAppSelector((state) => state.settings);
+  const { data: settings, isLoading } = useSettings();
+  const { data: currencies = [] } = useCurrencies();
+  const createCurrency = useCreateCurrency();
+  const updateCurrency = useUpdateCurrency();
+  const patchSettings = usePatchSettings();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newCode, setNewCode] = useState('');
@@ -47,46 +49,55 @@ export function CurrencySettings() {
       return;
     }
 
-    if (settings.currencies.find((c) => c.code === newCode.toUpperCase())) {
+    if (currencies.find((c) => c.code === newCode.toUpperCase())) {
       toast.error('Currency already exists');
       return;
     }
 
-    dispatch(
-      addCurrency({
-        code: newCode.toUpperCase(),
-        name: newName,
-        symbol: newSymbol,
-        rate: parseFloat(newRate),
-      })
-    );
-
-    toast.success('Currency added');
-    setIsDialogOpen(false);
-    setNewCode('');
-    setNewName('');
-    setNewSymbol('');
-    setNewRate('');
+    createCurrency.mutate({
+      code: newCode.toUpperCase(),
+      name: newName,
+      symbol: newSymbol,
+      rate: parseFloat(newRate),
+    }, {
+      onSuccess: () => {
+        toast.success('Currency added');
+        setIsDialogOpen(false);
+        setNewCode('');
+        setNewName('');
+        setNewSymbol('');
+        setNewRate('');
+      },
+    });
   };
 
   const handleUpdateRate = (code: string) => {
     if (!editingRate || !editingRate.rate) return;
 
-    dispatch(
-      updateCurrencyRate({
-        code,
-        rate: parseFloat(editingRate.rate),
-      })
-    );
-
-    toast.success(`${code} rate updated`);
-    setEditingRate(null);
+    updateCurrency.mutate({
+      code,
+      data: { rate: parseFloat(editingRate.rate) },
+    }, {
+      onSuccess: () => {
+        toast.success(`${code} rate updated`);
+        setEditingRate(null);
+      },
+    });
   };
 
   const handleSetDefault = (code: string) => {
-    dispatch(setDefaultCurrency(code));
-    toast.success(`${code} set as default currency`);
+    patchSettings.mutate({ defaultCurrency: code }, {
+      onSuccess: () => toast.success(`${code} set as default currency`),
+    });
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -179,12 +190,12 @@ export function CurrencySettings() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {settings.currencies.map((currency) => (
+                {currencies.map((currency) => (
                   <TableRow key={currency.code}>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{currency.code}</span>
-                        {currency.code === settings.defaultCurrency && (
+                        {currency.code === settings?.defaultCurrency && (
                           <Badge variant="secondary" className="text-xs">
                             Default
                           </Badge>
@@ -234,7 +245,7 @@ export function CurrencySettings() {
                       {formatCurrency(100, currency.code)}
                     </TableCell>
                     <TableCell className="text-right">
-                      {currency.code !== settings.defaultCurrency && (
+                      {currency.code !== settings?.defaultCurrency && (
                         <Button
                           variant="ghost"
                           size="sm"

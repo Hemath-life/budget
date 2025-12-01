@@ -138,7 +138,7 @@ export function RecurringManager() {
     };
 
     if (editItem) {
-      updateRecurringMutation.mutate({ ...editItem, ...itemData }, {
+      updateRecurringMutation.mutate({ id: editItem.id, data: itemData }, {
         onSuccess: () => {
           toast.success('Recurring transaction updated');
           setIsDialogOpen(false);

@@ -1,11 +1,6 @@
 'use client';
 
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import {
-  setDefaultCurrency,
-  setDateFormat,
-  toggleNotifications,
-} from '@/store/slices/settingsSlice';
+import { useSettings, useCurrencies, usePatchSettings } from '@/lib/hooks';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -17,10 +12,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 export function GeneralSettings() {
-  const dispatch = useAppDispatch();
-  const settings = useAppSelector((state) => state.settings);
+  const { data: settings, isLoading } = useSettings();
+  const { data: currencies = [] } = useCurrencies();
+  const patchSettings = usePatchSettings();
 
   const dateFormats = [
     { value: 'MMM dd, yyyy', label: 'Dec 01, 2025' },
@@ -29,6 +26,14 @@ export function GeneralSettings() {
     { value: 'yyyy-MM-dd', label: '2025-12-01' },
     { value: 'MMMM dd, yyyy', label: 'December 01, 2025' },
   ];
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -49,17 +54,18 @@ export function GeneralSettings() {
               </p>
             </div>
             <Select
-              value={settings.defaultCurrency}
+              value={settings?.defaultCurrency || 'USD'}
               onValueChange={(value) => {
-                dispatch(setDefaultCurrency(value));
-                toast.success('Default currency updated');
+                patchSettings.mutate({ defaultCurrency: value }, {
+                  onSuccess: () => toast.success('Default currency updated'),
+                });
               }}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {settings.currencies.map((currency) => (
+                {currencies.map((currency) => (
                   <SelectItem key={currency.code} value={currency.code}>
                     {currency.code} ({currency.symbol})
                   </SelectItem>
@@ -77,10 +83,11 @@ export function GeneralSettings() {
               </p>
             </div>
             <Select
-              value={settings.dateFormat}
+              value={settings?.dateFormat || 'MMM dd, yyyy'}
               onValueChange={(value) => {
-                dispatch(setDateFormat(value));
-                toast.success('Date format updated');
+                patchSettings.mutate({ dateFormat: value }, {
+                  onSuccess: () => toast.success('Date format updated'),
+                });
               }}
             >
               <SelectTrigger className="w-[180px]">
@@ -105,14 +112,13 @@ export function GeneralSettings() {
               </p>
             </div>
             <Switch
-              checked={settings.notificationsEnabled}
-              onCheckedChange={() => {
-                dispatch(toggleNotifications());
-                toast.success(
-                  settings.notificationsEnabled
-                    ? 'Notifications disabled'
-                    : 'Notifications enabled'
-                );
+              checked={settings?.notificationsEnabled ?? true}
+              onCheckedChange={(checked) => {
+                patchSettings.mutate({ notificationsEnabled: checked }, {
+                  onSuccess: () => toast.success(
+                    checked ? 'Notifications enabled' : 'Notifications disabled'
+                  ),
+                });
               }}
             />
           </div>

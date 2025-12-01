@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ReduxProvider } from "@/store/provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { Sidebar } from "@/components/layout/sidebar";
@@ -34,25 +33,23 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <QueryProvider>
-          <ReduxProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <div className="min-h-screen bg-background">
-                <Sidebar />
-                <div className="lg:pl-64">
-                  <Header />
-                  <main className="p-4 lg:p-6">
-                    {children}
-                  </main>
-                </div>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="min-h-screen bg-background">
+              <Sidebar />
+              <div className="lg:pl-64">
+                <Header />
+                <main className="p-4 lg:p-6">
+                  {children}
+                </main>
               </div>
-              <Toaster />
-            </ThemeProvider>
-          </ReduxProvider>
+            </div>
+            <Toaster />
+          </ThemeProvider>
         </QueryProvider>
       </body>
     </html>
