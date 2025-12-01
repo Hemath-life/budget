@@ -123,21 +123,11 @@ export function Sidebar() {
 
   return (
     <aside 
-      className="hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 border-r bg-card z-50"
-      style={{
-        width: isCollapsed ? '70px' : '256px',
-        transition: 'width 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-      }}
+      className={`hidden lg:flex lg:flex-col lg:fixed lg:inset-y-0 border-r bg-card z-50 transition-[width] duration-300 ease-out ${isCollapsed ? 'w-sidebar-collapsed' : 'w-sidebar'}`}
     >
       {/* Logo */}
       <div 
-        className="flex h-16 items-center border-b shrink-0"
-        style={{
-          justifyContent: isCollapsed ? 'center' : 'flex-start',
-          paddingLeft: isCollapsed ? '8px' : '24px',
-          paddingRight: isCollapsed ? '8px' : '24px',
-          transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-        }}
+        className={`flex items-center border-b shrink-0 h-header transition-all duration-300 ease-out ${isCollapsed ? 'justify-center px-2' : 'px-6'}`}
       >
         <Link href="/dashboard" className="flex items-center gap-2 overflow-hidden">
           <PiggyBank className="h-8 w-8 text-primary shrink-0" />
@@ -173,8 +163,8 @@ export function MobileSidebar() {
           <span className="sr-only">Toggle menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-64 p-0">
-        <div className="flex h-16 items-center border-b px-6 shrink-0">
+      <SheetContent side="left" className="w-sidebar p-0">
+        <div className="flex items-center border-b px-6 shrink-0 h-header">
           <Link href="/dashboard" className="flex items-center gap-2" onClick={() => setOpen(false)}>
             <PiggyBank className="h-8 w-8 text-primary" />
             <span className="text-xl font-bold">BudgetApp</span>

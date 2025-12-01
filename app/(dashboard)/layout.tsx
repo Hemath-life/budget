@@ -27,11 +27,7 @@ export default function DashboardLayout({
       <div className="h-screen overflow-hidden bg-background">
         <Sidebar />
         <div 
-          className="h-full flex flex-col"
-          style={{
-            paddingLeft: isLargeScreen ? (isCollapsed ? '70px' : '256px') : '0px',
-            transition: 'padding-left 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
+          className={`h-full flex flex-col transition-[padding-left] duration-300 ease-out ${isLargeScreen ? (isCollapsed ? 'lg:pl-sidebar-collapsed' : 'lg:pl-sidebar') : ''}`}
         >
           <Header />
           <main className="flex-1 overflow-auto p-2 lg:p-4">

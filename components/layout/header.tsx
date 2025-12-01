@@ -108,8 +108,8 @@ export function Header() {
   };
 
   return (
-    <header className="shrink-0 z-40 border-b bg-background">
-      <div className="flex h-16 items-center gap-4 px-4 lg:px-6">
+    <header className="shrink-0 z-40 border-b bg-background h-header">
+      <div className="flex h-full items-center gap-4 px-4 lg:px-6">
         <MobileSidebar />
         
         {/* Sidebar Toggle - Desktop */}
