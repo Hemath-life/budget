@@ -7,8 +7,9 @@ import { BudgetOverview } from '@/components/dashboard/budget-overview';
 import { GoalsProgress } from '@/components/dashboard/goals-progress';
 import { ExpenseChart } from '@/components/dashboard/expense-chart';
 import { UpcomingBills } from '@/components/dashboard/upcoming-bills';
+import { EmptyState } from '@/components/shared/empty-state';
 import { Button } from '@/components/ui/button';
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus, Loader2, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DashboardPage() {
@@ -64,6 +65,32 @@ export default function DashboardPage() {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  // Show empty state if no transactions
+  if (transactions.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground">
+            Welcome! Let&apos;s get started with your financial journey.
+          </p>
+        </div>
+        <EmptyState
+          title="No transactions yet"
+          description="Start tracking your finances by adding your first transaction, or load sample data to explore all features."
+          icon={<LayoutDashboard className="h-8 w-8 text-muted-foreground" />}
+        >
+          <Link href="/transactions/add">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Transaction
+            </Button>
+          </Link>
+        </EmptyState>
       </div>
     );
   }
