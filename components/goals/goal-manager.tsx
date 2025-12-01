@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { addGoal, updateGoal, deleteGoal, contributeToGoal } from '@/store/slices/goalsSlice';
+import { useGoals, useSettings, useCreateGoal, useUpdateGoal, useDeleteGoal, useContributeToGoal } from '@/lib/hooks';
 import { Goal } from '@/lib/types';
 import { formatCurrency, calculatePercentage, getDaysUntil } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,7 +21,7 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn, formatDate } from '@/lib/utils';
-import { Plus, Pencil, Trash2, CalendarIcon, Target, Trophy, PlusCircle } from 'lucide-react';
+import { Plus, Pencil, Trash2, CalendarIcon, Target, Trophy, PlusCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -41,9 +40,12 @@ const COLORS = [
 ];
 
 export function GoalManager() {
-  const dispatch = useAppDispatch();
-  const goals = useAppSelector((state) => state.goals.items);
-  const settings = useAppSelector((state) => state.settings);
+  const { data: goals = [], isLoading: goalsLoading } = useGoals();
+  const { data: settings } = useSettings();
+  const createGoal = useCreateGoal();
+  const updateGoalMutation = useUpdateGoal();
+  const deleteGoalMutation = useDeleteGoal();
+  const contributeToGoal = useContributeToGoal();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isContributeOpen, setIsContributeOpen] = useState(false);
@@ -80,7 +82,7 @@ export function GoalManager() {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name.trim()) {
       toast.error('Please enter a goal name');
       return;
@@ -94,49 +96,72 @@ export function GoalManager() {
       name: name.trim(),
       targetAmount: parseFloat(targetAmount),
       currentAmount: parseFloat(currentAmount) || 0,
-      currency: settings.defaultCurrency,
+      currency: settings?.defaultCurrency || 'USD',
       deadline: deadline.toISOString().split('T')[0],
       icon: 'Target',
       color,
     };
 
-    if (editGoal) {
-      dispatch(updateGoal({ 
-        ...editGoal, 
-        ...goalData,
-        isCompleted: goalData.currentAmount >= goalData.targetAmount
-      }));
-      toast.success('Goal updated');
-    } else {
-      dispatch(addGoal(goalData));
-      toast.success('Goal created');
+    try {
+      if (editGoal) {
+        await updateGoalMutation.mutateAsync({ 
+          id: editGoal.id, 
+          data: {
+            ...goalData,
+            isCompleted: goalData.currentAmount >= goalData.targetAmount
+          }
+        });
+        toast.success('Goal updated');
+      } else {
+        await createGoal.mutateAsync(goalData as Omit<Goal, 'id' | 'isCompleted'>);
+        toast.success('Goal created');
+      }
+      setIsDialogOpen(false);
+      resetForm();
+    } catch {
+      toast.error('Failed to save goal');
     }
-
-    setIsDialogOpen(false);
-    resetForm();
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteId) {
-      dispatch(deleteGoal(deleteId));
-      toast.success('Goal deleted');
-      setDeleteId(null);
+      try {
+        await deleteGoalMutation.mutateAsync(deleteId);
+        toast.success('Goal deleted');
+        setDeleteId(null);
+      } catch {
+        toast.error('Failed to delete goal');
+      }
     }
   };
 
-  const handleContribute = () => {
+  const handleContribute = async () => {
     if (!contributeAmount || parseFloat(contributeAmount) <= 0) {
       toast.error('Please enter a valid amount');
       return;
     }
     if (contributeId) {
-      dispatch(contributeToGoal({ id: contributeId, amount: parseFloat(contributeAmount) }));
-      toast.success('Contribution added');
-      setIsContributeOpen(false);
-      setContributeId(null);
-      setContributeAmount('');
+      try {
+        await contributeToGoal.mutateAsync({ id: contributeId, amount: parseFloat(contributeAmount) });
+        toast.success('Contribution added');
+        setIsContributeOpen(false);
+        setContributeId(null);
+        setContributeAmount('');
+      } catch {
+        toast.error('Failed to add contribution');
+      }
     }
   };
+
+  if (goalsLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   const GoalCard = ({ goal }: { goal: Goal }) => {
     const percentage = calculatePercentage(goal.currentAmount, goal.targetAmount);

@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { addBudget, updateBudget, deleteBudget } from '@/store/slices/budgetsSlice';
+import { useBudgets, useCategories, useSettings, useCreateBudget, useUpdateBudget, useDeleteBudget } from '@/lib/hooks';
 import { Budget } from '@/lib/types';
 import { formatCurrency, calculatePercentage } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,7 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus, Pencil, Trash2, AlertTriangle } from 'lucide-react';
+import { Plus, Pencil, Trash2, AlertTriangle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -39,10 +38,12 @@ import {
 } from '@/components/ui/alert-dialog';
 
 export function BudgetManager() {
-  const dispatch = useAppDispatch();
-  const budgets = useAppSelector((state) => state.budgets.items);
-  const categories = useAppSelector((state) => state.categories.items);
-  const settings = useAppSelector((state) => state.settings);
+  const { data: budgets = [], isLoading: budgetsLoading } = useBudgets();
+  const { data: categories = [] } = useCategories();
+  const { data: settings } = useSettings();
+  const createBudget = useCreateBudget();
+  const updateBudgetMutation = useUpdateBudget();
+  const deleteBudgetMutation = useDeleteBudget();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editBudget, setEditBudget] = useState<Budget | null>(null);
@@ -83,7 +84,7 @@ export function BudgetManager() {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!category) {
       toast.error('Please select a category');
       return;
@@ -96,29 +97,36 @@ export function BudgetManager() {
     const budgetData = {
       category,
       amount: parseFloat(amount),
-      currency: settings.defaultCurrency,
+      currency: settings?.defaultCurrency || 'USD',
       period,
       spent: editBudget?.spent || 0,
       startDate: new Date().toISOString().split('T')[0],
     };
 
-    if (editBudget) {
-      dispatch(updateBudget({ ...editBudget, ...budgetData }));
-      toast.success('Budget updated');
-    } else {
-      dispatch(addBudget(budgetData));
-      toast.success('Budget created');
+    try {
+      if (editBudget) {
+        await updateBudgetMutation.mutateAsync({ id: editBudget.id, data: budgetData });
+        toast.success('Budget updated');
+      } else {
+        await createBudget.mutateAsync(budgetData as Omit<Budget, 'id'>);
+        toast.success('Budget created');
+      }
+      setIsDialogOpen(false);
+      resetForm();
+    } catch {
+      toast.error('Failed to save budget');
     }
-
-    setIsDialogOpen(false);
-    resetForm();
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteId) {
-      dispatch(deleteBudget(deleteId));
-      toast.success('Budget deleted');
-      setDeleteId(null);
+      try {
+        await deleteBudgetMutation.mutateAsync(deleteId);
+        toast.success('Budget deleted');
+        setDeleteId(null);
+      } catch {
+        toast.error('Failed to delete budget');
+      }
     }
   };
 
@@ -127,6 +135,16 @@ export function BudgetManager() {
     if (percentage >= 80) return 'bg-yellow-500';
     return 'bg-green-500';
   };
+
+  if (budgetsLoading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <>
