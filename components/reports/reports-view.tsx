@@ -77,7 +77,7 @@ export function ReportsView() {
   const netSavings = totalIncome - totalExpenses;
   const savingsRate = totalIncome > 0 ? calculatePercentage(netSavings, totalIncome) : 0;
 
-  const currency = settings?.defaultCurrency || 'USD';
+  const currency = settings?.defaultCurrency || 'INR';
 
   if (transLoading) {
     return (

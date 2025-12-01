@@ -95,7 +95,7 @@ export function RecentTransactions() {
                     }`}
                   >
                     {transaction.type === 'income' ? '+' : '-'}
-                    {formatCurrency(transaction.amount, transaction.currency || settings?.defaultCurrency || 'USD')}
+                    {formatCurrency(transaction.amount, transaction.currency || settings?.defaultCurrency || 'INR')}
                   </div>
                 </div>
               ))

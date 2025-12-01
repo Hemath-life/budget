@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       id,
       body.category,
       body.amount,
-      body.currency || 'USD',
+      body.currency || 'INR',
       body.period,
       body.spent || 0,
       body.startDate || new Date().toISOString().split('T')[0],

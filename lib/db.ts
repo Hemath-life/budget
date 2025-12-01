@@ -33,7 +33,7 @@ function initializeDatabase(db: Database.Database) {
       id TEXT PRIMARY KEY,
       type TEXT NOT NULL CHECK (type IN ('income', 'expense')),
       amount REAL NOT NULL,
-      currency TEXT NOT NULL DEFAULT 'USD',
+      currency TEXT NOT NULL DEFAULT 'INR',
       category TEXT NOT NULL,
       description TEXT,
       date TEXT NOT NULL,
@@ -52,7 +52,7 @@ function initializeDatabase(db: Database.Database) {
       id TEXT PRIMARY KEY,
       category TEXT NOT NULL,
       amount REAL NOT NULL,
-      currency TEXT NOT NULL DEFAULT 'USD',
+      currency TEXT NOT NULL DEFAULT 'INR',
       period TEXT NOT NULL CHECK (period IN ('weekly', 'monthly', 'quarterly', 'yearly')),
       spent REAL DEFAULT 0,
       start_date TEXT NOT NULL,
@@ -68,7 +68,7 @@ function initializeDatabase(db: Database.Database) {
       name TEXT NOT NULL,
       target_amount REAL NOT NULL,
       current_amount REAL DEFAULT 0,
-      currency TEXT NOT NULL DEFAULT 'USD',
+      currency TEXT NOT NULL DEFAULT 'INR',
       deadline TEXT NOT NULL,
       category TEXT,
       icon TEXT NOT NULL,
@@ -85,7 +85,7 @@ function initializeDatabase(db: Database.Database) {
       id TEXT PRIMARY KEY,
       title TEXT NOT NULL,
       amount REAL NOT NULL,
-      currency TEXT NOT NULL DEFAULT 'USD',
+      currency TEXT NOT NULL DEFAULT 'INR',
       due_date TEXT NOT NULL,
       category TEXT NOT NULL,
       is_recurring INTEGER DEFAULT 0,
@@ -103,7 +103,7 @@ function initializeDatabase(db: Database.Database) {
       id TEXT PRIMARY KEY,
       type TEXT NOT NULL CHECK (type IN ('income', 'expense')),
       amount REAL NOT NULL,
-      currency TEXT NOT NULL DEFAULT 'USD',
+      currency TEXT NOT NULL DEFAULT 'INR',
       category TEXT NOT NULL,
       description TEXT,
       frequency TEXT NOT NULL CHECK (frequency IN ('daily', 'weekly', 'biweekly', 'monthly', 'quarterly', 'yearly')),
@@ -120,7 +120,7 @@ function initializeDatabase(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS settings (
       id INTEGER PRIMARY KEY CHECK (id = 1),
-      default_currency TEXT NOT NULL DEFAULT 'USD',
+      default_currency TEXT NOT NULL DEFAULT 'INR',
       theme TEXT NOT NULL DEFAULT 'system' CHECK (theme IN ('light', 'dark', 'system')),
       date_format TEXT NOT NULL DEFAULT 'MMM dd, yyyy',
       language TEXT NOT NULL DEFAULT 'en',
@@ -198,7 +198,7 @@ function initializeDatabase(db: Database.Database) {
   const settingsCount = db.prepare('SELECT COUNT(*) as count FROM settings').get() as { count: number };
   if (settingsCount.count === 0) {
     db.prepare('INSERT INTO settings (id, default_currency, theme, date_format, language, notifications_enabled) VALUES (1, ?, ?, ?, ?, ?)')
-      .run('USD', 'system', 'MMM dd, yyyy', 'en', 1);
+      .run('INR', 'system', 'MMM dd, yyyy', 'en', 1);
   }
 }
 

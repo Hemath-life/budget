@@ -19,7 +19,7 @@ export default function IncomePage() {
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
 
-  const currency = settings?.defaultCurrency || 'USD';
+  const currency = settings?.defaultCurrency || 'INR';
   const incomeTransactions = transactions.filter((t) => t.type === 'income');
   const totalIncome = incomeTransactions.reduce((sum, t) => sum + t.amount, 0);
 

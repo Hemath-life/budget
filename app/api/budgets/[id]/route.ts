@@ -59,7 +59,7 @@ export async function PUT(
     stmt.run(
       body.category,
       body.amount,
-      body.currency || 'USD',
+      body.currency || 'INR',
       body.period,
       body.spent || 0,
       body.startDate,

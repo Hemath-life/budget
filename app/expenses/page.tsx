@@ -19,7 +19,7 @@ export default function ExpensesPage() {
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
 
-  const currency = settings?.defaultCurrency || 'USD';
+  const currency = settings?.defaultCurrency || 'INR';
   const expenseTransactions = transactions.filter((t) => t.type === 'expense');
   const totalExpenses = expenseTransactions.reduce((sum, t) => sum + t.amount, 0);
 

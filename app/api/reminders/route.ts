@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
       id,
       body.title,
       body.amount,
-      body.currency || 'USD',
+      body.currency || 'INR',
       body.dueDate,
       body.category,
       body.isRecurring ? 1 : 0,

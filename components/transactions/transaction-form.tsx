@@ -65,9 +65,9 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
 
       setCategories(catData);
       setCurrencies(settingsData.currencies || []);
-      setDefaultCurrency(settingsData.defaultCurrency || 'USD');
+      setDefaultCurrency(settingsData.defaultCurrency || 'INR');
       if (!currency) {
-        setCurrency(settingsData.defaultCurrency || 'USD');
+        setCurrency(settingsData.defaultCurrency || 'INR');
       }
     } catch (error) {
       console.error('Error fetching data:', error);

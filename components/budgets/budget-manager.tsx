@@ -97,7 +97,7 @@ export function BudgetManager() {
     const budgetData = {
       category,
       amount: parseFloat(amount),
-      currency: settings?.defaultCurrency || 'USD',
+      currency: settings?.defaultCurrency || 'INR',
       period,
       spent: editBudget?.spent || 0,
       startDate: new Date().toISOString().split('T')[0],

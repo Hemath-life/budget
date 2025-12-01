@@ -54,7 +54,7 @@ export function GeneralSettings() {
               </p>
             </div>
             <Select
-              value={settings?.defaultCurrency || 'USD'}
+              value={settings?.defaultCurrency || 'INR'}
               onValueChange={(value) => {
                 patchSettings.mutate({ defaultCurrency: value }, {
                   onSuccess: () => toast.success('Default currency updated'),

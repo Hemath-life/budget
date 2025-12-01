@@ -42,7 +42,7 @@ export async function PUT(request: NextRequest) {
     `);
     
     stmt.run(
-      body.defaultCurrency || 'USD',
+      body.defaultCurrency || 'INR',
       body.theme || 'system',
       body.dateFormat || 'MMM dd, yyyy',
       body.language || 'en',

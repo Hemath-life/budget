@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Transaction, Category, AppSettings } from '@/lib/types';
+import { useState } from 'react';
+import { useTransactions, useCategories, useSettings, useDeleteTransaction } from '@/lib/hooks';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -59,45 +59,15 @@ interface TransactionListProps {
 }
 
 export function TransactionList({ filterType = 'all', showFilters = true, title = 'Transactions' }: TransactionListProps) {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [settings, setSettings] = useState<AppSettings | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data: transactions = [], isLoading } = useTransactions();
+  const { data: categories = [] } = useCategories();
+  const { data: settings } = useSettings();
+  const deleteTransaction = useDeleteTransaction();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>(filterType);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const [transRes, catRes, settingsRes] = await Promise.all([
-        fetch('/api/transactions'),
-        fetch('/api/categories'),
-        fetch('/api/settings'),
-      ]);
-      
-      const [transData, catData, settingsData] = await Promise.all([
-        transRes.json(),
-        catRes.json(),
-        settingsRes.json(),
-      ]);
-
-      setTransactions(transData);
-      setCategories(catData);
-      setSettings(settingsData);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      toast.error('Failed to load transactions');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getCategoryName = (categoryId: string) => {
     const category = categories.find((c) => c.id === categoryId);
@@ -123,30 +93,24 @@ export function TransactionList({ filterType = 'all', showFilters = true, title 
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (deleteId) {
-      try {
-        const res = await fetch(`/api/transactions/${deleteId}`, {
-          method: 'DELETE',
-        });
-        
-        if (res.ok) {
-          setTransactions(transactions.filter((t) => t.id !== deleteId));
+      deleteTransaction.mutate(deleteId, {
+        onSuccess: () => {
           toast.success('Transaction deleted');
-        } else {
+          setDeleteId(null);
+        },
+        onError: () => {
           toast.error('Failed to delete transaction');
-        }
-      } catch (error) {
-        console.error('Error deleting transaction:', error);
-        toast.error('Failed to delete transaction');
-      }
-      setDeleteId(null);
+          setDeleteId(null);
+        },
+      });
     }
   };
 
   const uniqueCategories = [...new Set(transactions.map((t) => t.category))];
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Card>
         <CardContent className="flex items-center justify-center py-12">
@@ -275,7 +239,7 @@ export function TransactionList({ filterType = 'all', showFilters = true, title 
                         }`}
                       >
                         {transaction.type === 'income' ? '+' : '-'}
-                        {formatCurrency(transaction.amount, transaction.currency || settings?.defaultCurrency || 'USD')}
+                        {formatCurrency(transaction.amount, transaction.currency || settings?.defaultCurrency || 'INR')}
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>

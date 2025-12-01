@@ -123,7 +123,7 @@ export function RecurringManager() {
       return;
     }
 
-    const currency = settings?.defaultCurrency || 'USD';
+    const currency = settings?.defaultCurrency || 'INR';
     const startDateStr = startDate.toISOString().split('T')[0];
     const itemData = {
       type,

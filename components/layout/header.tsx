@@ -40,7 +40,7 @@ export function Header() {
         <div className="flex items-center gap-2">
           {/* Currency Display */}
           <Badge variant="outline" className="hidden sm:flex">
-            {settings?.defaultCurrency || 'USD'}
+            {settings?.defaultCurrency || 'INR'}
           </Badge>
 
           {/* Notifications */}

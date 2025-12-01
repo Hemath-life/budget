@@ -63,7 +63,7 @@ export async function PUT(
       body.name,
       body.targetAmount,
       body.currentAmount || 0,
-      body.currency || 'USD',
+      body.currency || 'INR',
       body.deadline,
       body.category || null,
       body.icon || 'Target',

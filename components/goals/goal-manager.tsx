@@ -96,7 +96,7 @@ export function GoalManager() {
       name: name.trim(),
       targetAmount: parseFloat(targetAmount),
       currentAmount: parseFloat(currentAmount) || 0,
-      currency: settings?.defaultCurrency || 'USD',
+      currency: settings?.defaultCurrency || 'INR',
       deadline: deadline.toISOString().split('T')[0],
       icon: 'Target',
       color,

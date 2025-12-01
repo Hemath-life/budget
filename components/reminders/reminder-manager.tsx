@@ -120,7 +120,7 @@ export function ReminderManager() {
       return;
     }
 
-    const currency = settings?.defaultCurrency || 'USD';
+    const currency = settings?.defaultCurrency || 'INR';
     const reminderData = {
       title: title.trim(),
       amount: parseFloat(amount),

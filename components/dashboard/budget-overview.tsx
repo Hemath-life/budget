@@ -68,7 +68,7 @@ export function BudgetOverview() {
                       </span>
                     </div>
                     <span className="text-sm text-muted-foreground">
-                      {formatCurrency(budget.spent, budget.currency || settings?.defaultCurrency || 'USD')} / {formatCurrency(budget.amount, budget.currency || settings?.defaultCurrency || 'USD')}
+                      {formatCurrency(budget.spent, budget.currency || settings?.defaultCurrency || 'INR')} / {formatCurrency(budget.amount, budget.currency || settings?.defaultCurrency || 'INR')}
                     </span>
                   </div>
                   <div className="relative">
@@ -81,7 +81,7 @@ export function BudgetOverview() {
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>{percentage}% used</span>
                     <span>
-                      {formatCurrency(Math.max(budget.amount - budget.spent, 0), budget.currency || settings?.defaultCurrency || 'USD')} remaining
+                      {formatCurrency(Math.max(budget.amount - budget.spent, 0), budget.currency || settings?.defaultCurrency || 'INR')} remaining
                     </span>
                   </div>
                 </div>

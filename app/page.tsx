@@ -58,7 +58,7 @@ export default function DashboardPage() {
   const balance = totalIncome - totalExpenses;
   const savings = currentIncome - currentExpenses;
 
-  const currency = settings?.defaultCurrency || 'USD';
+  const currency = settings?.defaultCurrency || 'INR';
 
   if (isLoading) {
     return (

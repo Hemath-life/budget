@@ -81,7 +81,7 @@ export function UpcomingBills() {
                 </div>
                 <div className="text-right space-y-1">
                   <p className="font-semibold">
-                    {formatCurrency(bill.amount, bill.currency || settings?.defaultCurrency || 'USD')}
+                    {formatCurrency(bill.amount, bill.currency || settings?.defaultCurrency || 'INR')}
                   </p>
                   {getStatusBadge(bill.dueDate)}
                 </div>

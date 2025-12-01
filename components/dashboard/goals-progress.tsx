@@ -63,8 +63,8 @@ export function GoalsProgress() {
                   </div>
                   <Progress value={percentage} className="h-2" />
                   <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{formatCurrency(goal.currentAmount, goal.currency || settings?.defaultCurrency || 'USD')}</span>
-                    <span>{formatCurrency(goal.targetAmount, goal.currency || settings?.defaultCurrency || 'USD')}</span>
+                    <span>{formatCurrency(goal.currentAmount, goal.currency || settings?.defaultCurrency || 'INR')}</span>
+                    <span>{formatCurrency(goal.targetAmount, goal.currency || settings?.defaultCurrency || 'INR')}</span>
                   </div>
                 </div>
               );
