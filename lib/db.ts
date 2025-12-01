@@ -31,6 +31,7 @@ function initializeDatabase(db: Database.Database) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS transactions (
       id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL DEFAULT 'demo-user',
       type TEXT NOT NULL CHECK (type IN ('income', 'expense')),
       amount REAL NOT NULL,
       currency TEXT NOT NULL DEFAULT 'INR',
@@ -45,11 +46,19 @@ function initializeDatabase(db: Database.Database) {
       FOREIGN KEY (category) REFERENCES categories(id)
     )
   `);
+  
+  // Add user_id column if it doesn't exist (migration)
+  try {
+    db.exec(`ALTER TABLE transactions ADD COLUMN user_id TEXT NOT NULL DEFAULT 'demo-user'`);
+  } catch {
+    // Column already exists
+  }
 
   // Create budgets table
   db.exec(`
     CREATE TABLE IF NOT EXISTS budgets (
       id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL DEFAULT 'demo-user',
       category TEXT NOT NULL,
       amount REAL NOT NULL,
       currency TEXT NOT NULL DEFAULT 'INR',
@@ -60,6 +69,13 @@ function initializeDatabase(db: Database.Database) {
       FOREIGN KEY (category) REFERENCES categories(id)
     )
   `);
+
+  // Add user_id column if it doesn't exist (migration)
+  try {
+    db.exec(`ALTER TABLE budgets ADD COLUMN user_id TEXT NOT NULL DEFAULT 'demo-user'`);
+  } catch {
+    // Column already exists
+  }
 
   // Create goals table
   db.exec(`
