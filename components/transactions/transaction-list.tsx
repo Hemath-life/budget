@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTransactions, useCategories, useSettings, useDeleteTransaction } from '@/lib/hooks';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -56,10 +56,9 @@ import { EmptyState } from '@/components/shared/empty-state';
 interface TransactionListProps {
   filterType?: 'income' | 'expense' | 'all';
   showFilters?: boolean;
-  title?: string;
 }
 
-export function TransactionList({ filterType = 'all', showFilters = true, title = 'Transactions' }: TransactionListProps) {
+export function TransactionList({ filterType = 'all', showFilters = true }: TransactionListProps) {
   const { data: transactions = [], isLoading } = useTransactions();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
@@ -124,16 +123,7 @@ export function TransactionList({ filterType = 'all', showFilters = true, title 
   return (
     <>
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>{title}</CardTitle>
-          <Link href="/transactions/add">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Transaction
-            </Button>
-          </Link>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {showFilters && (
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <div className="relative flex-1">
@@ -168,6 +158,12 @@ export function TransactionList({ filterType = 'all', showFilters = true, title 
                   ))}
                 </SelectContent>
               </Select>
+              <Link href="/transactions/add">
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Transaction
+                </Button>
+              </Link>
             </div>
           )}
 

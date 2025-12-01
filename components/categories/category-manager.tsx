@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Category, TransactionType } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -228,8 +228,8 @@ export function CategoryManager() {
   return (
     <>
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Categories</CardTitle>
+        <CardContent className="pt-6">
+          <div className="flex justify-end mb-4">
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
             setIsDialogOpen(open);
             if (!open) resetForm();
@@ -295,8 +295,7 @@ export function CategoryManager() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </CardHeader>
-        <CardContent>
+          </div>
           <Tabs defaultValue="expense">
             <TabsList className="mb-4">
               <TabsTrigger value="expense">Expense ({expenseCategories.length})</TabsTrigger>

@@ -140,7 +140,7 @@ export default function IncomePage() {
           </CardContent>
         </Card>
 
-        <TransactionList filterType="income" showFilters={false} title="Recent Income" />
+        <TransactionList filterType="income" showFilters={false} />
       </div>
     </div>
   );

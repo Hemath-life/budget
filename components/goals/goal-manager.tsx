@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useGoals, useSettings, useCreateGoal, useUpdateGoal, useDeleteGoal, useContributeToGoal } from '@/lib/hooks';
 import { Goal } from '@/lib/types';
 import { formatCurrency, calculatePercentage, getDaysUntil } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -258,8 +258,8 @@ export function GoalManager() {
   return (
     <>
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Financial Goals</CardTitle>
+        <CardContent className="pt-6">
+          <div className="flex justify-end mb-4">
           <Dialog open={isDialogOpen} onOpenChange={(open) => {
             setIsDialogOpen(open);
             if (!open) resetForm();
@@ -364,8 +364,7 @@ export function GoalManager() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-        </CardHeader>
-        <CardContent>
+          </div>
           {goals.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <Target className="h-12 w-12 mx-auto mb-4 opacity-50" />

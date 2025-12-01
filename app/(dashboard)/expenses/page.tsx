@@ -140,7 +140,7 @@ export default function ExpensesPage() {
           </CardContent>
         </Card>
 
-        <TransactionList filterType="expense" showFilters={false} title="Recent Expenses" />
+        <TransactionList filterType="expense" showFilters={false} />
       </div>
     </div>
   );

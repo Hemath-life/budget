@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { exportToCSV, formatDate } from '@/lib/utils';
 import { useTransactions, useCategories, useBudgets, useGoals, useReminders, useRecurring } from '@/lib/hooks';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
@@ -183,16 +183,7 @@ export function ExportData() {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileSpreadsheet className="h-6 w-6" />
-            Export Data
-          </CardTitle>
-          <CardDescription>
-            Export your financial data as CSV files for backup or analysis in other applications.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="pt-6 space-y-6">
           {/* Export Type Selection */}
           <div className="space-y-2">
             <Label>What would you like to export?</Label>
@@ -293,13 +284,11 @@ export function ExportData() {
 
       {/* Export Preview */}
       <Card>
-        <CardHeader>
-          <CardTitle>Export Preview</CardTitle>
-          <CardDescription>
-            Preview of data that will be exported
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold">Export Preview</h3>
+            <p className="text-sm text-muted-foreground">Preview of data that will be exported</p>
+          </div>
           <div className="space-y-4">
             {exportType === 'transactions' && (
               <div>
