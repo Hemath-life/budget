@@ -25,7 +25,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Transactions', href: '/transactions', icon: ArrowLeftRight },
   { name: 'Income', href: '/income', icon: TrendingUp },
   { name: 'Expenses', href: '/expenses', icon: TrendingDown },
@@ -73,7 +73,7 @@ export function Sidebar() {
   return (
     <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 border-r bg-card">
       <div className="flex h-16 items-center border-b px-6">
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/dashboard" className="flex items-center gap-2">
           <PiggyBank className="h-8 w-8 text-primary" />
           <span className="text-xl font-bold">BudgetApp</span>
         </Link>
@@ -98,7 +98,7 @@ export function MobileSidebar() {
       </SheetTrigger>
       <SheetContent side="left" className="w-64 p-0">
         <div className="flex h-16 items-center border-b px-6">
-          <Link href="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
+          <Link href="/dashboard" className="flex items-center gap-2" onClick={() => setOpen(false)}>
             <PiggyBank className="h-8 w-8 text-primary" />
             <span className="text-xl font-bold">BudgetApp</span>
           </Link>

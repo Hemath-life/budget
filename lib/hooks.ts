@@ -11,8 +11,9 @@ import {
   settingsApi,
   currenciesApi,
   dashboardApi,
+  subscriptionApi,
 } from './api';
-import type { Transaction, Category, Budget, Goal, Reminder, RecurringTransaction, AppSettings, Currency } from './types';
+import type { Transaction, Category, Budget, Goal, Reminder, RecurringTransaction, AppSettings, Currency, Subscription } from './types';
 
 // Query Keys
 export const queryKeys = {
@@ -31,6 +32,7 @@ export const queryKeys = {
   settings: ['settings'] as const,
   currencies: ['currencies'] as const,
   dashboard: ['dashboard'] as const,
+  subscription: ['subscription'] as const,
 };
 
 // ============ TRANSACTIONS HOOKS ============

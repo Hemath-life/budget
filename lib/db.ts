@@ -138,6 +138,34 @@ function initializeDatabase(db: Database.Database) {
     )
   `);
 
+  // Create subscriptions table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS subscriptions (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL,
+      plan_id TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'cancelled', 'expired', 'past_due', 'trialing')),
+      current_period_start TEXT NOT NULL,
+      current_period_end TEXT,
+      cancel_at_period_end INTEGER DEFAULT 0,
+      trial_end TEXT,
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    )
+  `);
+
+  // Create users table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+      id TEXT PRIMARY KEY,
+      email TEXT UNIQUE NOT NULL,
+      name TEXT NOT NULL,
+      avatar TEXT,
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    )
+  `);
+
   // Seed default categories if empty
   const categoryCount = db.prepare('SELECT COUNT(*) as count FROM categories').get() as { count: number };
   if (categoryCount.count === 0) {

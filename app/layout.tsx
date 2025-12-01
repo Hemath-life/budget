@@ -3,8 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
-import { Sidebar } from "@/components/layout/sidebar";
-import { Header } from "@/components/layout/header";
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
@@ -18,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BudgetApp - Money Management",
-  description: "Manage your income, expenses, budgets, and financial goals",
+  title: "BudgetApp - Smart Money Management",
+  description: "Take control of your finances. Track expenses, set budgets, achieve your financial goals with BudgetApp.",
 };
 
 export default function RootLayout({
@@ -39,15 +37,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="min-h-screen bg-background">
-              <Sidebar />
-              <div className="lg:pl-64">
-                <Header />
-                <main className="p-4 lg:p-6">
-                  {children}
-                </main>
-              </div>
-            </div>
+            {children}
             <Toaster />
           </ThemeProvider>
         </QueryProvider>

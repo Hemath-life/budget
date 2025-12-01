@@ -197,3 +197,24 @@ export interface DashboardData {
 export const dashboardApi = {
   get: () => fetchApi<DashboardData>('/dashboard'),
 };
+
+// ============ SUBSCRIPTION ============
+import type { Subscription, SubscriptionCheckout } from './types';
+
+export const subscriptionApi = {
+  get: (userId?: string) => {
+    const query = userId ? `?userId=${userId}` : '';
+    return fetchApi<Subscription>(`/subscription${query}`);
+  },
+  
+  create: (data: SubscriptionCheckout & { userId?: string }) =>
+    fetchApi<Subscription>('/subscription', { method: 'POST', body: JSON.stringify(data) }),
+  
+  update: (data: { planId: string; userId?: string }) =>
+    fetchApi<Subscription>('/subscription', { method: 'PUT', body: JSON.stringify(data) }),
+  
+  cancel: (userId?: string) => {
+    const query = userId ? `?userId=${userId}` : '';
+    return fetchApi<{ success: boolean; message: string }>(`/subscription${query}`, { method: 'DELETE' });
+  },
+};
