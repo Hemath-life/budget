@@ -23,6 +23,17 @@ async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> 
 // Types
 import type { Transaction, Category, Budget, Goal, Reminder, RecurringTransaction, AppSettings, Currency } from './types';
 
+// Pagination types
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
 // ============ TRANSACTIONS ============
 export const transactionsApi = {
   getAll: (params?: { type?: string; category?: string; dateFrom?: string; dateTo?: string; search?: string; limit?: number }) => {
@@ -35,6 +46,19 @@ export const transactionsApi = {
     if (params?.limit) searchParams.set('limit', params.limit.toString());
     const query = searchParams.toString();
     return fetchApi<Transaction[]>(`/transactions${query ? `?${query}` : ''}`);
+  },
+  
+  getPaginated: (params: { type?: string; category?: string; dateFrom?: string; dateTo?: string; search?: string; page: number; pageSize: number }) => {
+    const searchParams = new URLSearchParams();
+    if (params.type && params.type !== 'all') searchParams.set('type', params.type);
+    if (params.category && params.category !== 'all') searchParams.set('category', params.category);
+    if (params.dateFrom) searchParams.set('dateFrom', params.dateFrom);
+    if (params.dateTo) searchParams.set('dateTo', params.dateTo);
+    if (params.search) searchParams.set('search', params.search);
+    searchParams.set('page', params.page.toString());
+    searchParams.set('pageSize', params.pageSize.toString());
+    const query = searchParams.toString();
+    return fetchApi<PaginatedResponse<Transaction>>(`/transactions?${query}`);
   },
   
   getById: (id: string) => fetchApi<Transaction>(`/transactions/${id}`),

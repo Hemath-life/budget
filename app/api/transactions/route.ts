@@ -18,38 +18,63 @@ export async function GET(request: NextRequest) {
     const dateTo = searchParams.get('dateTo');
     const search = searchParams.get('search');
     const limit = searchParams.get('limit');
+    const page = searchParams.get('page');
+    const pageSize = searchParams.get('pageSize');
     
     let query = 'SELECT * FROM transactions WHERE user_id = ?';
+    let countQuery = 'SELECT COUNT(*) as total FROM transactions WHERE user_id = ?';
     const params: (string | number)[] = [userId];
+    const countParams: (string | number)[] = [userId];
     
     if (type && type !== 'all') {
       query += ' AND type = ?';
+      countQuery += ' AND type = ?';
       params.push(type);
+      countParams.push(type);
     }
     
-    if (category) {
+    if (category && category !== 'all') {
       query += ' AND category = ?';
+      countQuery += ' AND category = ?';
       params.push(category);
+      countParams.push(category);
     }
     
     if (dateFrom) {
       query += ' AND date >= ?';
+      countQuery += ' AND date >= ?';
       params.push(dateFrom);
+      countParams.push(dateFrom);
     }
     
     if (dateTo) {
       query += ' AND date <= ?';
+      countQuery += ' AND date <= ?';
       params.push(dateTo);
+      countParams.push(dateTo);
     }
     
     if (search) {
       query += ' AND (description LIKE ? OR category LIKE ?)';
+      countQuery += ' AND (description LIKE ? OR category LIKE ?)';
       params.push(`%${search}%`, `%${search}%`);
+      countParams.push(`%${search}%`, `%${search}%`);
     }
+    
+    // Get total count for pagination
+    const countResult = db.prepare(countQuery).get(...countParams) as { total: number };
+    const total = countResult.total;
     
     query += ' ORDER BY date DESC, created_at DESC';
     
-    if (limit) {
+    // Handle pagination
+    if (page && pageSize) {
+      const pageNum = parseInt(page);
+      const size = parseInt(pageSize);
+      const offset = (pageNum - 1) * size;
+      query += ' LIMIT ? OFFSET ?';
+      params.push(size, offset);
+    } else if (limit) {
       query += ' LIMIT ?';
       params.push(parseInt(limit));
     }
@@ -65,6 +90,21 @@ export async function GET(request: NextRequest) {
       createdAt: t.created_at,
       updatedAt: t.updated_at,
     }));
+    
+    // Return paginated response if page params provided
+    if (page && pageSize) {
+      const pageNum = parseInt(page);
+      const size = parseInt(pageSize);
+      return NextResponse.json({
+        data: formattedTransactions,
+        pagination: {
+          page: pageNum,
+          pageSize: size,
+          total,
+          totalPages: Math.ceil(total / size),
+        },
+      });
+    }
     
     return NextResponse.json(formattedTransactions);
   } catch (error) {

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useTransactions, useCategories, useSettings, useDeleteTransaction } from '@/lib/hooks';
+import { useState, useEffect } from 'react';
+import { usePaginatedTransactions, useCategories, useSettings, useDeleteTransaction } from '@/lib/hooks';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -28,7 +28,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   ArrowUpRight,
   ArrowDownRight,
@@ -37,6 +36,10 @@ import {
   Trash2,
   Search,
   Loader2,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
 } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -57,8 +60,19 @@ interface TransactionListProps {
   showFilters?: boolean;
 }
 
+// Custom debounce hook
+function useDebounceValue<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 export function TransactionList({ filterType = 'all', showFilters = true }: TransactionListProps) {
-  const { data: transactions = [], isLoading } = useTransactions();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
   const deleteTransaction = useDeleteTransaction();
@@ -67,6 +81,31 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
   const [typeFilter, setTypeFilter] = useState<string>(filterType);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+
+  // Debounce search term
+  const debouncedSearch = useDebounceValue(searchTerm, 300);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPage(1);
+  }, [typeFilter, categoryFilter, debouncedSearch]);
+
+  // Fetch paginated transactions
+  const { data, isLoading, isFetching } = usePaginatedTransactions({
+    type: typeFilter,
+    category: categoryFilter,
+    search: debouncedSearch,
+    page,
+    pageSize,
+  });
+
+  const transactions = data?.data || [];
+  const pagination = data?.pagination;
+  const totalPages = pagination?.totalPages || 1;
+  const total = pagination?.total || 0;
 
   const getCategoryName = (categoryId: string) => {
     const category = categories.find((c) => c.id === categoryId);
@@ -77,20 +116,6 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
     const category = categories.find((c) => c.id === categoryId);
     return category?.color || '#6B7280';
   };
-
-  const filteredTransactions = transactions.filter((t) => {
-    const matchesType = typeFilter === 'all' || t.type === typeFilter;
-    const matchesCategory = categoryFilter === 'all' || t.category === categoryFilter;
-    const matchesSearch =
-      searchTerm === '' ||
-      t.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      getCategoryName(t.category).toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesType && matchesCategory && matchesSearch;
-  });
-
-  const sortedTransactions = [...filteredTransactions].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
 
   const handleDelete = () => {
     if (deleteId) {
@@ -107,7 +132,7 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
     }
   };
 
-  const uniqueCategories = [...new Set(transactions.map((t) => t.category))];
+  const uniqueCategories = categories.map((c) => ({ id: c.id, name: c.name }));
 
   if (isLoading) {
     return (
@@ -151,8 +176,8 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
                   {uniqueCategories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {getCategoryName(cat)}
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -160,8 +185,14 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
             </div>
           )}
 
-          <ScrollArea className="h-[500px]">
-            {sortedTransactions.length === 0 && transactions.length === 0 ? (
+          <div className="relative min-h-[400px]">
+            {isFetching && !isLoading && (
+              <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
+                <Loader2 className="h-6 w-6 animate-spin" />
+              </div>
+            )}
+            
+            {transactions.length === 0 && total === 0 ? (
               <EmptyState
                 title="No transactions yet"
                 description="Start tracking your finances by adding your first transaction, or load sample data to explore the app."
@@ -169,7 +200,7 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
                 actionHref="/transactions/add"
                 icon={<ArrowUpRight className="h-12 w-12 text-muted-foreground/50" />}
               />
-            ) : sortedTransactions.length === 0 ? (
+            ) : transactions.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
                 <p>No transactions match your filters</p>
                 <Button variant="link" onClick={() => { setSearchTerm(''); setTypeFilter('all'); setCategoryFilter('all'); }}>
@@ -177,98 +208,145 @@ export function TransactionList({ filterType = 'all', showFilters = true }: Tran
                 </Button>
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="text-right">Amount</TableHead>
-                    <TableHead className="w-[50px]"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {sortedTransactions.map((transaction) => (
-                    <TableRow key={transaction.id}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                              transaction.type === 'income'
-                                ? 'bg-green-100 dark:bg-green-900/20'
-                                : 'bg-red-100 dark:bg-red-900/20'
-                            }`}
-                          >
-                            {transaction.type === 'income' ? (
-                              <ArrowUpRight className="h-4 w-4 text-green-600" />
-                            ) : (
-                              <ArrowDownRight className="h-4 w-4 text-red-600" />
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-medium">{transaction.description}</p>
-                            {transaction.isRecurring && (
-                              <Badge variant="outline" className="text-xs mt-1">
-                                Recurring
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant="outline"
-                          style={{
-                            borderColor: getCategoryColor(transaction.category),
-                            color: getCategoryColor(transaction.category),
-                          }}
-                        >
-                          {getCategoryName(transaction.category)}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {formatDate(transaction.date)}
-                      </TableCell>
-                      <TableCell
-                        className={`text-right font-semibold ${
-                          transaction.type === 'income'
-                            ? 'text-green-600 dark:text-green-400'
-                            : 'text-red-600 dark:text-red-400'
-                        }`}
-                      >
-                        {transaction.type === 'income' ? '+' : '-'}
-                        {formatCurrency(transaction.amount, transaction.currency || settings?.defaultCurrency || 'INR')}
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem asChild>
-                              <Link href={`/transactions/${transaction.id}`}>
-                                <Pencil className="h-4 w-4 mr-2" />
-                                Edit
-                              </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="text-red-600"
-                              onClick={() => setDeleteId(transaction.id)}
-                            >
-                              <Trash2 className="h-4 w-4 mr-2" />
-                              Delete
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+              <>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Description</TableHead>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead className="text-right">Amount</TableHead>
+                      <TableHead className="w-[50px]"></TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {transactions.map((transaction) => (
+                      <TableRow key={transaction.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div
+                              className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                                transaction.type === 'income'
+                                  ? 'bg-green-100 dark:bg-green-900/20'
+                                  : 'bg-red-100 dark:bg-red-900/20'
+                              }`}
+                            >
+                              {transaction.type === 'income' ? (
+                                <ArrowUpRight className="h-4 w-4 text-green-600" />
+                              ) : (
+                                <ArrowDownRight className="h-4 w-4 text-red-600" />
+                              )}
+                            </div>
+                            <div>
+                              <p className="font-medium">{transaction.description}</p>
+                              {transaction.isRecurring && (
+                                <Badge variant="outline" className="text-xs mt-1">
+                                  Recurring
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            style={{
+                              borderColor: getCategoryColor(transaction.category),
+                              color: getCategoryColor(transaction.category),
+                            }}
+                          >
+                            {getCategoryName(transaction.category)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {formatDate(transaction.date)}
+                        </TableCell>
+                        <TableCell
+                          className={`text-right font-semibold ${
+                            transaction.type === 'income'
+                              ? 'text-green-600 dark:text-green-400'
+                              : 'text-red-600 dark:text-red-400'
+                          }`}
+                        >
+                          {transaction.type === 'income' ? '+' : '-'}
+                          {formatCurrency(transaction.amount, transaction.currency || settings?.defaultCurrency || 'INR')}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon">
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem asChild>
+                                <Link href={`/transactions/${transaction.id}`}>
+                                  <Pencil className="h-4 w-4 mr-2" />
+                                  Edit
+                                </Link>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="text-red-600"
+                                onClick={() => setDeleteId(transaction.id)}
+                              >
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+
+                {/* Pagination */}
+                <div className="flex items-center justify-between mt-6 pt-4 border-t">
+                  <div className="text-sm text-muted-foreground">
+                    Showing {((page - 1) * pageSize) + 1} to {Math.min(page * pageSize, total)} of {total} transactions
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setPage(1)}
+                      disabled={page === 1}
+                    >
+                      <ChevronsLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setPage(p => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <div className="flex items-center gap-1 mx-2">
+                      <span className="text-sm font-medium">Page {page}</span>
+                      <span className="text-sm text-muted-foreground">of {totalPages}</span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                      disabled={page === totalPages}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setPage(totalPages)}
+                      disabled={page === totalPages}
+                    >
+                      <ChevronsRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </>
             )}
-          </ScrollArea>
+          </div>
         </CardContent>
       </Card>
 

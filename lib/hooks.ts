@@ -43,6 +43,14 @@ export function useTransactions(params?: Parameters<typeof transactionsApi.getAl
   });
 }
 
+export function usePaginatedTransactions(params: Parameters<typeof transactionsApi.getPaginated>[0]) {
+  return useQuery({
+    queryKey: [...queryKeys.transactions, 'paginated', params],
+    queryFn: () => transactionsApi.getPaginated(params),
+    placeholderData: (previousData) => previousData,
+  });
+}
+
 export function useTransaction(id: string) {
   return useQuery({
     queryKey: queryKeys.transaction(id),
