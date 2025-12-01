@@ -108,7 +108,7 @@ export function PricingSection() {
                 </ul>
 
                 <div className="mt-8">
-                  <Link href="/dashboard">
+                  <Link href="/signup">
                     <Button
                       className="w-full"
                       variant={isPopular ? 'default' : 'outline'}

@@ -55,10 +55,10 @@ export function LandingHeader() {
 
           {/* CTA Buttons */}
           <div className="hidden md:flex md:items-center md:gap-4">
-            <Link href="/dashboard">
+            <Link href="/login">
               <Button variant="ghost">Sign In</Button>
             </Link>
-            <Link href="/dashboard">
+            <Link href="/signup">
               <Button>
                 Get Started Free
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -97,10 +97,10 @@ export function LandingHeader() {
                 </a>
               ))}
               <div className="flex flex-col gap-2 pt-4 border-t">
-                <Link href="/dashboard">
+                <Link href="/login">
                   <Button variant="outline" className="w-full">Sign In</Button>
                 </Link>
-                <Link href="/dashboard">
+                <Link href="/signup">
                   <Button className="w-full">
                     Get Started Free
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -147,7 +147,7 @@ export function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/dashboard">
+            <Link href="/signup">
               <Button size="lg" className="text-lg px-8 py-6">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -451,7 +451,7 @@ export function CTASection() {
               Join thousands of users who are already saving more and spending smarter with BudgetApp.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/dashboard">
+              <Link href="/signup">
                 <Button size="lg" variant="secondary" className="text-lg px-8">
                   Start Free Trial
                   <ArrowRight className="ml-2 h-5 w-5" />
