@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { exportToCSV, formatDate } from '@/lib/utils';
-import { Transaction, Budget, Goal, RecurringTransaction, Reminder, Category } from '@/lib/types';
+import { useTransactions, useCategories, useBudgets, useGoals, useReminders, useRecurring } from '@/lib/hooks';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
@@ -23,58 +22,19 @@ import { toast } from 'sonner';
 type ExportType = 'transactions' | 'budgets' | 'goals' | 'recurring' | 'reminders' | 'all';
 
 export function ExportData() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [recurring, setRecurring] = useState<RecurringTransaction[]>([]);
-  const [reminders, setReminders] = useState<Reminder[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Use React Query hooks for data fetching with automatic caching
+  const { data: transactions = [], isLoading: loadingTrans } = useTransactions();
+  const { data: budgets = [], isLoading: loadingBudgets } = useBudgets();
+  const { data: goals = [], isLoading: loadingGoals } = useGoals();
+  const { data: recurring = [], isLoading: loadingRecurring } = useRecurring();
+  const { data: reminders = [], isLoading: loadingReminders } = useReminders();
+  const { data: categories = [], isLoading: loadingCategories } = useCategories();
+  
+  const loading = loadingTrans || loadingBudgets || loadingGoals || loadingRecurring || loadingReminders || loadingCategories;
 
   const [exportType, setExportType] = useState<ExportType>('transactions');
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
-  const [selectedTypes, setSelectedTypes] = useState<ExportType[]>(['transactions']);
-  const [includeHeaders, setIncludeHeaders] = useState(true);
-
-  useEffect(() => {
-    fetchAllData();
-  }, []);
-
-  const fetchAllData = async () => {
-    setLoading(true);
-    try {
-      const [transRes, budgetRes, goalRes, recurringRes, reminderRes, categoryRes] = await Promise.all([
-        fetch('/api/transactions'),
-        fetch('/api/budgets'),
-        fetch('/api/goals'),
-        fetch('/api/recurring'),
-        fetch('/api/reminders'),
-        fetch('/api/categories'),
-      ]);
-
-      const [transData, budgetData, goalData, recurringData, reminderData, categoryData] = await Promise.all([
-        transRes.json(),
-        budgetRes.json(),
-        goalRes.json(),
-        recurringRes.json(),
-        reminderRes.json(),
-        categoryRes.json(),
-      ]);
-
-      setTransactions(transData);
-      setBudgets(budgetData);
-      setGoals(goalData);
-      setRecurring(recurringData);
-      setReminders(reminderData);
-      setCategories(categoryData);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      toast.error('Failed to load data');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getCategoryName = (categoryId: string) => {
     const category = categories.find((c) => c.id === categoryId);

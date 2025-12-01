@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ReduxProvider } from "@/store/provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { QueryProvider } from "@/components/providers/query-provider";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { Toaster } from "@/components/ui/sonner";
@@ -32,25 +33,27 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ReduxProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <div className="min-h-screen bg-background">
-              <Sidebar />
-              <div className="lg:pl-64">
-                <Header />
-                <main className="p-4 lg:p-6">
-                  {children}
-                </main>
+        <QueryProvider>
+          <ReduxProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <div className="min-h-screen bg-background">
+                <Sidebar />
+                <div className="lg:pl-64">
+                  <Header />
+                  <main className="p-4 lg:p-6">
+                    {children}
+                  </main>
+                </div>
               </div>
-            </div>
-            <Toaster />
-          </ThemeProvider>
-        </ReduxProvider>
+              <Toaster />
+            </ThemeProvider>
+          </ReduxProvider>
+        </QueryProvider>
       </body>
     </html>
   );

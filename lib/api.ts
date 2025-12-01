@@ -1,0 +1,199 @@
+// API client for all endpoints
+
+const API_BASE = '/api';
+
+// Generic fetch wrapper with error handling
+async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  const response = await fetch(`${API_BASE}${endpoint}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+    ...options,
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Request failed' }));
+    throw new Error(error.error || 'Request failed');
+  }
+
+  return response.json();
+}
+
+// Types
+import type { Transaction, Category, Budget, Goal, Reminder, RecurringTransaction, AppSettings, Currency } from './types';
+
+// ============ TRANSACTIONS ============
+export const transactionsApi = {
+  getAll: (params?: { type?: string; category?: string; dateFrom?: string; dateTo?: string; search?: string; limit?: number }) => {
+    const searchParams = new URLSearchParams();
+    if (params?.type) searchParams.set('type', params.type);
+    if (params?.category) searchParams.set('category', params.category);
+    if (params?.dateFrom) searchParams.set('dateFrom', params.dateFrom);
+    if (params?.dateTo) searchParams.set('dateTo', params.dateTo);
+    if (params?.search) searchParams.set('search', params.search);
+    if (params?.limit) searchParams.set('limit', params.limit.toString());
+    const query = searchParams.toString();
+    return fetchApi<Transaction[]>(`/transactions${query ? `?${query}` : ''}`);
+  },
+  
+  getById: (id: string) => fetchApi<Transaction>(`/transactions/${id}`),
+  
+  create: (data: Omit<Transaction, 'id' | 'createdAt' | 'updatedAt'>) =>
+    fetchApi<Transaction>('/transactions', { method: 'POST', body: JSON.stringify(data) }),
+  
+  update: (id: string, data: Partial<Transaction>) =>
+    fetchApi<Transaction>(`/transactions/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  
+  delete: (id: string) =>
+    fetchApi<{ success: boolean }>(`/transactions/${id}`, { method: 'DELETE' }),
+};
+
+// ============ CATEGORIES ============
+export const categoriesApi = {
+  getAll: (type?: 'income' | 'expense') => {
+    const query = type ? `?type=${type}` : '';
+    return fetchApi<Category[]>(`/categories${query}`);
+  },
+  
+  getById: (id: string) => fetchApi<Category>(`/categories/${id}`),
+  
+  create: (data: Omit<Category, 'id'>) =>
+    fetchApi<Category>('/categories', { method: 'POST', body: JSON.stringify(data) }),
+  
+  update: (id: string, data: Partial<Category>) =>
+    fetchApi<Category>(`/categories/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  
+  delete: (id: string) =>
+    fetchApi<{ success: boolean }>(`/categories/${id}`, { method: 'DELETE' }),
+};
+
+// ============ BUDGETS ============
+export const budgetsApi = {
+  getAll: () => fetchApi<Budget[]>('/budgets'),
+  
+  getById: (id: string) => fetchApi<Budget>(`/budgets/${id}`),
+  
+  create: (data: Omit<Budget, 'id' | 'createdAt'>) =>
+    fetchApi<Budget>('/budgets', { method: 'POST', body: JSON.stringify(data) }),
+  
+  update: (id: string, data: Partial<Budget>) =>
+    fetchApi<Budget>(`/budgets/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  
+  delete: (id: string) =>
+    fetchApi<{ success: boolean }>(`/budgets/${id}`, { method: 'DELETE' }),
+};
+
+// ============ GOALS ============
+export const goalsApi = {
+  getAll: () => fetchApi<Goal[]>('/goals'),
+  
+  getById: (id: string) => fetchApi<Goal>(`/goals/${id}`),
+  
+  create: (data: Omit<Goal, 'id' | 'createdAt'>) =>
+    fetchApi<Goal>('/goals', { method: 'POST', body: JSON.stringify(data) }),
+  
+  update: (id: string, data: Partial<Goal>) =>
+    fetchApi<Goal>(`/goals/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  
+  delete: (id: string) =>
+    fetchApi<{ success: boolean }>(`/goals/${id}`, { method: 'DELETE' }),
+  
+  contribute: (id: string, amount: number) =>
+    fetchApi<Goal>(`/goals/${id}`, { method: 'PATCH', body: JSON.stringify({ amount }) }),
+};
+
+// ============ REMINDERS ============
+export const remindersApi = {
+  getAll: (status?: 'paid' | 'unpaid') => {
+    const query = status ? `?status=${status}` : '';
+    return fetchApi<Reminder[]>(`/reminders${query}`);
+  },
+  
+  getById: (id: string) => fetchApi<Reminder>(`/reminders/${id}`),
+  
+  create: (data: Omit<Reminder, 'id' | 'createdAt'>) =>
+    fetchApi<Reminder>('/reminders', { method: 'POST', body: JSON.stringify(data) }),
+  
+  update: (id: string, data: Partial<Reminder>) =>
+    fetchApi<Reminder>(`/reminders/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  
+  delete: (id: string) =>
+    fetchApi<{ success: boolean }>(`/reminders/${id}`, { method: 'DELETE' }),
+  
+  markPaid: (id: string) =>
+    fetchApi<Reminder>(`/reminders/${id}`, { method: 'PATCH', body: JSON.stringify({ action: 'markPaid' }) }),
+  
+  markUnpaid: (id: string) =>
+    fetchApi<Reminder>(`/reminders/${id}`, { method: 'PATCH', body: JSON.stringify({ action: 'markUnpaid' }) }),
+};
+
+// ============ RECURRING ============
+export const recurringApi = {
+  getAll: (status?: 'active' | 'inactive') => {
+    const query = status ? `?status=${status}` : '';
+    return fetchApi<RecurringTransaction[]>(`/recurring${query}`);
+  },
+  
+  getById: (id: string) => fetchApi<RecurringTransaction>(`/recurring/${id}`),
+  
+  create: (data: Omit<RecurringTransaction, 'id' | 'createdAt'>) =>
+    fetchApi<RecurringTransaction>('/recurring', { method: 'POST', body: JSON.stringify(data) }),
+  
+  update: (id: string, data: Partial<RecurringTransaction>) =>
+    fetchApi<RecurringTransaction>(`/recurring/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  
+  delete: (id: string) =>
+    fetchApi<{ success: boolean }>(`/recurring/${id}`, { method: 'DELETE' }),
+  
+  toggle: (id: string) =>
+    fetchApi<RecurringTransaction>(`/recurring/${id}`, { method: 'PATCH' }),
+};
+
+// ============ SETTINGS ============
+export const settingsApi = {
+  get: () => fetchApi<AppSettings>('/settings'),
+  
+  update: (data: Partial<AppSettings>) =>
+    fetchApi<AppSettings>('/settings', { method: 'PUT', body: JSON.stringify(data) }),
+  
+  patch: (data: Partial<AppSettings>) =>
+    fetchApi<AppSettings>('/settings', { method: 'PATCH', body: JSON.stringify(data) }),
+};
+
+// ============ CURRENCIES ============
+export const currenciesApi = {
+  getAll: () => fetchApi<Currency[]>('/currencies'),
+  
+  getByCode: (code: string) => fetchApi<Currency>(`/currencies/${code}`),
+  
+  create: (data: Currency) =>
+    fetchApi<Currency>('/currencies', { method: 'POST', body: JSON.stringify(data) }),
+  
+  update: (code: string, data: Partial<Currency>) =>
+    fetchApi<Currency>(`/currencies/${code}`, { method: 'PUT', body: JSON.stringify(data) }),
+  
+  delete: (code: string) =>
+    fetchApi<{ success: boolean }>(`/currencies/${code}`, { method: 'DELETE' }),
+};
+
+// ============ DASHBOARD ============
+export interface DashboardData {
+  summary: {
+    totalIncome: number;
+    totalExpenses: number;
+    balance: number;
+    currentMonth: { income: number; expenses: number; balance: number };
+    lastMonth: { income: number; expenses: number; balance: number };
+    savingsRate: number;
+  };
+  recentTransactions: Transaction[];
+  expensesByCategory: { category: string; total: number }[];
+  upcomingReminders: Reminder[];
+  budgets: Budget[];
+  goals: Goal[];
+}
+
+export const dashboardApi = {
+  get: () => fetchApi<DashboardData>('/dashboard'),
+};
