@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { useAppSelector } from '@/store/hooks';
+import { useState, useEffect } from 'react';
 import { exportToCSV, formatDate } from '@/lib/utils';
+import { Transaction, Budget, Goal, RecurringTransaction, Reminder, Category } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -17,24 +17,64 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { CalendarIcon, Download, FileSpreadsheet, Check } from 'lucide-react';
+import { CalendarIcon, Download, FileSpreadsheet, Check, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 type ExportType = 'transactions' | 'budgets' | 'goals' | 'recurring' | 'reminders' | 'all';
 
 export function ExportData() {
-  const transactions = useAppSelector((state) => state.transactions.items);
-  const budgets = useAppSelector((state) => state.budgets.items);
-  const goals = useAppSelector((state) => state.goals.items);
-  const recurring = useAppSelector((state) => state.recurring.items);
-  const reminders = useAppSelector((state) => state.reminders.items);
-  const categories = useAppSelector((state) => state.categories.items);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [recurring, setRecurring] = useState<RecurringTransaction[]>([]);
+  const [reminders, setReminders] = useState<Reminder[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [exportType, setExportType] = useState<ExportType>('transactions');
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
   const [selectedTypes, setSelectedTypes] = useState<ExportType[]>(['transactions']);
   const [includeHeaders, setIncludeHeaders] = useState(true);
+
+  useEffect(() => {
+    fetchAllData();
+  }, []);
+
+  const fetchAllData = async () => {
+    setLoading(true);
+    try {
+      const [transRes, budgetRes, goalRes, recurringRes, reminderRes, categoryRes] = await Promise.all([
+        fetch('/api/transactions'),
+        fetch('/api/budgets'),
+        fetch('/api/goals'),
+        fetch('/api/recurring'),
+        fetch('/api/reminders'),
+        fetch('/api/categories'),
+      ]);
+
+      const [transData, budgetData, goalData, recurringData, reminderData, categoryData] = await Promise.all([
+        transRes.json(),
+        budgetRes.json(),
+        goalRes.json(),
+        recurringRes.json(),
+        reminderRes.json(),
+        categoryRes.json(),
+      ]);
+
+      setTransactions(transData);
+      setBudgets(budgetData);
+      setGoals(goalData);
+      setRecurring(recurringData);
+      setReminders(reminderData);
+      setCategories(categoryData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      toast.error('Failed to load data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getCategoryName = (categoryId: string) => {
     const category = categories.find((c) => c.id === categoryId);

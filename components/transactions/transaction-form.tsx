@@ -1,10 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { addTransaction, updateTransaction } from '@/store/slices/transactionsSlice';
-import { Transaction, TransactionType } from '@/lib/types';
+import { Transaction, TransactionType, Category, Currency } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,7 +19,7 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn, formatDate } from '@/lib/utils';
-import { CalendarIcon, ArrowLeft } from 'lucide-react';
+import { CalendarIcon, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
@@ -32,13 +30,15 @@ interface TransactionFormProps {
 
 export function TransactionForm({ transaction, mode }: TransactionFormProps) {
   const router = useRouter();
-  const dispatch = useAppDispatch();
-  const categories = useAppSelector((state) => state.categories.items);
-  const settings = useAppSelector((state) => state.settings);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [currencies, setCurrencies] = useState<Currency[]>([]);
+  const [defaultCurrency, setDefaultCurrency] = useState('USD');
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const [type, setType] = useState<TransactionType>(transaction?.type || 'expense');
   const [amount, setAmount] = useState(transaction?.amount?.toString() || '');
-  const [currency, setCurrency] = useState(transaction?.currency || settings.defaultCurrency);
+  const [currency, setCurrency] = useState(transaction?.currency || '');
   const [category, setCategory] = useState(transaction?.category || '');
   const [description, setDescription] = useState(transaction?.description || '');
   const [date, setDate] = useState<Date>(
@@ -47,9 +47,39 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
   const [isRecurring, setIsRecurring] = useState(transaction?.isRecurring || false);
   const [tags, setTags] = useState(transaction?.tags?.join(', ') || '');
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const [catRes, settingsRes] = await Promise.all([
+        fetch('/api/categories'),
+        fetch('/api/settings'),
+      ]);
+      
+      const [catData, settingsData] = await Promise.all([
+        catRes.json(),
+        settingsRes.json(),
+      ]);
+
+      setCategories(catData);
+      setCurrencies(settingsData.currencies || []);
+      setDefaultCurrency(settingsData.defaultCurrency || 'USD');
+      if (!currency) {
+        setCurrency(settingsData.defaultCurrency || 'USD');
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      toast.error('Failed to load form data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filteredCategories = categories.filter((c) => c.type === type);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!amount || parseFloat(amount) <= 0) {
@@ -67,10 +97,12 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
       return;
     }
 
+    setSubmitting(true);
+
     const transactionData = {
       type,
       amount: parseFloat(amount),
-      currency,
+      currency: currency || defaultCurrency,
       category,
       description: description.trim(),
       date: date.toISOString().split('T')[0],
@@ -78,21 +110,51 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
       tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
     };
 
-    if (mode === 'add') {
-      dispatch(addTransaction(transactionData));
-      toast.success('Transaction added successfully');
-    } else if (transaction) {
-      dispatch(
-        updateTransaction({
-          ...transaction,
-          ...transactionData,
-        })
-      );
-      toast.success('Transaction updated successfully');
+    try {
+      if (mode === 'add') {
+        const res = await fetch('/api/transactions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(transactionData),
+        });
+        
+        if (res.ok) {
+          toast.success('Transaction added successfully');
+          router.push('/transactions');
+        } else {
+          toast.error('Failed to add transaction');
+        }
+      } else if (transaction) {
+        const res = await fetch(`/api/transactions/${transaction.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(transactionData),
+        });
+        
+        if (res.ok) {
+          toast.success('Transaction updated successfully');
+          router.push('/transactions');
+        } else {
+          toast.error('Failed to update transaction');
+        }
+      }
+    } catch (error) {
+      console.error('Error saving transaction:', error);
+      toast.error('Failed to save transaction');
+    } finally {
+      setSubmitting(false);
     }
-
-    router.push('/transactions');
   };
+
+  if (loading) {
+    return (
+      <Card className="max-w-2xl mx-auto">
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="max-w-2xl mx-auto">
@@ -164,7 +226,7 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
                   <SelectValue placeholder="Currency" />
                 </SelectTrigger>
                 <SelectContent>
-                  {settings.currencies.map((c) => (
+                  {currencies.map((c) => (
                     <SelectItem key={c.code} value={c.code}>
                       {c.code} ({c.symbol})
                     </SelectItem>
@@ -264,13 +326,15 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
 
           {/* Submit Buttons */}
           <div className="flex gap-4 pt-4">
-            <Button type="submit" className="flex-1">
+            <Button type="submit" className="flex-1" disabled={submitting}>
+              {submitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               {mode === 'add' ? 'Add Transaction' : 'Update Transaction'}
             </Button>
             <Button
               type="button"
               variant="outline"
               onClick={() => router.push('/transactions')}
+              disabled={submitting}
             >
               Cancel
             </Button>

@@ -1,10 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { addCategory, updateCategory, deleteCategory } from '@/store/slices/categoriesSlice';
+import { useState, useEffect } from 'react';
 import { Category, TransactionType } from '@/lib/types';
-import { generateId } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,7 +23,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -54,8 +51,9 @@ const ICONS = [
 ];
 
 export function CategoryManager() {
-  const dispatch = useAppDispatch();
-  const categories = useAppSelector((state) => state.categories.items);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editCategory, setEditCategory] = useState<Category | null>(null);
@@ -65,6 +63,23 @@ export function CategoryManager() {
   const [type, setType] = useState<TransactionType>('expense');
   const [icon, setIcon] = useState('MoreHorizontal');
   const [color, setColor] = useState('#3B82F6');
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch('/api/categories');
+      const data = await res.json();
+      setCategories(data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      toast.error('Failed to load categories');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const incomeCategories = categories.filter((c) => c.type === 'income');
   const expenseCategories = categories.filter((c) => c.type === 'expense');
@@ -86,31 +101,85 @@ export function CategoryManager() {
     setIsDialogOpen(true);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name.trim()) {
       toast.error('Please enter a category name');
       return;
     }
 
-    if (editCategory) {
-      dispatch(updateCategory({ ...editCategory, name, type, icon, color }));
-      toast.success('Category updated');
-    } else {
-      dispatch(addCategory({ name, type, icon, color }));
-      toast.success('Category added');
-    }
+    setSubmitting(true);
+    try {
+      if (editCategory) {
+        const res = await fetch(`/api/categories/${editCategory.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, type, icon, color }),
+        });
+        
+        if (res.ok) {
+          const updated = await res.json();
+          setCategories(categories.map((c) => c.id === editCategory.id ? updated : c));
+          toast.success('Category updated');
+        } else {
+          toast.error('Failed to update category');
+        }
+      } else {
+        const res = await fetch('/api/categories', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, type, icon, color }),
+        });
+        
+        if (res.ok) {
+          const newCategory = await res.json();
+          setCategories([...categories, newCategory]);
+          toast.success('Category added');
+        } else {
+          toast.error('Failed to add category');
+        }
+      }
 
-    setIsDialogOpen(false);
-    resetForm();
+      setIsDialogOpen(false);
+      resetForm();
+    } catch (error) {
+      console.error('Error saving category:', error);
+      toast.error('Failed to save category');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteId) {
-      dispatch(deleteCategory(deleteId));
-      toast.success('Category deleted');
+      try {
+        const res = await fetch(`/api/categories/${deleteId}`, {
+          method: 'DELETE',
+        });
+        
+        if (res.ok) {
+          setCategories(categories.filter((c) => c.id !== deleteId));
+          toast.success('Category deleted');
+        } else {
+          const data = await res.json();
+          toast.error(data.error || 'Failed to delete category');
+        }
+      } catch (error) {
+        console.error('Error deleting category:', error);
+        toast.error('Failed to delete category');
+      }
       setDeleteId(null);
     }
   };
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   const CategoryGrid = ({ items }: { items: Category[] }) => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

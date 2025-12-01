@@ -1,8 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { deleteTransaction } from '@/store/slices/transactionsSlice';
+import { useState, useEffect } from 'react';
+import { Transaction, Category, AppSettings } from '@/lib/types';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -37,8 +36,8 @@ import {
   Pencil,
   Trash2,
   Search,
-  Filter,
   Plus,
+  Loader2,
 } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -51,6 +50,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { toast } from 'sonner';
 
 interface TransactionListProps {
   filterType?: 'income' | 'expense' | 'all';
@@ -59,16 +59,45 @@ interface TransactionListProps {
 }
 
 export function TransactionList({ filterType = 'all', showFilters = true, title = 'Transactions' }: TransactionListProps) {
-  const dispatch = useAppDispatch();
-  const transactions = useAppSelector((state) => state.transactions.items);
-  const categories = useAppSelector((state) => state.categories.items);
-  const filters = useAppSelector((state) => state.transactions.filters);
-  const settings = useAppSelector((state) => state.settings);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [settings, setSettings] = useState<AppSettings | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>(filterType);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [transRes, catRes, settingsRes] = await Promise.all([
+        fetch('/api/transactions'),
+        fetch('/api/categories'),
+        fetch('/api/settings'),
+      ]);
+      
+      const [transData, catData, settingsData] = await Promise.all([
+        transRes.json(),
+        catRes.json(),
+        settingsRes.json(),
+      ]);
+
+      setTransactions(transData);
+      setCategories(catData);
+      setSettings(settingsData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      toast.error('Failed to load transactions');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getCategoryName = (categoryId: string) => {
     const category = categories.find((c) => c.id === categoryId);
@@ -94,14 +123,38 @@ export function TransactionList({ filterType = 'all', showFilters = true, title 
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteId) {
-      dispatch(deleteTransaction(deleteId));
+      try {
+        const res = await fetch(`/api/transactions/${deleteId}`, {
+          method: 'DELETE',
+        });
+        
+        if (res.ok) {
+          setTransactions(transactions.filter((t) => t.id !== deleteId));
+          toast.success('Transaction deleted');
+        } else {
+          toast.error('Failed to delete transaction');
+        }
+      } catch (error) {
+        console.error('Error deleting transaction:', error);
+        toast.error('Failed to delete transaction');
+      }
       setDeleteId(null);
     }
   };
 
   const uniqueCategories = [...new Set(transactions.map((t) => t.category))];
+
+  if (loading) {
+    return (
+      <Card>
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <>
@@ -222,7 +275,7 @@ export function TransactionList({ filterType = 'all', showFilters = true, title 
                         }`}
                       >
                         {transaction.type === 'income' ? '+' : '-'}
-                        {formatCurrency(transaction.amount, transaction.currency || settings.defaultCurrency)}
+                        {formatCurrency(transaction.amount, transaction.currency || settings?.defaultCurrency || 'USD')}
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>
