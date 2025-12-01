@@ -18,7 +18,6 @@ import {
   ChevronRight,
   Star,
   Sparkles,
-  Check,
   LayoutDashboard,
   Receipt,
   FolderOpen,
@@ -193,8 +192,8 @@ export function HeroSection() {
         {/* Dashboard Preview */}
         <div className="mt-16 relative">
           {/* Glow effects */}
-          <div className="absolute -inset-4 bg-gradient-to-r from-green-500/20 via-emerald-500/30 to-teal-500/20 rounded-3xl blur-2xl opacity-70 animate-pulse" />
-          <div className="absolute inset-0 bg-gradient-to-tr from-green-600/10 to-transparent rounded-2xl" />
+          <div className="absolute -inset-4 bg-linear-to-r from-green-500/20 via-emerald-500/30 to-teal-500/20 rounded-3xl blur-2xl opacity-70 animate-pulse" />
+          <div className="absolute inset-0 bg-linear-to-tr from-green-600/10 to-transparent rounded-2xl" />
           
           <div className="relative rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-1.5 shadow-2xl shadow-green-500/10">
             {/* Browser bar */}
@@ -225,9 +224,9 @@ export function HeroSection() {
                 ].map((stat) => (
                   <div 
                     key={stat.label} 
-                    className="group relative rounded-xl border border-gray-100 dark:border-gray-800 p-4 bg-gradient-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50 hover:border-green-500/50 hover:shadow-lg hover:shadow-green-500/5 transition-all duration-300 hover:-translate-y-0.5"
+                    className="group relative rounded-xl border border-gray-100 dark:border-gray-800 p-4 bg-linear-to-br from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50 hover:border-green-500/50 hover:shadow-lg hover:shadow-green-500/5 transition-all duration-300 hover:-translate-y-0.5"
                   >
-                    <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-5 transition-opacity`} />
+                    <div className={`absolute inset-0 rounded-xl bg-linear-to-br ${stat.color} opacity-0 group-hover:opacity-5 transition-opacity`} />
                     <div className="relative">
                       <div className="flex items-center justify-between mb-2">
                         <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{stat.label}</p>
@@ -283,11 +282,11 @@ export function HeroSection() {
                     <div key={i} className="flex-1 flex flex-col items-center gap-1">
                       <div className="w-full flex gap-px items-end h-32">
                         <div 
-                          className="flex-1 bg-green-100 hover:bg-green-400 rounded-t-sm transition-colors min-h-[4px] opacity-10"
+                          className="flex-1 bg-green-100 hover:bg-green-400 rounded-t-sm transition-colors min-h-1 opacity-10"
                           style={{ height: `${Math.round((data.income / 140) * 100)}%` }}
                         />
                         <div 
-                          className="flex-1 bg-rose-100 hover:bg-rose-300 rounded-t-sm transition-colors min-h-[4px] opacity-10"
+                          className="flex-1 bg-rose-100 hover:bg-rose-300 rounded-t-sm transition-colors min-h-1 opacity-10"
                           style={{ height: `${Math.round((data.expense / 140) * 100)}%` }}
                         />
                       </div>
@@ -782,7 +781,7 @@ export function LandingFooter() {
           {/* Brand column */}
           <div className="col-span-2">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/20">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/20">
                 <Wallet className="h-5 w-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">Budget</span>
