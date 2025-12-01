@@ -1,6 +1,7 @@
 'use client';
 
 import { useTheme } from 'next-themes';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -28,20 +29,120 @@ const themes = [
   },
 ];
 
+const colorThemes = [
+  {
+    value: 'default',
+    label: 'Default',
+    color: 'oklch(0.205 0 0)',
+    darkColor: 'oklch(0.922 0 0)',
+  },
+  {
+    value: 'blue',
+    label: 'Blue',
+    color: 'oklch(0.546 0.245 262.881)',
+    darkColor: 'oklch(0.623 0.214 259.815)',
+  },
+  {
+    value: 'green',
+    label: 'Green',
+    color: 'oklch(0.596 0.145 163.225)',
+    darkColor: 'oklch(0.696 0.17 162.48)',
+  },
+  {
+    value: 'purple',
+    label: 'Purple',
+    color: 'oklch(0.558 0.288 302.321)',
+    darkColor: 'oklch(0.714 0.203 305.504)',
+  },
+  {
+    value: 'orange',
+    label: 'Orange',
+    color: 'oklch(0.705 0.213 47.604)',
+    darkColor: 'oklch(0.792 0.184 70.08)',
+  },
+  {
+    value: 'rose',
+    label: 'Rose',
+    color: 'oklch(0.645 0.246 16.439)',
+    darkColor: 'oklch(0.76 0.18 11.341)',
+  },
+  {
+    value: 'teal',
+    label: 'Teal',
+    color: 'oklch(0.6 0.118 184.704)',
+    darkColor: 'oklch(0.72 0.12 186.218)',
+  },
+  {
+    value: 'cream',
+    label: 'Cream',
+    color: 'oklch(0.97 0.01 85)',
+    darkColor: 'oklch(0.75 0.1 55)',
+    isFullTheme: true,
+  },
+  {
+    value: 'sand',
+    label: 'Sand',
+    color: 'oklch(0.96 0.02 75)',
+    darkColor: 'oklch(0.72 0.1 50)',
+    isFullTheme: true,
+  },
+  {
+    value: 'ivory',
+    label: 'Ivory',
+    color: 'oklch(0.98 0.005 100)',
+    darkColor: 'oklch(0.7 0.08 45)',
+    isFullTheme: true,
+  },
+];
+
 export function ThemeSettings() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [colorTheme, setColorTheme] = useState('default');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const savedColorTheme = localStorage.getItem('color-theme') || 'default';
+    setColorTheme(savedColorTheme);
+    // eslint-disable-next-line react-hooks/immutability
+    applyColorTheme(savedColorTheme);
+  }, []);
+
+  const applyColorTheme = (value: string) => {
+    const root = document.documentElement;
+    // Remove all theme classes
+    colorThemes.forEach((t) => {
+      if (t.value !== 'default') {
+        root.classList.remove(`theme-${t.value}`);
+      }
+    });
+    // Add new theme class
+    if (value !== 'default') {
+      root.classList.add(`theme-${value}`);
+    }
+  };
 
   const handleThemeChange = (value: string) => {
     setTheme(value);
   };
 
+  const handleColorThemeChange = (value: string) => {
+    setColorTheme(value);
+    localStorage.setItem('color-theme', value);
+    applyColorTheme(value);
+  };
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle>Theme Settings</CardTitle>
+          <CardTitle>Appearance Mode</CardTitle>
           <CardDescription>
-            Customize the appearance of the application
+            Choose between light, dark, or system theme
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -80,6 +181,49 @@ export function ThemeSettings() {
               </Label>
             ))}
           </RadioGroup>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Accent Color</CardTitle>
+          <CardDescription>
+            Choose an accent color for buttons and highlights
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-3">
+            {colorThemes.map((t) => {
+              const isSelected = colorTheme === t.value;
+              const displayColor = resolvedTheme === 'dark' ? t.darkColor : t.color;
+              
+              return (
+                <button
+                  key={t.value}
+                  onClick={() => handleColorThemeChange(t.value)}
+                  className={cn(
+                    'flex flex-col items-center gap-2 p-3 rounded-lg border transition-all',
+                    isSelected
+                      ? 'border-primary ring-2 ring-primary ring-offset-2 ring-offset-background'
+                      : 'border-border hover:border-muted-foreground'
+                  )}
+                >
+                  <div
+                    className={cn(
+                      'h-10 w-10 rounded-full flex items-center justify-center transition-transform',
+                      isSelected && 'scale-110'
+                    )}
+                    style={{ backgroundColor: displayColor }}
+                  >
+                    {isSelected && (
+                      <Check className="h-5 w-5 text-white" />
+                    )}
+                  </div>
+                  <span className="text-xs font-medium">{t.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </CardContent>
       </Card>
 
