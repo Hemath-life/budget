@@ -414,3 +414,41 @@ export function useDashboard() {
     queryFn: dashboardApi.get,
   });
 }
+
+// ============ SUBSCRIPTION HOOKS ============
+export function useSubscription(userId?: string) {
+  return useQuery({
+    queryKey: [...queryKeys.subscription, userId],
+    queryFn: () => subscriptionApi.get(userId),
+  });
+}
+
+export function useCreateSubscription() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: subscriptionApi.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.subscription });
+    },
+  });
+}
+
+export function useUpdateSubscription() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: subscriptionApi.update,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.subscription });
+    },
+  });
+}
+
+export function useCancelSubscription() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: subscriptionApi.cancel,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.subscription });
+    },
+  });
+}
