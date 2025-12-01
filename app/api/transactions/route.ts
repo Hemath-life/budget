@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
     const transactions = db.prepare(query).all(...params);
     
     // Convert SQLite integer booleans to actual booleans and parse tags
-    const formattedTransactions = transactions.map((t: Record<string, unknown>) => ({
+    const formattedTransactions = (transactions as Record<string, unknown>[]).map((t) => ({
       ...t,
       isRecurring: Boolean(t.is_recurring),
       recurringId: t.recurring_id,

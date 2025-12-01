@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     const reminders = db.prepare(query).all(...params);
     
     // Format to match frontend expectations
-    const formattedReminders = reminders.map((r: Record<string, unknown>) => ({
+    const formattedReminders = (reminders as Record<string, unknown>[]).map((r) => ({
       id: r.id,
       title: r.title,
       amount: r.amount,
