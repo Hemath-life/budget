@@ -51,6 +51,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
+import { EmptyState } from '@/components/shared/empty-state';
 
 interface TransactionListProps {
   filterType?: 'income' | 'expense' | 'all';
@@ -171,12 +172,20 @@ export function TransactionList({ filterType = 'all', showFilters = true, title 
           )}
 
           <ScrollArea className="h-[500px]">
-            {sortedTransactions.length === 0 ? (
+            {sortedTransactions.length === 0 && transactions.length === 0 ? (
+              <EmptyState
+                title="No transactions yet"
+                description="Start tracking your finances by adding your first transaction, or load sample data to explore the app."
+                actionLabel="Add Transaction"
+                actionHref="/transactions/add"
+                icon={<ArrowUpRight className="h-12 w-12 text-muted-foreground/50" />}
+              />
+            ) : sortedTransactions.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
-                <p>No transactions found</p>
-                <Link href="/transactions/add">
-                  <Button variant="link">Add your first transaction</Button>
-                </Link>
+                <p>No transactions match your filters</p>
+                <Button variant="link" onClick={() => { setSearchTerm(''); setTypeFilter('all'); setCategoryFilter('all'); }}>
+                  Clear filters
+                </Button>
               </div>
             ) : (
               <Table>

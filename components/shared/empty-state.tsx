@@ -3,15 +3,19 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Database, Loader2, CheckCircle2, Sparkles } from 'lucide-react';
+import { Database, Loader2, CheckCircle2, Sparkles, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+import Link from 'next/link';
 
 interface EmptyStateProps {
   title?: string;
   description?: string;
   icon?: React.ReactNode;
   showSeedButton?: boolean;
+  actionLabel?: string;
+  actionHref?: string;
+  onAction?: () => void;
   children?: React.ReactNode;
 }
 
@@ -20,6 +24,9 @@ export function EmptyState({
   description = 'Get started by adding your first entry or load sample data to explore the app.',
   icon,
   showSeedButton = true,
+  actionLabel,
+  actionHref,
+  onAction,
   children,
 }: EmptyStateProps) {
   const [loading, setLoading] = useState(false);
@@ -67,6 +74,22 @@ export function EmptyState({
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3">
+          {actionHref && actionLabel && (
+            <Link href={actionHref}>
+              <Button className="gap-2">
+                <Plus className="h-4 w-4" />
+                {actionLabel}
+              </Button>
+            </Link>
+          )}
+          
+          {onAction && actionLabel && !actionHref && (
+            <Button onClick={onAction} className="gap-2">
+              <Plus className="h-4 w-4" />
+              {actionLabel}
+            </Button>
+          )}
+
           {children}
           
           {showSeedButton && (
