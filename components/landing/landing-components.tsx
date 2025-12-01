@@ -282,11 +282,11 @@ export function HeroSection() {
                     <div key={i} className="flex-1 flex flex-col items-center gap-1">
                       <div className="w-full flex gap-px items-end h-32">
                         <div 
-                          className="flex-1 bg-green-500 hover:bg-green-400 rounded-t-sm transition-colors min-h-[4px]"
+                          className="flex-1 bg-green-100 hover:bg-green-400 rounded-t-sm transition-colors min-h-[4px] opacity-10"
                           style={{ height: `${Math.round((data.income / 140) * 100)}%` }}
                         />
                         <div 
-                          className="flex-1 bg-rose-400 hover:bg-rose-300 rounded-t-sm transition-colors min-h-[4px]"
+                          className="flex-1 bg-rose-100 hover:bg-rose-300 rounded-t-sm transition-colors min-h-[4px] opacity-10"
                           style={{ height: `${Math.round((data.expense / 140) * 100)}%` }}
                         />
                       </div>
