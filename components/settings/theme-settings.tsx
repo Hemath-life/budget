@@ -128,6 +128,34 @@ const colorThemes = [
     darkColor: 'oklch(0.7 0.1 45)',
     isFullTheme: true,
   },
+  {
+    value: 'onyx',
+    label: 'Onyx',
+    color: 'oklch(0.12 0.01 0)',
+    darkColor: 'oklch(0.85 0.18 340)',
+    isFullTheme: true,
+  },
+  {
+    value: 'graphite',
+    label: 'Graphite',
+    color: 'oklch(0.28 0.015 230)',
+    darkColor: 'oklch(0.7 0.12 170)',
+    isFullTheme: true,
+  },
+  {
+    value: 'noir',
+    label: 'Noir',
+    color: 'oklch(0.08 0 0)',
+    darkColor: 'oklch(0.95 0 0)',
+    isFullTheme: true,
+  },
+  {
+    value: 'titanium',
+    label: 'Titanium',
+    color: 'oklch(0.55 0.02 250)',
+    darkColor: 'oklch(0.75 0.15 30)',
+    isFullTheme: true,
+  },
 ];
 
 export function ThemeSettings() {
