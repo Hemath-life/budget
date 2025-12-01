@@ -22,7 +22,6 @@ import {
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -72,15 +71,15 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
 export function Sidebar() {
   return (
     <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 border-r bg-card">
-      <div className="flex h-16 items-center border-b px-6">
+      <div className="flex h-16 items-center border-b px-6 shrink-0">
         <Link href="/dashboard" className="flex items-center gap-2">
           <PiggyBank className="h-8 w-8 text-primary" />
           <span className="text-xl font-bold">BudgetApp</span>
         </Link>
       </div>
-      <ScrollArea className="flex-1 py-4">
+      <div className="flex-1 py-4 overflow-hidden">
         <NavLinks />
-      </ScrollArea>
+      </div>
     </aside>
   );
 }
@@ -97,15 +96,15 @@ export function MobileSidebar() {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-64 p-0">
-        <div className="flex h-16 items-center border-b px-6">
+        <div className="flex h-16 items-center border-b px-6 shrink-0">
           <Link href="/dashboard" className="flex items-center gap-2" onClick={() => setOpen(false)}>
             <PiggyBank className="h-8 w-8 text-primary" />
             <span className="text-xl font-bold">BudgetApp</span>
           </Link>
         </div>
-        <ScrollArea className="h-[calc(100vh-4rem)] py-4">
+        <div className="py-4 overflow-hidden">
           <NavLinks onNavigate={() => setOpen(false)} />
-        </ScrollArea>
+        </div>
       </SheetContent>
     </Sheet>
   );

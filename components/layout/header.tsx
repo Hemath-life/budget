@@ -31,7 +31,7 @@ export function Header() {
   });
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <header className="shrink-0 z-40 border-b bg-background">
       <div className="flex h-16 items-center gap-4 px-4 lg:px-6">
         <MobileSidebar />
 
