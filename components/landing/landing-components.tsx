@@ -245,56 +245,70 @@ export function HeroSection() {
               </div>
               
               {/* Chart area */}
-              <div className="mt-4 rounded-xl border border-gray-100 dark:border-gray-800 p-5 bg-gradient-to-br from-white to-gray-50/30 dark:from-gray-900 dark:to-gray-800/30">
-                <div className="flex items-center justify-between mb-5">
+              <div className="mt-4 rounded-xl border border-gray-100 dark:border-gray-800 p-5 bg-white dark:bg-gray-900">
+                <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className="text-sm font-semibold text-black dark:text-white">Monthly Overview</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">Income vs Expenses</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Income vs Expenses (2024)</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-1.5">
-                      <div className="h-2.5 w-2.5 rounded-full bg-gradient-to-r from-green-500 to-emerald-500" />
+                      <div className="h-3 w-3 rounded-sm bg-green-500" />
                       <span className="text-xs text-gray-500">Income</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="h-2.5 w-2.5 rounded-full bg-gradient-to-r from-emerald-300 to-teal-300" />
+                      <div className="h-3 w-3 rounded-sm bg-rose-400" />
                       <span className="text-xs text-gray-500">Expenses</span>
                     </div>
                   </div>
                 </div>
                 
-                <div className="flex items-end justify-between h-32 gap-1">
+                {/* Chart with fixed height bars */}
+                <div className="flex items-end gap-2 h-40 px-2">
                   {[
-                    { income: 60, expense: 40 },
-                    { income: 75, expense: 50 },
-                    { income: 65, expense: 45 },
-                    { income: 90, expense: 55 },
-                    { income: 70, expense: 48 },
-                    { income: 85, expense: 52 },
-                    { income: 95, expense: 60 },
-                    { income: 78, expense: 50 },
-                    { income: 88, expense: 55 },
-                    { income: 100, expense: 65 },
-                    { income: 72, expense: 48 },
-                    { income: 92, expense: 58 },
+                    { month: 'J', income: 95, expense: 72 },
+                    { month: 'F', income: 88, expense: 65 },
+                    { month: 'M', income: 102, expense: 78 },
+                    { month: 'A', income: 110, expense: 82 },
+                    { month: 'M', income: 98, expense: 70 },
+                    { month: 'J', income: 115, expense: 85 },
+                    { month: 'J', income: 108, expense: 75 },
+                    { month: 'A', income: 120, expense: 88 },
+                    { month: 'S', income: 112, expense: 80 },
+                    { month: 'O', income: 125, expense: 78 },
+                    { month: 'N', income: 118, expense: 82 },
+                    { month: 'D', income: 135, expense: 92 },
                   ].map((data, i) => (
-                    <div key={i} className="flex-1 flex gap-0.5 items-end group cursor-pointer">
-                      <div 
-                        className="flex-1 bg-gradient-to-t from-green-600 to-green-400 rounded-t transition-all duration-300 group-hover:from-green-500 group-hover:to-green-300 group-hover:shadow-lg group-hover:shadow-green-500/20"
-                        style={{ height: `${data.income}%` }}
-                      />
-                      <div 
-                        className="flex-1 bg-gradient-to-t from-emerald-400 to-teal-300 rounded-t transition-all duration-300 group-hover:from-emerald-300 group-hover:to-teal-200"
-                        style={{ height: `${data.expense}%` }}
-                      />
+                    <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                      <div className="w-full flex gap-px items-end h-32">
+                        <div 
+                          className="flex-1 bg-green-500 hover:bg-green-400 rounded-t-sm transition-colors min-h-[4px]"
+                          style={{ height: `${Math.round((data.income / 140) * 100)}%` }}
+                        />
+                        <div 
+                          className="flex-1 bg-rose-400 hover:bg-rose-300 rounded-t-sm transition-colors min-h-[4px]"
+                          style={{ height: `${Math.round((data.expense / 140) * 100)}%` }}
+                        />
+                      </div>
+                      <span className="text-[10px] text-gray-400 font-medium">{data.month}</span>
                     </div>
                   ))}
                 </div>
                 
-                <div className="flex justify-between mt-3 text-[10px] text-gray-400 font-medium">
-                  {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map(m => (
-                    <span key={m}>{m}</span>
-                  ))}
+                {/* Summary */}
+                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 flex justify-around">
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500">Total Income</p>
+                    <p className="text-sm font-bold text-green-600">₹13.2L</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500">Total Expenses</p>
+                    <p className="text-sm font-bold text-rose-500">₹9.5L</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500">Savings</p>
+                    <p className="text-sm font-bold text-blue-600">₹3.7L</p>
+                  </div>
                 </div>
               </div>
               
