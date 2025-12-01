@@ -1,9 +1,10 @@
 'use client';
 
 import { use } from 'react';
-import { useAppSelector } from '@/store/hooks';
+import { useTransactions } from '@/lib/hooks';
 import { TransactionForm } from '@/components/transactions/transaction-form';
 import { notFound } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
 export default function EditTransactionPage({ 
   params 
@@ -11,8 +12,16 @@ export default function EditTransactionPage({
   params: Promise<{ id: string }> 
 }) {
   const { id } = use(params);
-  const transactions = useAppSelector((state) => state.transactions.items);
+  const { data: transactions = [], isLoading } = useTransactions();
   const transaction = transactions.find((t) => t.id === id);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   if (!transaction) {
     notFound();

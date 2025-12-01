@@ -1,8 +1,6 @@
 'use client';
 
 import { useTheme } from 'next-themes';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { setTheme as setStoreTheme } from '@/store/slices/settingsSlice';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -32,11 +30,9 @@ const themes = [
 
 export function ThemeSettings() {
   const { theme, setTheme } = useTheme();
-  const dispatch = useAppDispatch();
 
   const handleThemeChange = (value: string) => {
     setTheme(value);
-    dispatch(setStoreTheme(value as 'light' | 'dark' | 'system'));
   };
 
   return (
