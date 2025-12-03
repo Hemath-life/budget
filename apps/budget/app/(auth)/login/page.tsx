@@ -5,6 +5,7 @@ import { authApi } from '@/lib/api';
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { Label } from '@repo/ui/components/ui/label';
+import { useQueryClient } from '@tanstack/react-query';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -17,6 +18,7 @@ const DUMMY_CREDENTIALS = {
 
 export default function LoginPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { login, isAuthenticated } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,6 +41,8 @@ export default function LoginPage() {
     try {
       const response = await authApi.login({ email, password });
       login(response.access_token, response.user);
+      // Invalidate all queries to refetch with new auth token
+      queryClient.invalidateQueries();
       router.push('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
