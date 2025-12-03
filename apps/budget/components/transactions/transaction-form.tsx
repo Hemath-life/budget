@@ -49,7 +49,7 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
   );
   const [amount, setAmount] = useState(transaction?.amount?.toString() || '');
   const [currency, setCurrency] = useState(transaction?.currency || '');
-  const [category, setCategory] = useState(transaction?.category || '');
+  const [category, setCategory] = useState(transaction?.categoryId || '');
   const [description, setDescription] = useState(
     transaction?.description || ''
   );
@@ -59,7 +59,7 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
   const [isRecurring, setIsRecurring] = useState(
     transaction?.isRecurring || false
   );
-  const [tags, setTags] = useState(transaction?.tags?.join(', ') || '');
+  const [tags, setTags] = useState(transaction?.tags || '');
 
   useEffect(() => {
     fetchData();
@@ -114,14 +114,15 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
       type,
       amount: parseFloat(amount),
       currency: currency || defaultCurrency,
-      category,
+      categoryId: category,
       description: description.trim(),
       date: date.toISOString().split('T')[0],
       isRecurring,
       tags: tags
         .split(',')
         .map((t) => t.trim())
-        .filter(Boolean),
+        .filter(Boolean)
+        .join(','),
     };
 
     try {

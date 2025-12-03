@@ -183,15 +183,17 @@ export const transactionsApi = {
 
   getById: (id: string) => fetchApi<Transaction>(`/transactions/${id}`),
 
-  create: (data: Omit<Transaction, 'id' | 'createdAt' | 'updatedAt'>) =>
+  create: (
+    data: Omit<Transaction, 'id' | 'category' | 'createdAt' | 'updatedAt'>
+  ) =>
     fetchApi<Transaction>('/transactions', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
 
-  update: (id: string, data: Partial<Transaction>) =>
+  update: (id: string, data: Partial<Omit<Transaction, 'category'>>) =>
     fetchApi<Transaction>(`/transactions/${id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       body: JSON.stringify(data),
     }),
 

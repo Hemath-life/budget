@@ -15,12 +15,13 @@ export interface Transaction {
   type: TransactionType;
   amount: number;
   currency: string;
-  category: string;
+  categoryId: string;
+  category?: Category;
   description: string;
   date: string;
   isRecurring: boolean;
   recurringId?: string;
-  tags?: string[];
+  tags?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -32,7 +33,13 @@ export interface RecurringTransaction {
   currency: string;
   category: string;
   description: string;
-  frequency: 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly';
+  frequency:
+    | 'daily'
+    | 'weekly'
+    | 'biweekly'
+    | 'monthly'
+    | 'quarterly'
+    | 'yearly';
   startDate: string;
   endDate?: string;
   nextDueDate: string;
@@ -73,7 +80,13 @@ export interface Reminder {
   dueDate: string;
   category: string;
   isRecurring: boolean;
-  frequency?: 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly';
+  frequency?:
+    | 'daily'
+    | 'weekly'
+    | 'biweekly'
+    | 'monthly'
+    | 'quarterly'
+    | 'yearly';
   isPaid: boolean;
   notifyBefore: number; // days before
   createdAt: string;
