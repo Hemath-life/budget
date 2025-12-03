@@ -30,13 +30,17 @@ export default function SignupPage() {
     try {
       const response = await authApi.signup({ email, password, name });
       authApi.setToken(response.access_token);
-      localStorage.setItem(
-        'user',
-        JSON.stringify({
-          email,
-          name,
-        })
-      );
+      if (response.user) {
+        localStorage.setItem('user', JSON.stringify(response.user));
+      } else {
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            email,
+            name,
+          })
+        );
+      }
       router.push('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed');

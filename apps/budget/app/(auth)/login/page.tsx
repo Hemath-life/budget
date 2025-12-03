@@ -30,13 +30,17 @@ export default function LoginPage() {
     try {
       const response = await authApi.login({ email, password });
       authApi.setToken(response.access_token);
-      localStorage.setItem(
-        'user',
-        JSON.stringify({
-          email,
-          name: email.split('@')[0],
-        })
-      );
+      if (response.user) {
+        localStorage.setItem('user', JSON.stringify(response.user));
+      } else {
+        localStorage.setItem(
+          'user',
+          JSON.stringify({
+            email,
+            name: email.split('@')[0],
+          })
+        );
+      }
       router.push('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
