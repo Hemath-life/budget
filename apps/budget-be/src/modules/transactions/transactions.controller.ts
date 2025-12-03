@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -27,8 +28,37 @@ export class TransactionsController {
   }
 
   @Get()
-  findAll() {
-    return this.transactionsService.findAll();
+  findAll(
+    @Query('type') type?: string,
+    @Query('category') category?: string,
+    @Query('search') search?: string,
+    @Query('dateFrom') dateFrom?: string,
+    @Query('dateTo') dateTo?: string,
+    @Query('page') page?: string,
+    @Query('pageSize') pageSize?: string,
+    @Query('limit') limit?: string,
+  ) {
+    // If pagination params are provided, return paginated response
+    if (page && pageSize) {
+      return this.transactionsService.findAllPaginated({
+        type,
+        category,
+        search,
+        dateFrom,
+        dateTo,
+        page: parseInt(page, 10),
+        pageSize: parseInt(pageSize, 10),
+      });
+    }
+    // Otherwise return all (optionally filtered)
+    return this.transactionsService.findAll({
+      type,
+      category,
+      search,
+      dateFrom,
+      dateTo,
+      limit: limit ? parseInt(limit, 10) : undefined,
+    });
   }
 
   @Get(':id')
