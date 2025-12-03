@@ -1,6 +1,7 @@
 'use client';
 
-import { categoriesApi, settingsApi, transactionsApi } from '@/lib/api';
+import { categoriesApi, settingsApi } from '@/lib/api';
+import { useCreateTransaction, useUpdateTransaction } from '@/lib/hooks';
 import { Category, Currency, Transaction, TransactionType } from '@/lib/types';
 import { cn, formatDate } from '@/lib/utils';
 import {
@@ -38,11 +39,12 @@ interface TransactionFormProps {
 
 export function TransactionForm({ transaction, mode }: TransactionFormProps) {
   const router = useRouter();
+  const createTransaction = useCreateTransaction();
+  const updateTransaction = useUpdateTransaction();
   const [categories, setCategories] = useState<Category[]>([]);
   const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [defaultCurrency, setDefaultCurrency] = useState('USD');
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
 
   const [type, setType] = useState<TransactionType>(
     transaction?.type || 'expense'
@@ -60,6 +62,8 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
     transaction?.isRecurring || false
   );
   const [tags, setTags] = useState(transaction?.tags || '');
+
+  const submitting = createTransaction.isPending || updateTransaction.isPending;
 
   useEffect(() => {
     fetchData();
@@ -108,8 +112,6 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
       return;
     }
 
-    setSubmitting(true);
-
     // Create date at noon UTC to avoid timezone issues
     const utcDate = new Date(
       Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0)
@@ -134,11 +136,14 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
 
     try {
       if (mode === 'add') {
-        await transactionsApi.create(transactionData);
+        await createTransaction.mutateAsync(transactionData);
         toast.success('Transaction added successfully');
         router.push('/transactions');
       } else if (transaction) {
-        await transactionsApi.update(transaction.id, transactionData);
+        await updateTransaction.mutateAsync({
+          id: transaction.id,
+          data: transactionData,
+        });
         toast.success('Transaction updated successfully');
         router.push('/transactions');
       }
@@ -147,8 +152,6 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
       toast.error(
         error instanceof Error ? error.message : 'Failed to save transaction'
       );
-    } finally {
-      setSubmitting(false);
     }
   };
 
