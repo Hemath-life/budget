@@ -10,8 +10,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@repo/tailwind-config": "workspace:*",
-    "@repo/ui": "workspace:*",
     "@hookform/resolvers": "^5.2.2",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
@@ -32,6 +30,8 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@repo/tailwind-config": "workspace:*",
+    "@repo/ui": "workspace:*",
     "@tanstack/react-query": "^5.90.11",
     "@tanstack/react-query-devtools": "^5.91.1",
     "@types/better-sqlite3": "^7.6.13",
@@ -44,6 +44,7 @@
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.555.0",
     "next": "16.0.6",
+    "next-nprogress-bar": "^2.4.7",
     "next-themes": "^0.4.6",
     "react": "19.2.0",
     "react-day-picker": "^9.11.3",

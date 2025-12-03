@@ -1,3 +1,4 @@
+import { ProgressBarProvider } from '@/components/providers/progress-bar-provider';
 import { QueryProvider } from '@/components/providers/query-provider';
 import { ThemeProvider } from '@/components/providers/theme-provider';
 import { Toaster } from '@repo/ui/components/ui';
@@ -33,8 +34,10 @@ export default function RootLayout({
       >
         <QueryProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            {children}
-            <Toaster />
+            <ProgressBarProvider>
+              {children}
+              <Toaster />
+            </ProgressBarProvider>
           </ThemeProvider>
         </QueryProvider>
       </body>
