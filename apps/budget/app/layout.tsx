@@ -1,3 +1,4 @@
+import { AuthProvider } from '@/components/providers/auth-provider';
 import { ProgressBarProvider } from '@/components/providers/progress-bar-provider';
 import { QueryProvider } from '@/components/providers/query-provider';
 import { ThemeProvider } from '@/components/providers/theme-provider';
@@ -34,10 +35,12 @@ export default function RootLayout({
       >
         <QueryProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <ProgressBarProvider>
-              {children}
-              <Toaster />
-            </ProgressBarProvider>
+            <AuthProvider>
+              <ProgressBarProvider>
+                {children}
+                <Toaster />
+              </ProgressBarProvider>
+            </AuthProvider>
           </ThemeProvider>
         </QueryProvider>
       </body>
