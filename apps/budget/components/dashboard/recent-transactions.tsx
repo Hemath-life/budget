@@ -24,32 +24,42 @@ export function RecentTransactions() {
     .slice(0, 5);
 
   // Handle both categoryId (string) and category object from API
-  const getCategoryId = (category: string | { id: string }) => {
-    return typeof category === 'object' ? category.id : category;
+  // Also handle cases where the data might come as categoryId instead of category
+  type TransactionWithCategory = {
+    category?: string | { id: string; name?: string; color?: string };
+    categoryId?: string;
   };
 
-  const getCategoryName = (
-    category: string | { id: string; name?: string }
-  ) => {
-    if (typeof category === 'object' && category.name) {
-      return category.name;
+  const getCategoryData = (transaction: TransactionWithCategory) => {
+    // If category is an object with data, use it directly
+    if (transaction.category && typeof transaction.category === 'object') {
+      return {
+        id: transaction.category.id,
+        name: transaction.category.name || 'Unknown',
+        color: transaction.category.color || '#6B7280',
+      };
     }
-    const categoryId = getCategoryId(category);
-    const cat = categories.find((c) => c.id === categoryId);
-    return cat?.name || categoryId;
-  };
 
-  const getCategoryColor = (
-    category: string | { id: string; color?: string }
-  ) => {
-    if (typeof category === 'object' && category.color) {
-      return category.color;
+    // Otherwise, look up by categoryId or category string
+    const categoryId =
+      transaction.categoryId || (transaction.category as string);
+    if (categoryId) {
+      const cat = categories.find((c) => c.id === categoryId);
+      if (cat) {
+        return {
+          id: cat.id,
+          name: cat.name,
+          color: cat.color,
+        };
+      }
     }
-    const categoryId = getCategoryId(category);
-    const cat = categories.find((c) => c.id === categoryId);
-    return cat?.color || '#6B7280';
-  };
 
+    return {
+      id: categoryId || 'unknown',
+      name: 'Unknown',
+      color: '#6B7280',
+    };
+  };
   if (transLoading) {
     return (
       <Card>
@@ -79,58 +89,62 @@ export function RecentTransactions() {
                 No transactions yet
               </p>
             ) : (
-              recentTransactions.map((transaction) => (
-                <div
-                  key={transaction.id}
-                  className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="h-10 w-10 rounded-full flex items-center justify-center"
-                      style={{
-                        backgroundColor:
-                          getCategoryColor(transaction.category) + '20',
-                      }}
-                    >
-                      {transaction.type === 'income' ? (
-                        <ArrowUpRight className="h-5 w-5 text-green-500" />
-                      ) : (
-                        <ArrowDownRight className="h-5 w-5 text-red-500" />
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-medium">{transaction.description}</p>
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          variant="outline"
-                          style={{
-                            borderColor: getCategoryColor(transaction.category),
-                            color: getCategoryColor(transaction.category),
-                          }}
-                        >
-                          {getCategoryName(transaction.category)}
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">
-                          {formatDate(transaction.date)}
-                        </span>
+              recentTransactions.map((transaction) => {
+                const categoryData = getCategoryData(transaction);
+                return (
+                  <div
+                    key={transaction.id}
+                    className="flex items-center justify-between p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="h-10 w-10 rounded-full flex items-center justify-center"
+                        style={{
+                          backgroundColor: categoryData.color + '20',
+                        }}
+                      >
+                        {transaction.type === 'income' ? (
+                          <ArrowUpRight className="h-5 w-5 text-green-500" />
+                        ) : (
+                          <ArrowDownRight className="h-5 w-5 text-red-500" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium">{transaction.description}</p>
+                        <div className="flex items-center gap-2">
+                          <Badge
+                            variant="outline"
+                            style={{
+                              borderColor: categoryData.color,
+                              color: categoryData.color,
+                            }}
+                          >
+                            {categoryData.name}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {formatDate(transaction.date)}
+                          </span>
+                        </div>
                       </div>
                     </div>
+                    <div
+                      className={`text-right font-semibold ${
+                        transaction.type === 'income'
+                          ? 'text-green-600 dark:text-green-400'
+                          : 'text-red-600 dark:text-red-400'
+                      }`}
+                    >
+                      {transaction.type === 'income' ? '+' : '-'}
+                      {formatCurrency(
+                        transaction.amount,
+                        transaction.currency ||
+                          settings?.defaultCurrency ||
+                          'INR'
+                      )}
+                    </div>
                   </div>
-                  <div
-                    className={`text-right font-semibold ${
-                      transaction.type === 'income'
-                        ? 'text-green-600 dark:text-green-400'
-                        : 'text-red-600 dark:text-red-400'
-                    }`}
-                  >
-                    {transaction.type === 'income' ? '+' : '-'}
-                    {formatCurrency(
-                      transaction.amount,
-                      transaction.currency || settings?.defaultCurrency || 'INR'
-                    )}
-                  </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </ScrollArea>
