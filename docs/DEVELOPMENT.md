@@ -1,0 +1,220 @@
+# Development Guide
+
+This guide covers common development workflows and best practices.
+
+## Getting Started
+
+### Prerequisites
+
+Ensure you have the following installed:
+
+- **Node.js** >= 22.10.0
+- **pnpm** >= 10.13.1
+
+### First-Time Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/your-org/budget-app.git
+cd budget-app
+
+# Install dependencies
+pnpm install
+
+# Set up environment variables
+pnpm env:copy-example
+
+# Initialize the database
+pnpm db:push
+
+# Start development
+pnpm dev
+```
+
+## Common Workflows
+
+### Starting Development
+
+```bash
+# Start all apps
+pnpm dev
+
+# Start a specific app
+pnpm dev --filter @budget-app/web
+```
+
+### Building for Production
+
+```bash
+# Build everything
+pnpm build
+
+# Build a specific package
+pnpm build --filter @repo/ui
+```
+
+### Code Quality
+
+```bash
+# Run all checks
+pnpm lint && pnpm typecheck && pnpm format
+
+# Fix issues automatically
+pnpm lint:fix && pnpm format:fix
+```
+
+### Database Operations
+
+```bash
+# Push schema changes
+pnpm db:push
+
+# Open database studio
+pnpm db:studio
+```
+
+### Adding Dependencies
+
+```bash
+# Add to a specific package
+pnpm add <package> --filter @budget-app/web
+
+# Add to root (dev dependency)
+pnpm add -D <package> -w
+
+# Add from catalog
+pnpm add <package>@catalog: --filter @repo/ui
+```
+
+### Adding UI Components
+
+```bash
+# Add a shadcn/ui component
+pnpm ui-add button
+pnpm ui-add card
+pnpm ui-add dialog
+```
+
+## Debugging
+
+### VS Code
+
+Launch configurations are in `.vscode/launch.json`. Use:
+
+- **Next.js: Debug Server** - Debug the server-side
+- **Next.js: Debug Client** - Debug the client-side
+
+### React DevTools
+
+Install the React DevTools browser extension for:
+
+- Component inspection
+- State/props debugging
+- Performance profiling
+
+### TanStack Query DevTools
+
+The Query DevTools are automatically included in development mode.
+
+## Testing
+
+### Running Tests
+
+```bash
+# Run all tests
+pnpm test
+
+# Run tests for a specific package
+pnpm test --filter @budget-app/web
+
+# Run in watch mode
+pnpm test --watch
+```
+
+### Test Structure
+
+```
+src/
+├── components/
+│   ├── Button/
+│   │   ├── Button.tsx
+│   │   ├── Button.test.tsx
+│   │   └── index.ts
+```
+
+## Performance
+
+### Build Caching
+
+Turborepo caches build outputs. To clear the cache:
+
+```bash
+# Clean Turbo cache
+rm -rf .turbo
+
+# Full clean (including node_modules)
+pnpm clean
+```
+
+### Remote Caching
+
+Enable remote caching with Vercel:
+
+```bash
+npx turbo login
+npx turbo link
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### "Module not found"
+
+1. Ensure dependencies are installed: `pnpm install`
+2. Check package exports in `package.json`
+3. Rebuild dependencies: `pnpm build`
+
+#### TypeScript Errors
+
+1. Check `tsconfig.json` extends correct base config
+2. Ensure types are generated: `pnpm typecheck`
+3. Restart TypeScript server in VS Code
+
+#### Port Already in Use
+
+```bash
+# Kill process on port 3000
+lsof -ti:3000 | xargs kill -9
+```
+
+#### Stale Cache
+
+```bash
+# Clear all caches
+rm -rf .turbo .next node_modules/.cache
+pnpm install
+```
+
+## Best Practices
+
+### Code Organization
+
+1. **Co-locate related code** - Keep components, styles, and tests together
+2. **Use barrel exports** - Export from index files
+3. **Consistent naming** - Follow project conventions
+
+### Git Workflow
+
+1. Create feature branch from `main`
+2. Make changes with atomic commits
+3. Open PR with description
+4. Address review feedback
+5. Squash and merge
+
+### Performance Tips
+
+1. Use React.memo for expensive components
+2. Lazy load routes and heavy components
+3. Optimize images with Next.js Image component
+4. Use TanStack Query for server state
