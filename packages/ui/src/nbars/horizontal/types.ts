@@ -1,5 +1,3 @@
-import { cn } from '#/lib/utils';
-
 export interface BottomBarProps {
   items: BottomBarItem[];
   activeItem?: string;
