@@ -1,29 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Category, TransactionType } from '@/lib/types';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Pencil, Trash2, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,19 +10,75 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Category, TransactionType } from '@/lib/types';
+import { Loader2, Pencil, Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 const COLORS = [
-  '#EF4444', '#F97316', '#EAB308', '#84CC16', '#22C55E',
-  '#10B981', '#14B8A6', '#06B6D4', '#0EA5E9', '#3B82F6',
-  '#6366F1', '#8B5CF6', '#A855F7', '#D946EF', '#EC4899',
-  '#F43F5E', '#64748B', '#78716C',
+  '#EF4444',
+  '#F97316',
+  '#EAB308',
+  '#84CC16',
+  '#22C55E',
+  '#10B981',
+  '#14B8A6',
+  '#06B6D4',
+  '#0EA5E9',
+  '#3B82F6',
+  '#6366F1',
+  '#8B5CF6',
+  '#A855F7',
+  '#D946EF',
+  '#EC4899',
+  '#F43F5E',
+  '#64748B',
+  '#78716C',
 ];
 
 const ICONS = [
-  'Briefcase', 'Laptop', 'TrendingUp', 'Home', 'Gift', 'Plus',
-  'ShoppingCart', 'Zap', 'Car', 'Film', 'ShoppingBag', 'Heart',
-  'GraduationCap', 'Utensils', 'Plane', 'CreditCard', 'Shield',
-  'MoreHorizontal', 'DollarSign', 'Wallet', 'Banknote', 'Coins',
+  'Briefcase',
+  'Laptop',
+  'TrendingUp',
+  'Home',
+  'Gift',
+  'Plus',
+  'ShoppingCart',
+  'Zap',
+  'Car',
+  'Film',
+  'ShoppingBag',
+  'Heart',
+  'GraduationCap',
+  'Utensils',
+  'Plane',
+  'CreditCard',
+  'Shield',
+  'MoreHorizontal',
+  'DollarSign',
+  'Wallet',
+  'Banknote',
+  'Coins',
 ];
 
 interface CategoryManagerProps {
@@ -54,7 +86,10 @@ interface CategoryManagerProps {
   setIsDialogOpen: (open: boolean) => void;
 }
 
-export function CategoryManager({ isDialogOpen, setIsDialogOpen }: CategoryManagerProps) {
+export function CategoryManager({
+  isDialogOpen,
+  setIsDialogOpen,
+}: CategoryManagerProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -75,17 +110,22 @@ export function CategoryManager({ isDialogOpen, setIsDialogOpen }: CategoryManag
     try {
       const res = await fetch('/api/categories');
       const data = await res.json();
-      setCategories(data);
+      setCategories(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching categories:', error);
       toast.error('Failed to load categories');
+      setCategories([]);
     } finally {
       setLoading(false);
     }
   };
 
-  const incomeCategories = categories.filter((c) => c.type === 'income');
-  const expenseCategories = categories.filter((c) => c.type === 'expense');
+  const incomeCategories = (categories || []).filter(
+    (c) => c.type === 'income'
+  );
+  const expenseCategories = (categories || []).filter(
+    (c) => c.type === 'expense'
+  );
 
   const resetForm = () => {
     setName('');
@@ -118,10 +158,12 @@ export function CategoryManager({ isDialogOpen, setIsDialogOpen }: CategoryManag
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, type, icon, color }),
         });
-        
+
         if (res.ok) {
           const updated = await res.json();
-          setCategories(categories.map((c) => c.id === editCategory.id ? updated : c));
+          setCategories(
+            categories.map((c) => (c.id === editCategory.id ? updated : c))
+          );
           toast.success('Category updated');
         } else {
           toast.error('Failed to update category');
@@ -132,7 +174,7 @@ export function CategoryManager({ isDialogOpen, setIsDialogOpen }: CategoryManag
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, type, icon, color }),
         });
-        
+
         if (res.ok) {
           const newCategory = await res.json();
           setCategories([...categories, newCategory]);
@@ -158,7 +200,7 @@ export function CategoryManager({ isDialogOpen, setIsDialogOpen }: CategoryManag
         const res = await fetch(`/api/categories/${deleteId}`, {
           method: 'DELETE',
         });
-        
+
         if (res.ok) {
           setCategories(categories.filter((c) => c.id !== deleteId));
           toast.success('Category deleted');
@@ -232,8 +274,12 @@ export function CategoryManager({ isDialogOpen, setIsDialogOpen }: CategoryManag
     <>
       <Tabs defaultValue="expense">
         <TabsList className="mb-4">
-          <TabsTrigger value="expense">Expense ({expenseCategories.length})</TabsTrigger>
-          <TabsTrigger value="income">Income ({incomeCategories.length})</TabsTrigger>
+          <TabsTrigger value="expense">
+            Expense ({expenseCategories.length})
+          </TabsTrigger>
+          <TabsTrigger value="income">
+            Income ({incomeCategories.length})
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="expense">
           <CategoryGrid items={expenseCategories} />
@@ -244,10 +290,13 @@ export function CategoryManager({ isDialogOpen, setIsDialogOpen }: CategoryManag
       </Tabs>
 
       {/* Category Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={(open) => {
-        setIsDialogOpen(open);
-        if (!open) resetForm();
-      }}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) resetForm();
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
@@ -266,7 +315,10 @@ export function CategoryManager({ isDialogOpen, setIsDialogOpen }: CategoryManag
             </div>
             <div className="space-y-2">
               <Label>Type</Label>
-              <Select value={type} onValueChange={(v) => setType(v as TransactionType)}>
+              <Select
+                value={type}
+                onValueChange={(v) => setType(v as TransactionType)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -284,7 +336,9 @@ export function CategoryManager({ isDialogOpen, setIsDialogOpen }: CategoryManag
                     key={c}
                     type="button"
                     className={`h-8 w-8 rounded-full transition-transform ${
-                      color === c ? 'ring-2 ring-offset-2 ring-primary scale-110' : ''
+                      color === c
+                        ? 'ring-2 ring-offset-2 ring-primary scale-110'
+                        : ''
                     }`}
                     style={{ backgroundColor: c }}
                     onClick={() => setColor(c)}
@@ -309,12 +363,16 @@ export function CategoryManager({ isDialogOpen, setIsDialogOpen }: CategoryManag
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Category</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this category? Transactions using this category will not be affected.
+              Are you sure you want to delete this category? Transactions using
+              this category will not be affected.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
