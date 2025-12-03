@@ -1,5 +1,6 @@
 {
-  "name": "budget-app",
+  "name": "@budget/web",
+  "description": "Main Next.js web application for budget management",
   "version": "0.1.0",
   "private": true,
   "scripts": {
