@@ -6,6 +6,7 @@ import { Button } from '@repo/ui/components/ui/button';
 import { Checkbox } from '@repo/ui/components/ui/checkbox';
 import { Input } from '@repo/ui/components/ui/input';
 import { Label } from '@repo/ui/components/ui/label';
+import { useQueryClient } from '@tanstack/react-query';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -13,6 +14,7 @@ import { useEffect, useState } from 'react';
 
 export default function SignupPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { login, isAuthenticated } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -39,6 +41,8 @@ export default function SignupPage() {
     try {
       const response = await authApi.signup({ email, password, name });
       login(response.access_token, response.user);
+      // Invalidate all queries to refetch with new auth token
+      queryClient.invalidateQueries();
       router.push('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed');
