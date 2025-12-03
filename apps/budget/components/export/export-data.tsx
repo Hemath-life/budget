@@ -38,22 +38,15 @@ type ExportType =
 
 export function ExportData() {
   // Use React Query hooks for data fetching with automatic caching
-  const { data: transactions = [], isLoading: loadingTrans } =
+  const { data: transactions = [] } =
     useTransactions();
   const { data: budgets = [], isLoading: loadingBudgets } = useBudgets();
-  const { data: goals = [], isLoading: loadingGoals } = useGoals();
+  const { data: goals = [] } = useGoals();
   const { data: recurring = [], isLoading: loadingRecurring } = useRecurring();
   const { data: reminders = [], isLoading: loadingReminders } = useReminders();
   const { data: categories = [], isLoading: loadingCategories } =
     useCategories();
 
-  const loading =
-    loadingTrans ||
-    loadingBudgets ||
-    loadingGoals ||
-    loadingRecurring ||
-    loadingReminders ||
-    loadingCategories;
 
   const [exportType, setExportType] = useState<ExportType>('transactions');
   const [dateFrom, setDateFrom] = useState<Date | undefined>();

@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuth } from '@/components/providers/auth-provider';
 import { authApi } from '@/lib/api';
 import { Button } from '@repo/ui/components/ui/button';
 import { Checkbox } from '@repo/ui/components/ui/checkbox';
@@ -8,10 +9,11 @@ import { Label } from '@repo/ui/components/ui/label';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function SignupPage() {
   const router = useRouter();
+  const { login, isAuthenticated } = useAuth();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,6 +21,13 @@ export default function SignupPage() {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,18 +38,7 @@ export default function SignupPage() {
 
     try {
       const response = await authApi.signup({ email, password, name });
-      authApi.setToken(response.access_token);
-      if (response.user) {
-        localStorage.setItem('user', JSON.stringify(response.user));
-      } else {
-        localStorage.setItem(
-          'user',
-          JSON.stringify({
-            email,
-            name,
-          })
-        );
-      }
+      login(response.access_token, response.user);
       router.push('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Signup failed');

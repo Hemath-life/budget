@@ -67,10 +67,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { MobileSidebar, useSidebar } from './sidebar';
+import { useAuth } from '../providers/auth-provider';
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { logout } = useAuth();
   const { setTheme, theme } = useTheme();
   const { data: settings } = useSettings();
   const { data: transactions = [] } = useTransactions();
@@ -535,7 +537,7 @@ export function Header() {
                   Settings
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push('/login')}>
+              <DropdownMenuItem onClick={() => logout()}>
                 <LogOut className="mr-2 h-4 w-4" />
                 Log out
               </DropdownMenuItem>

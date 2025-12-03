@@ -29,6 +29,23 @@ async function fetchApi<T>(
   });
 
   if (!response.ok) {
+    // Handle 401 Unauthorized - clear auth and redirect
+    if (response.status === 401) {
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('isAuthenticated');
+        // Only redirect if not already on auth pages
+        if (
+          !window.location.pathname.startsWith('/login') &&
+          !window.location.pathname.startsWith('/signup')
+        ) {
+          window.location.href = '/login';
+        }
+      }
+      throw new Error('Unauthorized');
+    }
+
     const error = await response
       .json()
       .catch(() => ({ error: 'Request failed' }));
