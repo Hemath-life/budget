@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { IconCheck, IconMoon, IconSun, IconPalette } from '@tabler/icons-react';
-import { cn } from '#/lib/utils';
+import { cn } from '../../lib/utils';
 import { Button } from '#/components/ui/button';
 import {
   DropdownMenu,

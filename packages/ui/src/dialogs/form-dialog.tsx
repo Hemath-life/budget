@@ -1,4 +1,4 @@
-import { cn } from '#/lib/utils';
+import { cn } from '../lib/utils';
 import { Button } from '#/components/ui/button';
 import { DialogFooter } from '#/components/ui/dialog';
 import { BaseDialog, type BaseDialogProps } from './base-dialog';

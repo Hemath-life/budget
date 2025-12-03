@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Upload, X, FileText, Image, File } from 'lucide-react';
-import { cn } from '#/lib/utils';
+import { cn } from '../lib/utils';
 import { Button } from '#/components/ui/button';
 import { DialogFooter } from '#/components/ui/dialog';
 import { BaseDialog, type BaseDialogProps } from './base-dialog';

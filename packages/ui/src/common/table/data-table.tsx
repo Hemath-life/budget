@@ -21,7 +21,7 @@ import {
     TableHeader,
     TableRow,
 } from '#/components/ui/table';
-import { cn } from '#/lib/utils';
+import { cn } from '../../lib/utils';
 import { type DataTableProps } from './types';
 
 // Loading skeleton component

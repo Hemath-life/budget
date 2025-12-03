@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@tanstack/react-router';
-import { cn } from '#/lib/utils';
+import { cn } from '../../lib/utils';
 import { Button } from '#/components/ui/button';
 
 export interface HorizontalNavProps {

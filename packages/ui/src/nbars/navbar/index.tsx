@@ -1,4 +1,4 @@
-import { cn } from '#/lib/utils';
+import { cn } from '../../lib/utils';
 import { ProfileDropdown } from '#/forms/profile-dropdown';
 import { ThemeSwitch } from '#/common/theme';
 import { Header } from './header';
