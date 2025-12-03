@@ -1,193 +1,193 @@
 {
-    "name": "@repo/ui",
-    "description": "Shared UI component library",
-    "private": true,
-    "version": "0.1.0",
-    "type": "module",
-    "sideEffects": false,
-    "files": [
-        "dist"
-    ],
-    "imports": {
-        "#/*": "./src/*"
+  "name": "@repo/ui",
+  "description": "Shared UI component library",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./src/index.ts"
     },
-    "exports": {
-        ".": {
-            "types": "./dist/src/index.d.ts",
-            "default": "./src/index.ts"
-        },
-        "./components": {
-            "types": "./dist/src/components/index.d.ts",
-            "default": "./src/components/index.ts"
-        },
-        "./components/ui": {
-            "types": "./dist/src/components/ui/index.d.ts",
-            "default": "./src/components/ui/index.ts"
-        },
-        "./lib": {
-            "types": "./dist/src/lib/index.d.ts",
-            "default": "./src/lib/index.ts"
-        },
-        "./components/*": {
-            "types": "./dist/src/components/*.d.ts",
-            "default": "./src/components/*"
-        },
-        "./components/layouts/*": {
-            "types": "./dist/src/components/layouts/*.d.ts",
-            "default": "./src/components/layouts/*"
-        },
-        "./components/layouts": {
-            "types": "./dist/src/components/layouts/index.d.ts",
-            "default": "./src/components/layouts/index.ts"
-        },
-        "./components/layout": {
-            "types": "./dist/src/components/layout/index.d.ts",
-            "default": "./src/components/layout/index.ts"
-        },
-        "./components/ui/*": {
-            "types": "./dist/src/components/ui/*.d.ts",
-            "default": "./src/components/ui/*"
-        },
-        "./components/ui/custom/*": {
-            "types": "./dist/src/components/ui/custom/*.d.ts",
-            "default": "./src/components/ui/custom/*"
-        },
-        "./header": {
-            "types": "./dist/src/header/index.d.ts",
-            "default": "./src/header/index.ts"
-        },
-        "./layout": {
-            "types": "./dist/src/layout/index.d.ts",
-            "default": "./src/layout/index.ts"
-        },
-        "./dialogs": {
-            "types": "./dist/src/dialogs/index.d.ts",
-            "default": "./src/dialogs/index.ts"
-        },
-        "./forms": {
-            "types": "./dist/src/forms/index.d.ts",
-            "default": "./src/forms/index.ts"
-        },
-        "./empty": {
-            "types": "./dist/src/empty/index.d.ts",
-            "default": "./src/empty/index.ts"
-        },
-        "./loaders": {
-            "types": "./dist/src/loaders/index.d.ts",
-            "default": "./src/loaders/index.ts"
-        },
-        "./errors": {
-            "types": "./dist/src/errors/index.d.ts",
-            "default": "./src/errors/index.ts"
-        },
-        "./pages": {
-            "types": "./dist/src/pages/index.d.ts",
-            "default": "./src/pages/index.ts"
-        },
-        "./common": {
-            "types": "./dist/src/common/index.d.ts",
-            "default": "./src/common/index.ts"
-        },
-        "./common/i18n": {
-            "types": "./dist/src/common/i18n/index.d.ts",
-            "default": "./src/common/i18n/index.ts"
-        },
-        "./assets/i18n": {
-            "types": "./dist/src/assets/i18n/index.d.ts",
-            "default": "./src/assets/i18n/index.ts"
-        },
-        "./theme": {
-            "types": "./dist/src/common/theme/index.d.ts",
-            "default": "./src/common/theme/index.ts"
-        },
-        "./components/layouts/font/font-context": {
-            "types": "./dist/src/common/font/font-context.d.ts",
-            "default": "./src/common/font/font-context.tsx"
-        },
-        "./nbars": {
-            "types": "./dist/src/nbars/index.d.ts",
-            "default": "./src/nbars/index.ts"
-        },
-        "./hooks": {
-            "types": "./dist/src/hooks/index.ts",
-            "default": "./src/hooks/index.ts"
-        }
+    "./components": {
+      "types": "./dist/src/components/index.d.ts",
+      "default": "./src/components/index.ts"
     },
-    "scripts": {
-        "build": "tsc && tsc --emitDeclarationOnly",
-        "clean": "git clean -xdf .cache .turbo dist node_modules",
-        "dev": "tsc --watch",
-        "format": "prettier --check . --ignore-path ../../.gitignore",
-        "lint": "eslint",
-        "postui-add": "prettier src --write --list-different",
-        "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-        "ui-add": "pnpm dlx shadcn@canary add",
-        "storybook": "storybook dev -p 6006",
-        "build-storybook": "storybook build"
+    "./components/ui": {
+      "types": "./dist/src/components/ui/index.d.ts",
+      "default": "./src/components/ui/index.ts"
     },
-    "dependencies": {
-        "@hookform/resolvers": "^5.2.2",
-        "@radix-ui/react-accordion": "^1.2.12",
-        "@radix-ui/react-alert-dialog": "^1.1.15",
-        "@radix-ui/react-aspect-ratio": "^1.1.7",
-        "@radix-ui/react-avatar": "catalog:",
-        "@radix-ui/react-checkbox": "^1.3.3",
-        "@radix-ui/react-collapsible": "^1.1.12",
-        "@radix-ui/react-dialog": "catalog:",
-        "@radix-ui/react-dropdown-menu": "catalog:",
-        "@radix-ui/react-icons": "catalog:",
-        "@radix-ui/react-label": "catalog:",
-        "@radix-ui/react-navigation-menu": "^1.2.14",
-        "@radix-ui/react-popover": "^1.1.15",
-        "@radix-ui/react-radio-group": "^1.3.8",
-        "@radix-ui/react-scroll-area": "^1.2.10",
-        "@radix-ui/react-select": "^2.2.6",
-        "@radix-ui/react-separator": "^1.1.7",
-        "@radix-ui/react-slot": "catalog:",
-        "@radix-ui/react-switch": "^1.2.6",
-        "@radix-ui/react-tabs": "^1.1.13",
-        "@radix-ui/react-toast": "catalog:",
-        "@radix-ui/react-tooltip": "catalog:",
-        "@tabler/icons-react": "^3.35.0",
-        "@tanstack/react-table": "^8.20.5",
-        "axios": "^1.12.2",
-        "class-variance-authority": "catalog:",
-        "cmdk": "1.1.1",
-        "date-fns": "^4.1.0",
-        "dayjs": "^1.11.18",
-        "embla-carousel-react": "^8.6.0",
-        "input-otp": "^1.4.2",
-        "js-cookie": "^3.0.5",
-        "lucide-react": "^0.526.0",
-        "react-day-picker": "9.8.0",
-        "react-hook-form": "^7.63.0",
-        "react-router": "^7.9.2",
-        "react-top-loading-bar": "^3.0.2",
-        "recharts": "^3.2.1",
-        "sonner": "catalog:",
-        "tailwind-merge": "catalog:",
-        "zod": "^4.1.11"
+    "./lib": {
+      "types": "./dist/src/lib/index.d.ts",
+      "default": "./src/lib/index.ts"
     },
-    "devDependencies": {
-        "@repo/eslint-config": "workspace:*",
-        "@repo/prettier-config": "workspace:*",
-        "@repo/tailwind-config": "workspace:*",
-        "@repo/typescript-config": "workspace:*",
-        "@types/js-cookie": "^3.0.6",
-        "@types/react": "catalog:",
-        "eslint": "catalog:",
-        "prettier": "catalog:",
-        "react": "catalog:",
-        "react-dom": "catalog:",
-        "typescript": "catalog:",
-        "vite-plugin-svgr": "^4.5.0"
+    "./components/*": {
+      "types": "./dist/src/components/*.d.ts",
+      "default": "./src/components/*"
     },
-    "peerDependencies": {
-        "@tanstack/react-router": "catalog:",
-        "next-themes": "catalog:",
-        "react": "catalog:",
-        "react-dom": "catalog:",
-        "tailwindcss": "catalog:"
+    "./components/layouts/*": {
+      "types": "./dist/src/components/layouts/*.d.ts",
+      "default": "./src/components/layouts/*"
     },
-    "prettier": "@repo/prettier-config"
+    "./components/layouts": {
+      "types": "./dist/src/components/layouts/index.d.ts",
+      "default": "./src/components/layouts/index.ts"
+    },
+    "./components/layout": {
+      "types": "./dist/src/components/layout/index.d.ts",
+      "default": "./src/components/layout/index.ts"
+    },
+    "./components/ui/*": {
+      "types": "./dist/src/components/ui/*.d.ts",
+      "default": "./src/components/ui/*"
+    },
+    "./components/ui/custom/*": {
+      "types": "./dist/src/components/ui/custom/*.d.ts",
+      "default": "./src/components/ui/custom/*"
+    },
+    "./header": {
+      "types": "./dist/src/header/index.d.ts",
+      "default": "./src/header/index.ts"
+    },
+    "./layout": {
+      "types": "./dist/src/layout/index.d.ts",
+      "default": "./src/layout/index.ts"
+    },
+    "./dialogs": {
+      "types": "./dist/src/dialogs/index.d.ts",
+      "default": "./src/dialogs/index.ts"
+    },
+    "./forms": {
+      "types": "./dist/src/forms/index.d.ts",
+      "default": "./src/forms/index.ts"
+    },
+    "./empty": {
+      "types": "./dist/src/empty/index.d.ts",
+      "default": "./src/empty/index.ts"
+    },
+    "./loaders": {
+      "types": "./dist/src/loaders/index.d.ts",
+      "default": "./src/loaders/index.ts"
+    },
+    "./errors": {
+      "types": "./dist/src/errors/index.d.ts",
+      "default": "./src/errors/index.ts"
+    },
+    "./pages": {
+      "types": "./dist/src/pages/index.d.ts",
+      "default": "./src/pages/index.ts"
+    },
+    "./common": {
+      "types": "./dist/src/common/index.d.ts",
+      "default": "./src/common/index.ts"
+    },
+    "./common/i18n": {
+      "types": "./dist/src/common/i18n/index.d.ts",
+      "default": "./src/common/i18n/index.ts"
+    },
+    "./assets/i18n": {
+      "types": "./dist/src/assets/i18n/index.d.ts",
+      "default": "./src/assets/i18n/index.ts"
+    },
+    "./theme": {
+      "types": "./dist/src/common/theme/index.d.ts",
+      "default": "./src/common/theme/index.ts"
+    },
+    "./components/layouts/font/font-context": {
+      "types": "./dist/src/common/font/font-context.d.ts",
+      "default": "./src/common/font/font-context.tsx"
+    },
+    "./nbars": {
+      "types": "./dist/src/nbars/index.d.ts",
+      "default": "./src/nbars/index.ts"
+    },
+    "./hooks": {
+      "types": "./dist/src/hooks/index.ts",
+      "default": "./src/hooks/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc && tsc --emitDeclarationOnly",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc --watch",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "postui-add": "prettier src --write --list-different",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "ui-add": "pnpm dlx shadcn@canary add",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@radix-ui/react-accordion": "^1.2.12",
+    "@radix-ui/react-alert-dialog": "^1.1.15",
+    "@radix-ui/react-aspect-ratio": "^1.1.7",
+    "@radix-ui/react-avatar": "catalog:",
+    "@radix-ui/react-checkbox": "^1.3.3",
+    "@radix-ui/react-collapsible": "^1.1.12",
+    "@radix-ui/react-dialog": "catalog:",
+    "@radix-ui/react-dropdown-menu": "catalog:",
+    "@radix-ui/react-icons": "catalog:",
+    "@radix-ui/react-label": "catalog:",
+    "@radix-ui/react-navigation-menu": "^1.2.14",
+    "@radix-ui/react-popover": "^1.1.15",
+    "@radix-ui/react-radio-group": "^1.3.8",
+    "@radix-ui/react-scroll-area": "^1.2.10",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-separator": "^1.1.7",
+    "@radix-ui/react-slot": "catalog:",
+    "@radix-ui/react-switch": "^1.2.6",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@radix-ui/react-toast": "catalog:",
+    "@radix-ui/react-tooltip": "catalog:",
+    "@tabler/icons-react": "^3.35.0",
+    "@tanstack/react-table": "^8.20.5",
+    "axios": "^1.12.2",
+    "class-variance-authority": "catalog:",
+    "cmdk": "1.1.1",
+    "date-fns": "^4.1.0",
+    "dayjs": "^1.11.18",
+    "embla-carousel-react": "^8.6.0",
+    "input-otp": "^1.4.2",
+    "js-cookie": "^3.0.5",
+    "lucide-react": "^0.526.0",
+    "react-day-picker": "9.8.0",
+    "react-hook-form": "^7.63.0",
+    "react-router": "^7.9.2",
+    "react-top-loading-bar": "^3.0.2",
+    "recharts": "^3.2.1",
+    "sonner": "catalog:",
+    "tailwind-merge": "catalog:",
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/prettier-config": "workspace:*",
+    "@repo/tailwind-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/js-cookie": "^3.0.6",
+    "@types/react": "catalog:",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:",
+    "vite-plugin-svgr": "^4.5.0"
+  },
+  "peerDependencies": {
+    "@tanstack/react-router": "catalog:",
+    "next-themes": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwindcss": "catalog:"
+  },
+  "prettier": "@repo/prettier-config"
 }
