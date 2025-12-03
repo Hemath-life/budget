@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -23,21 +27,49 @@ interface PaginationParams extends FilterParams {
 export class TransactionsService {
   constructor(private prisma: PrismaService) {}
 
-  create(createTransactionDto: CreateTransactionDto, userId: string) {
-    return this.prisma.transaction.create({
-      data: {
-        type: createTransactionDto.type,
-        amount: createTransactionDto.amount,
-        currency: createTransactionDto.currency || 'INR',
-        categoryId: createTransactionDto.categoryId,
-        description: createTransactionDto.description,
-        date: new Date(createTransactionDto.date),
-        isRecurring: createTransactionDto.isRecurring || false,
-        recurringId: createTransactionDto.recurringId,
-        tags: createTransactionDto.tags,
-        userId,
-      },
+  async create(createTransactionDto: CreateTransactionDto, userId: string) {
+    // Verify the category exists
+    const category = await this.prisma.category.findUnique({
+      where: { id: createTransactionDto.categoryId },
     });
+
+    if (!category) {
+      throw new NotFoundException(
+        `Category with ID "${createTransactionDto.categoryId}" not found`,
+      );
+    }
+
+    // Verify category type matches transaction type
+    if (category.type !== createTransactionDto.type) {
+      throw new BadRequestException(
+        `Category type "${category.type}" does not match transaction type "${createTransactionDto.type}"`,
+      );
+    }
+
+    try {
+      return await this.prisma.transaction.create({
+        data: {
+          type: createTransactionDto.type,
+          amount: createTransactionDto.amount,
+          currency: createTransactionDto.currency || 'INR',
+          categoryId: createTransactionDto.categoryId,
+          description: createTransactionDto.description,
+          date: new Date(createTransactionDto.date),
+          isRecurring: createTransactionDto.isRecurring || false,
+          recurringId: createTransactionDto.recurringId,
+          tags: createTransactionDto.tags,
+          userId,
+        },
+        include: { category: true },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2003') {
+          throw new BadRequestException('Invalid foreign key reference');
+        }
+      }
+      throw error;
+    }
   }
 
   private buildWhereClause(params: FilterParams): Prisma.TransactionWhereInput {
