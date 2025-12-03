@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { GoalManager } from '@/apps/components/goals/goal-manager';
-import { Button } from '@/apps/components/ui/button';
+import { GoalManager } from '@/components/goals/goal-manager';
+import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
 export default function GoalsPage() {

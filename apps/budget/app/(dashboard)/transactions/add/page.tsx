@@ -1,4 +1,4 @@
-import { TransactionForm } from '@/apps/components/transactions/transaction-form';
+import { TransactionForm } from '@/components/transactions/transaction-form';
 
 export default function AddTransactionPage() {
   return (

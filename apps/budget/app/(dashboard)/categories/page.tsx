@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { CategoryManager } from '@/apps/components/categories/category-manager';
-import { Button } from '@/apps/components/ui/button';
+import { CategoryManager } from '@/components/categories/category-manager';
+import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
 export default function CategoriesPage() {

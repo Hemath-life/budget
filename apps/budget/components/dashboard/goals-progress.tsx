@@ -1,9 +1,9 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/apps/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useGoals, useSettings } from '@/lib/hooks';
 import { formatCurrency, formatDate, calculatePercentage } from '@/lib/utils';
-import { Progress } from '@/apps/components/ui/progress';
+import { Progress } from '@/components/ui/progress';
 import Link from 'next/link';
 import { Target, Loader2 } from 'lucide-react';
 

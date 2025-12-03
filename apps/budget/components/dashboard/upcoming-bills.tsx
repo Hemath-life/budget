@@ -1,9 +1,9 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/apps/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useReminders, useSettings } from '@/lib/hooks';
 import { formatCurrency, formatDate, getDaysUntil, isOverdue } from '@/lib/utils';
-import { Badge } from '@/apps/components/ui/badge';
+import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { AlertTriangle, Clock, CheckCircle, Loader2 } from 'lucide-react';
 

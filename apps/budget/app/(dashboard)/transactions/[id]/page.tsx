@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import { useTransactions } from '@/lib/hooks';
-import { TransactionForm } from '@/apps/components/transactions/transaction-form';
+import { TransactionForm } from '@/components/transactions/transaction-form';
 import { notFound } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 

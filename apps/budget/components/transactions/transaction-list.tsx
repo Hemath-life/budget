@@ -3,15 +3,15 @@
 import { useState, useEffect } from 'react';
 import { usePaginatedTransactions, useCategories, useSettings, useDeleteTransaction } from '@/lib/hooks';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { Button } from '@/apps/components/ui/button';
-import { Input } from '@/apps/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/apps/components/ui/select';
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -19,14 +19,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/apps/components/ui/table';
+} from '@/components/ui/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/apps/components/ui/dropdown-menu';
-import { Badge } from '@/apps/components/ui/badge';
+} from '@/components/ui/dropdown-menu';
+import { Badge } from '@/components/ui/badge';
 import {
   ArrowUpRight,
   ArrowDownRight,
@@ -50,9 +50,9 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/apps/components/ui/alert-dialog';
+} from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { EmptyState } from '@/apps/components/shared/empty-state';
+import { EmptyState } from '@/components/shared/empty-state';
 
 interface TransactionListProps {
   filterType?: 'income' | 'expense' | 'all';

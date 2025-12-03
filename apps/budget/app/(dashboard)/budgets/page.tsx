@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { BudgetManager } from '@/apps/components/budgets/budget-manager';
-import { Button } from '@/apps/components/ui/button';
+import { BudgetManager } from '@/components/budgets/budget-manager';
+import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
 export default function BudgetsPage() {

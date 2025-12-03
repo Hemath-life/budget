@@ -2,26 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import { Category, TransactionType } from '@/lib/types';
-import { Card, CardContent } from '@/apps/components/ui/card';
-import { Button } from '@/apps/components/ui/button';
-import { Input } from '@/apps/components/ui/input';
-import { Label } from '@/apps/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/apps/components/ui/dialog';
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/apps/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/apps/components/ui/tabs';
-import { Badge } from '@/apps/components/ui/badge';
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 import { Pencil, Trash2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -33,7 +33,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/apps/components/ui/alert-dialog';
+} from '@/components/ui/alert-dialog';
 
 const COLORS = [
   '#EF4444', '#F97316', '#EAB308', '#84CC16', '#22C55E',

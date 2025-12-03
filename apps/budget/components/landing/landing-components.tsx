@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@/apps/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { 
   Wallet, 
   Menu, 

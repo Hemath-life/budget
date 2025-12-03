@@ -1,0 +1,228 @@
+---
+title: Recurring Transactions
+description: Automating recurring income and expenses.
+---
+
+# Recurring Transactions
+
+Automate tracking of transactions that happen on a regular schedule.
+
+## Overview
+
+Recurring transactions handle:
+
+- **Income** - Salary, rental income, dividends
+- **Expenses** - Rent, subscriptions, EMIs, utilities
+
+## Properties
+
+| Property      | Type                  | Description          |
+| ------------- | --------------------- | -------------------- |
+| `id`          | string                | Unique identifier    |
+| `type`        | 'income' \| 'expense' | Transaction type     |
+| `amount`      | number                | Amount               |
+| `currency`    | string                | Currency code        |
+| `category`    | string                | Category ID          |
+| `description` | string                | Description          |
+| `frequency`   | string                | Recurrence frequency |
+| `startDate`   | string                | Start date           |
+| `endDate`     | string?               | Optional end date    |
+| `nextDueDate` | string                | Next occurrence      |
+| `isActive`    | boolean               | Active status        |
+| `createdAt`   | string                | Creation timestamp   |
+
+## Data Model
+
+```typescript
+interface RecurringTransaction {
+  id: string;
+  type: "income" | "expense";
+  amount: number;
+  currency: string;
+  category: string;
+  description: string;
+  frequency:
+    | "daily"
+    | "weekly"
+    | "biweekly"
+    | "monthly"
+    | "quarterly"
+    | "yearly";
+  startDate: string;
+  endDate?: string;
+  nextDueDate: string;
+  isActive: boolean;
+  createdAt: string;
+}
+```
+
+## Frequencies
+
+| Frequency   | Description    | Example              |
+| ----------- | -------------- | -------------------- |
+| `daily`     | Every day      | Daily allowance      |
+| `weekly`    | Every 7 days   | Weekly groceries     |
+| `biweekly`  | Every 14 days  | Bi-weekly paycheck   |
+| `monthly`   | Every month    | Rent, salary         |
+| `quarterly` | Every 3 months | Insurance premium    |
+| `yearly`    | Every year     | Annual subscriptions |
+
+## Creating Recurring Transactions
+
+### Via UI
+
+1. Go to **Recurring** page
+2. Click **Add Recurring**
+3. Fill in details:
+   - Type (Income/Expense)
+   - Amount
+   - Category
+   - Frequency
+   - Start date
+   - Optional end date
+4. Click **Save**
+
+### Via API
+
+```bash
+POST /api/recurring
+Content-Type: application/json
+
+{
+  "type": "expense",
+  "amount": 25000,
+  "currency": "INR",
+  "category": "rent",
+  "description": "Monthly Rent",
+  "frequency": "monthly",
+  "startDate": "2024-01-01"
+}
+```
+
+## How It Works
+
+1. **Setup** - Create recurring transaction with frequency
+2. **Auto-Create** - System creates transactions on due dates
+3. **Track** - View all generated transactions
+4. **Manage** - Pause, edit, or stop recurring items
+
+## Auto-Generation Flow
+
+```
+┌─────────────────┐
+│ Recurring Setup │
+│ Rent: ₹25,000   │
+│ Monthly         │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ System checks   │
+│ nextDueDate     │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Creates actual  │
+│ transaction     │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│ Updates next    │
+│ due date        │
+└─────────────────┘
+```
+
+## Managing Recurring Items
+
+### Pause
+
+Set `isActive: false` to temporarily stop:
+
+```bash
+PUT /api/recurring/[id]
+{
+  "isActive": false
+}
+```
+
+### Edit Amount
+
+Update for future occurrences:
+
+```bash
+PUT /api/recurring/[id]
+{
+  "amount": 27000
+}
+```
+
+### Stop Completely
+
+Set end date or delete:
+
+```bash
+PUT /api/recurring/[id]
+{
+  "endDate": "2024-12-31"
+}
+```
+
+## Common Use Cases
+
+### Monthly Salary
+
+```typescript
+{
+  type: 'income',
+  amount: 85000,
+  category: 'salary',
+  description: 'Monthly Salary',
+  frequency: 'monthly',
+  startDate: '2024-01-01'
+}
+```
+
+### Rent Payment
+
+```typescript
+{
+  type: 'expense',
+  amount: 25000,
+  category: 'rent',
+  description: 'Apartment Rent',
+  frequency: 'monthly',
+  startDate: '2024-01-01'
+}
+```
+
+### Subscriptions
+
+```typescript
+const subscriptions = [
+  { description: "Netflix", amount: 999, frequency: "monthly" },
+  { description: "Spotify", amount: 199, frequency: "monthly" },
+  { description: "Amazon Prime", amount: 1499, frequency: "yearly" },
+];
+```
+
+### Insurance Premium
+
+```typescript
+{
+  type: 'expense',
+  amount: 15000,
+  category: 'insurance',
+  description: 'Health Insurance',
+  frequency: 'quarterly',
+  startDate: '2024-01-15'
+}
+```
+
+## Tips
+
+1. **Set Up Early** - Add recurring items when you start
+2. **Review Monthly** - Check if amounts need updating
+3. **Use End Dates** - For temporary recurring items
+4. **Link to Reminders** - Get notified before due dates

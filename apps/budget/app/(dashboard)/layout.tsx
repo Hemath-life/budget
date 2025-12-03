@@ -1,7 +1,7 @@
 'use client';
 
-import { Sidebar, SidebarContext } from "@/apps/components/layout/sidebar";
-import { Header } from "@/apps/components/layout/header";
+import { Sidebar, SidebarContext } from "@/components/layout/sidebar";
+import { Header } from "@/components/layout/header";
 import { useState, useEffect } from "react";
 
 export default function DashboardLayout({

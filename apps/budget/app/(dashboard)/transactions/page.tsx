@@ -1,5 +1,5 @@
-import { TransactionList } from '@/apps/components/transactions/transaction-list';
-import { Button } from '@/apps/components/ui/button';
+import { TransactionList } from '@/components/transactions/transaction-list';
+import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 

@@ -1,0 +1,121 @@
+---
+title: Installation
+description: Get started with Budget App in your local development environment.
+---
+
+# Installation
+
+Get Budget App running on your local machine.
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **Node.js** >= 22.10.0
+- **pnpm** >= 10.13.1
+
+## Quick Start
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-org/budget-app.git
+cd budget-app
+```
+
+### 2. Install Dependencies
+
+From the monorepo root:
+
+```bash
+pnpm install
+```
+
+### 3. Set Up Environment
+
+Copy the example environment file:
+
+```bash
+cp apps/budget/.env.example apps/budget/.env.local
+```
+
+Edit `.env.local` with your configuration:
+
+```env
+# Database
+DATABASE_URL="file:./budget.db"
+
+# App URL
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
+
+# Environment
+NODE_ENV="development"
+```
+
+### 4. Initialize Database
+
+The database is automatically initialized on first run with:
+
+- Default categories (income & expense)
+- Default currencies
+- Demo user with sample data
+
+### 5. Start Development Server
+
+```bash
+# From monorepo root
+pnpm dev
+
+# Or specifically the budget app
+pnpm dev --filter @repo/web
+```
+
+Visit [http://localhost:3000](http://localhost:3000)
+
+## Project Commands
+
+| Command          | Description              |
+| ---------------- | ------------------------ |
+| `pnpm dev`       | Start development server |
+| `pnpm build`     | Build for production     |
+| `pnpm start`     | Start production server  |
+| `pnpm lint`      | Run ESLint               |
+| `pnpm typecheck` | Run TypeScript checks    |
+
+## Seed Data
+
+The app comes with demo data including:
+
+- **Demo User** - `demo@budgetapp.com`
+- **25+ Transactions** - Sample income and expenses
+- **6 Budgets** - Monthly category budgets
+- **5 Goals** - Savings goals with progress
+- **7 Reminders** - Upcoming bill reminders
+- **5 Recurring Transactions** - Automated transactions
+
+To reset the database, delete `budget.db` and restart the server.
+
+## Troubleshooting
+
+### Database Lock Error
+
+If you see `SQLITE_BUSY`, close any other connections:
+
+```bash
+# Kill any running processes
+lsof budget.db
+```
+
+### Port Already in Use
+
+```bash
+# Kill process on port 3000
+lsof -ti:3000 | xargs kill -9
+```
+
+### Clear Cache
+
+```bash
+rm -rf .next node_modules/.cache
+pnpm install
+```

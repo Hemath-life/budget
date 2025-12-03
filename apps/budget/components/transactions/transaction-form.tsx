@@ -3,19 +3,19 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Transaction, TransactionType, Category, Currency } from '@/lib/types';
-import { Button } from '@/apps/components/ui/button';
-import { Input } from '@/apps/components/ui/input';
-import { Label } from '@/apps/components/ui/label';
-import { Switch } from '@/apps/components/ui/switch';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/apps/components/ui/select';
-import { Calendar } from '@/apps/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/apps/components/ui/popover';
+} from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn, formatDate } from '@/lib/utils';
 import { CalendarIcon, ArrowLeft, Loader2, TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
 import Link from 'next/link';

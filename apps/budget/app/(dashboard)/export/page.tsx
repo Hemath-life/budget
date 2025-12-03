@@ -1,6 +1,6 @@
 'use client';
 
-import { ExportData } from '@/apps/components/export/export-data';
+import { ExportData } from '@/components/export/export-data';
 
 export default function ExportPage() {
   return (

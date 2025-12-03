@@ -4,11 +4,11 @@ import { useState } from 'react';
 import { useSettings, useCurrencies, useCreateCurrency, useUpdateCurrency, usePatchSettings } from '@/lib/hooks';
 import { formatCurrency } from '@/lib/utils';
 import { Currency } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/apps/components/ui/card';
-import { Button } from '@/apps/components/ui/button';
-import { Input } from '@/apps/components/ui/input';
-import { Label } from '@/apps/components/ui/label';
-import { Badge } from '@/apps/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from '@/apps/components/ui/dialog';
+} from '@/components/ui/dialog';
 import {
   Table,
   TableBody,
@@ -24,7 +24,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/apps/components/ui/table';
+} from '@/components/ui/table';
 import { Check, Plus, RefreshCw, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 

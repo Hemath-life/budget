@@ -1,0 +1,228 @@
+---
+title: Project Structure
+description: Understanding the Budget App codebase organization and architecture.
+---
+
+# Project Structure
+
+A comprehensive guide to the Budget App directory structure and architecture.
+
+## Directory Overview
+
+```
+apps/budget/
+├── app/                      # Next.js App Router
+├── components/               # React Components
+├── config/                   # App configuration
+├── content/                  # Documentation content
+├── lib/                      # Utilities & Services
+├── public/                   # Static assets
+└── plan/                     # Planning documents
+```
+
+## App Directory
+
+The `app/` directory uses Next.js 14+ App Router:
+
+```
+app/
+├── (auth)/                   # Auth route group
+│   ├── login/
+│   │   └── page.tsx
+│   ├── signup/
+│   │   └── page.tsx
+│   └── template.tsx
+│
+├── (dashboard)/              # Dashboard route group
+│   ├── budgets/
+│   │   └── page.tsx
+│   ├── categories/
+│   │   └── page.tsx
+│   ├── dashboard/
+│   │   └── page.tsx
+│   ├── expenses/
+│   │   └── page.tsx
+│   ├── export/
+│   │   └── page.tsx
+│   ├── goals/
+│   │   └── page.tsx
+│   ├── income/
+│   │   └── page.tsx
+│   ├── recurring/
+│   │   └── page.tsx
+│   ├── reminders/
+│   │   └── page.tsx
+│   ├── reports/
+│   │   └── page.tsx
+│   ├── settings/
+│   │   └── page.tsx
+│   ├── transactions/
+│   │   └── page.tsx
+│   ├── layout.tsx
+│   └── template.tsx
+│
+├── api/                      # API Routes
+│   ├── budgets/
+│   ├── categories/
+│   ├── currencies/
+│   ├── dashboard/
+│   ├── goals/
+│   ├── recurring/
+│   ├── reminders/
+│   ├── seed/
+│   ├── settings/
+│   ├── subscription/
+│   └── transactions/
+│
+├── docs/                     # Documentation pages
+├── globals.css
+├── layout.tsx
+├── page.tsx
+└── template.tsx
+```
+
+## Route Groups
+
+### `(auth)` - Authentication Routes
+
+Unauthenticated pages with minimal layout:
+
+| Route     | Description           |
+| --------- | --------------------- |
+| `/login`  | User login form       |
+| `/signup` | New user registration |
+
+### `(dashboard)` - Protected Routes
+
+Main application with sidebar navigation:
+
+| Route           | Description           |
+| --------------- | --------------------- |
+| `/dashboard`    | Overview with widgets |
+| `/transactions` | All transactions      |
+| `/income`       | Income transactions   |
+| `/expenses`     | Expense transactions  |
+| `/budgets`      | Budget management     |
+| `/goals`        | Financial goals       |
+| `/categories`   | Category CRUD         |
+| `/recurring`    | Recurring items       |
+| `/reminders`    | Bill reminders        |
+| `/reports`      | Charts & analytics    |
+| `/export`       | Data export           |
+| `/settings`     | App settings          |
+
+## Components Directory
+
+Organized by feature domain:
+
+```
+components/
+├── budgets/
+│   └── budget-manager.tsx
+├── categories/
+│   └── category-manager.tsx
+├── dashboard/
+│   ├── budget-overview.tsx
+│   ├── expense-chart.tsx
+│   ├── goals-progress.tsx
+│   ├── recent-transactions.tsx
+│   ├── summary-card.tsx
+│   └── upcoming-bills.tsx
+├── export/
+│   └── export-data.tsx
+├── goals/
+│   └── goal-manager.tsx
+├── landing/
+│   └── ...
+├── layout/
+│   └── ...
+├── providers/
+│   └── ...
+├── recurring/
+│   └── ...
+├── reminders/
+│   └── ...
+├── reports/
+│   └── ...
+├── settings/
+│   └── ...
+├── shared/
+│   └── ...
+├── transactions/
+│   └── ...
+└── ui/
+    ├── button.tsx
+    ├── card.tsx
+    ├── dialog.tsx
+    └── ...
+```
+
+## Lib Directory
+
+Core utilities and services:
+
+```
+lib/
+├── api.ts          # API client functions
+├── auth.ts         # Authentication helpers
+├── db.ts           # Database connection
+├── hooks.ts        # Custom React hooks
+├── plans.ts        # Subscription plans
+├── types.ts        # TypeScript types
+├── utils.ts        # Utility functions
+└── services/       # Business logic
+```
+
+### Key Files
+
+#### `lib/types.ts`
+
+All TypeScript interfaces:
+
+```typescript
+export interface Transaction {
+  id: string;
+  type: "income" | "expense";
+  amount: number;
+  currency: string;
+  category: string;
+  description: string;
+  date: string;
+  // ...
+}
+```
+
+#### `lib/db.ts`
+
+SQLite database connection and schema initialization.
+
+#### `lib/api.ts`
+
+API client functions for data fetching.
+
+## API Routes
+
+RESTful API structure:
+
+```
+api/
+├── transactions/
+│   ├── route.ts          # GET (list), POST (create)
+│   └── [id]/
+│       └── route.ts      # GET, PUT, DELETE
+├── budgets/
+│   ├── route.ts
+│   └── [id]/
+│       └── route.ts
+└── ...
+```
+
+## Configuration Files
+
+| File                 | Purpose               |
+| -------------------- | --------------------- |
+| `next.config.ts`     | Next.js configuration |
+| `tsconfig.json`      | TypeScript settings   |
+| `components.json`    | shadcn/ui config      |
+| `postcss.config.mjs` | PostCSS plugins       |
+| `eslint.config.mjs`  | ESLint rules          |

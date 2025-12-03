@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/apps/components/ui/button";
-import { Input } from "@/apps/components/ui/input";
-import { Label } from "@/apps/components/ui/label";
-import { Checkbox } from "@/apps/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 
 export default function SignupPage() {

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { ReminderManager } from '@/apps/components/reminders/reminder-manager';
-import { Button } from '@/apps/components/ui/button';
+import { ReminderManager } from '@/components/reminders/reminder-manager';
+import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
 export default function RemindersPage() {

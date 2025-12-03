@@ -1,0 +1,217 @@
+---
+title: Reminders
+description: Setting up bill reminders and payment notifications.
+---
+
+# Reminders
+
+Never miss a bill payment with automated reminders.
+
+## Overview
+
+Reminders help you:
+
+- Track upcoming bills
+- Get notified before due dates
+- Mark payments as complete
+- Handle recurring bills
+
+## Properties
+
+| Property       | Type    | Description           |
+| -------------- | ------- | --------------------- |
+| `id`           | string  | Unique identifier     |
+| `title`        | string  | Reminder title        |
+| `amount`       | number  | Bill amount           |
+| `currency`     | string  | Currency code         |
+| `dueDate`      | string  | Payment due date      |
+| `category`     | string  | Category ID           |
+| `isRecurring`  | boolean | Recurring bill?       |
+| `frequency`    | string? | Recurrence frequency  |
+| `isPaid`       | boolean | Payment status        |
+| `notifyBefore` | number  | Days before to notify |
+| `createdAt`    | string  | Creation timestamp    |
+
+## Data Model
+
+```typescript
+interface Reminder {
+  id: string;
+  title: string;
+  amount: number;
+  currency: string;
+  dueDate: string;
+  category: string;
+  isRecurring: boolean;
+  frequency?:
+    | "daily"
+    | "weekly"
+    | "biweekly"
+    | "monthly"
+    | "quarterly"
+    | "yearly";
+  isPaid: boolean;
+  notifyBefore: number; // days
+  createdAt: string;
+}
+```
+
+## Creating Reminders
+
+### Via UI
+
+1. Go to **Reminders** page
+2. Click **Add Reminder**
+3. Enter details:
+   - Title (e.g., "Electricity Bill")
+   - Amount
+   - Due date
+   - Category
+   - Recurring (Yes/No)
+   - Notify before (days)
+4. Click **Save**
+
+### Via API
+
+```bash
+POST /api/reminders
+Content-Type: application/json
+
+{
+  "title": "Electricity Bill",
+  "amount": 4500,
+  "currency": "INR",
+  "dueDate": "2024-12-15",
+  "category": "utilities",
+  "isRecurring": true,
+  "frequency": "monthly",
+  "notifyBefore": 3
+}
+```
+
+## Reminder States
+
+### Upcoming
+
+Bills due in the future:
+
+```
+┌─────────────────────────────┐
+│ ⏰ Electricity Bill         │
+│ ₹4,500 due in 5 days        │
+│ 📅 Dec 15, 2024             │
+│ [Mark as Paid]              │
+└─────────────────────────────┘
+```
+
+### Due Soon
+
+Bills within notification period:
+
+```
+┌─────────────────────────────┐
+│ ⚠️ Internet Bill            │
+│ ₹1,800 due tomorrow!        │
+│ 📅 Dec 4, 2024              │
+│ [Mark as Paid]              │
+└─────────────────────────────┘
+```
+
+### Overdue
+
+Past due date, unpaid:
+
+```
+┌─────────────────────────────┐
+│ 🔴 Credit Card Bill         │
+│ ₹35,000 overdue by 2 days   │
+│ 📅 Dec 1, 2024              │
+│ [Mark as Paid]              │
+└─────────────────────────────┘
+```
+
+### Paid
+
+Completed payments:
+
+```
+┌─────────────────────────────┐
+│ ✅ Rent Payment             │
+│ ₹25,000 paid                │
+│ 📅 Dec 1, 2024              │
+└─────────────────────────────┘
+```
+
+## Mark as Paid
+
+```bash
+PUT /api/reminders/[id]
+{
+  "isPaid": true
+}
+```
+
+When marked paid for recurring reminders:
+
+1. Current reminder marked as paid
+2. Next due date calculated
+3. New reminder created for next occurrence
+
+## Dashboard Widget
+
+Upcoming bills shown on dashboard:
+
+```
+Upcoming Bills
+────────────────────────────────
+⚠️ Internet Bill    ₹1,800  Tomorrow
+⏰ Electricity      ₹4,500  5 days
+⏰ Netflix          ₹999    11 days
+⏰ Credit Card      ₹35,000 8 days
+────────────────────────────────
+Total Due: ₹42,299
+```
+
+## Notification Settings
+
+Configure when to be notified:
+
+| Setting            | Description             |
+| ------------------ | ----------------------- |
+| `notifyBefore: 1`  | 1 day before            |
+| `notifyBefore: 3`  | 3 days before (default) |
+| `notifyBefore: 7`  | 1 week before           |
+| `notifyBefore: 14` | 2 weeks before          |
+
+## Common Reminders
+
+```typescript
+const commonReminders = [
+  { title: "Rent", amount: 25000, frequency: "monthly", notifyBefore: 5 },
+  { title: "Electricity", amount: 4500, frequency: "monthly", notifyBefore: 3 },
+  { title: "Internet", amount: 1800, frequency: "monthly", notifyBefore: 3 },
+  { title: "Mobile Bill", amount: 599, frequency: "monthly", notifyBefore: 3 },
+  { title: "Netflix", amount: 999, frequency: "monthly", notifyBefore: 1 },
+  { title: "Credit Card", amount: 0, frequency: "monthly", notifyBefore: 7 },
+  {
+    title: "Insurance",
+    amount: 15000,
+    frequency: "quarterly",
+    notifyBefore: 14,
+  },
+  {
+    title: "Car Service",
+    amount: 5000,
+    frequency: "quarterly",
+    notifyBefore: 7,
+  },
+];
+```
+
+## Tips
+
+1. **Set Realistic Notify Days** - Give yourself enough time
+2. **Use Categories** - Helps with budgeting
+3. **Check Weekly** - Review upcoming bills
+4. **Mark Promptly** - Keep status accurate
+5. **Variable Amounts** - Update when bill amount changes

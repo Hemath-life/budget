@@ -1,0 +1,190 @@
+---
+title: Categories
+description: Managing income and expense categories.
+---
+
+# Categories
+
+Categories help organize transactions into meaningful groups for tracking and analysis.
+
+## Overview
+
+Categories are:
+
+- **Pre-defined** - Default set for common needs
+- **Typed** - Either income or expense
+- **Visual** - With icons and colors
+
+## Category Properties
+
+| Property | Type                  | Description       |
+| -------- | --------------------- | ----------------- |
+| `id`     | string                | Unique identifier |
+| `name`   | string                | Display name      |
+| `type`   | 'income' \| 'expense' | Category type     |
+| `icon`   | string                | Lucide icon name  |
+| `color`  | string                | Hex color code    |
+
+## Data Model
+
+```typescript
+interface Category {
+  id: string;
+  name: string;
+  type: "income" | "expense";
+  icon: string;
+  color: string;
+}
+```
+
+## Default Categories
+
+### Income Categories
+
+| ID             | Name          | Icon       | Color   |
+| -------------- | ------------- | ---------- | ------- |
+| `salary`       | Salary        | Briefcase  | #10B981 |
+| `freelance`    | Freelance     | Laptop     | #3B82F6 |
+| `investments`  | Investments   | TrendingUp | #8B5CF6 |
+| `rental`       | Rental Income | Home       | #F59E0B |
+| `gifts-income` | Gifts         | Gift       | #EC4899 |
+| `other-income` | Other Income  | Plus       | #6B7280 |
+
+### Expense Categories
+
+| ID              | Name           | Icon           | Color   |
+| --------------- | -------------- | -------------- | ------- |
+| `rent`          | Rent           | Home           | #EF4444 |
+| `groceries`     | Groceries      | ShoppingCart   | #F97316 |
+| `utilities`     | Utilities      | Zap            | #EAB308 |
+| `transport`     | Transportation | Car            | #84CC16 |
+| `entertainment` | Entertainment  | Film           | #06B6D4 |
+| `shopping`      | Shopping       | ShoppingBag    | #8B5CF6 |
+| `healthcare`    | Healthcare     | Heart          | #EC4899 |
+| `education`     | Education      | GraduationCap  | #14B8A6 |
+| `dining`        | Dining         | Utensils       | #F43F5E |
+| `travel`        | Travel         | Plane          | #0EA5E9 |
+| `subscriptions` | Subscriptions  | CreditCard     | #A855F7 |
+| `insurance`     | Insurance      | Shield         | #64748B |
+| `gifts`         | Gifts          | Gift           | #FB7185 |
+| `other`         | Other          | MoreHorizontal | #9CA3AF |
+
+## Using Categories
+
+### In Transactions
+
+```typescript
+// Creating a transaction with category
+const transaction = {
+  type: "expense",
+  amount: 5000,
+  category: "groceries", // Category ID
+  description: "Weekly groceries",
+  date: "2024-12-03",
+};
+```
+
+### In Budgets
+
+```typescript
+// Creating a budget for a category
+const budget = {
+  category: "groceries", // Category ID
+  amount: 15000,
+  period: "monthly",
+};
+```
+
+## Category API
+
+### List Categories
+
+```bash
+GET /api/categories
+```
+
+Response:
+
+```json
+{
+  "categories": [
+    {
+      "id": "salary",
+      "name": "Salary",
+      "type": "income",
+      "icon": "Briefcase",
+      "color": "#10B981"
+    },
+    ...
+  ]
+}
+```
+
+### Filter by Type
+
+```bash
+GET /api/categories?type=expense
+```
+
+## Icons Reference
+
+Categories use [Lucide React](https://lucide.dev/icons/) icons:
+
+```tsx
+import {
+  Briefcase,
+  Laptop,
+  Home,
+  ShoppingCart,
+  Car,
+  Film,
+  Heart,
+  Plane,
+  // ...
+} from "lucide-react";
+```
+
+## Color Palette
+
+Suggested colors by category type:
+
+### Income Colors (Greens/Blues)
+
+```
+#10B981 - Emerald (Salary)
+#3B82F6 - Blue (Freelance)
+#8B5CF6 - Violet (Investments)
+#F59E0B - Amber (Rental)
+```
+
+### Expense Colors (Full Spectrum)
+
+```
+#EF4444 - Red (Rent)
+#F97316 - Orange (Food)
+#EAB308 - Yellow (Utilities)
+#84CC16 - Lime (Transport)
+#06B6D4 - Cyan (Entertainment)
+```
+
+## Best Practices
+
+1. **Keep it Simple** - Don't create too many categories
+2. **Be Consistent** - Always use the same category for similar items
+3. **Use "Other"** - For rare one-off expenses
+4. **Review Periodically** - Check if categories match your needs
+
+## Spending Analysis by Category
+
+The Reports page shows spending breakdown:
+
+```
+Expense Distribution
+────────────────────────────────
+🏠 Rent           ████████░░ 40%
+🛒 Groceries      ████░░░░░░ 20%
+🚗 Transport      ██░░░░░░░░ 10%
+🍽️ Dining         ██░░░░░░░░ 10%
+🛍️ Shopping       ██░░░░░░░░ 10%
+📦 Other          ██░░░░░░░░ 10%
+```

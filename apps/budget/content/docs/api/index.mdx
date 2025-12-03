@@ -1,0 +1,260 @@
+---
+title: API Overview
+description: REST API reference for Budget App.
+---
+
+# API Reference
+
+Budget App provides a RESTful API for all data operations.
+
+## Base URL
+
+```
+http://localhost:3000/api
+```
+
+## Authentication
+
+Currently uses session-based auth. API routes check for authenticated user.
+
+## Response Format
+
+All responses follow this format:
+
+### Success
+
+```json
+{
+  "data": { ... },
+  "message": "Success"
+}
+```
+
+### Error
+
+```json
+{
+  "error": "Error message",
+  "code": "ERROR_CODE"
+}
+```
+
+## Endpoints Overview
+
+| Endpoint                 | Methods          | Description            |
+| ------------------------ | ---------------- | ---------------------- |
+| `/api/transactions`      | GET, POST        | Transactions           |
+| `/api/transactions/[id]` | GET, PUT, DELETE | Single transaction     |
+| `/api/budgets`           | GET, POST        | Budgets                |
+| `/api/budgets/[id]`      | GET, PUT, DELETE | Single budget          |
+| `/api/goals`             | GET, POST        | Goals                  |
+| `/api/goals/[id]`        | GET, PUT, DELETE | Single goal            |
+| `/api/categories`        | GET              | Categories             |
+| `/api/recurring`         | GET, POST        | Recurring transactions |
+| `/api/recurring/[id]`    | GET, PUT, DELETE | Single recurring       |
+| `/api/reminders`         | GET, POST        | Reminders              |
+| `/api/reminders/[id]`    | GET, PUT, DELETE | Single reminder        |
+| `/api/dashboard`         | GET              | Dashboard data         |
+| `/api/settings`          | GET, PUT         | App settings           |
+| `/api/currencies`        | GET              | Currencies             |
+
+## Common Parameters
+
+### Pagination
+
+```
+GET /api/transactions?page=1&limit=20
+```
+
+### Filtering
+
+```
+GET /api/transactions?type=expense&category=groceries
+```
+
+### Date Range
+
+```
+GET /api/transactions?dateFrom=2024-01-01&dateTo=2024-12-31
+```
+
+### Sorting
+
+```
+GET /api/transactions?sortBy=date&order=desc
+```
+
+## Transactions API
+
+### List Transactions
+
+```bash
+GET /api/transactions
+```
+
+Query Parameters:
+
+| Param      | Type   | Description           |
+| ---------- | ------ | --------------------- |
+| `type`     | string | 'income' \| 'expense' |
+| `category` | string | Category ID           |
+| `dateFrom` | string | Start date            |
+| `dateTo`   | string | End date              |
+| `search`   | string | Search term           |
+
+Response:
+
+```json
+{
+  "transactions": [
+    {
+      "id": "abc123",
+      "type": "expense",
+      "amount": 1500,
+      "currency": "INR",
+      "category": "groceries",
+      "description": "Weekly groceries",
+      "date": "2024-12-03",
+      "createdAt": "2024-12-03T10:00:00Z"
+    }
+  ],
+  "total": 100,
+  "page": 1,
+  "limit": 20
+}
+```
+
+### Create Transaction
+
+```bash
+POST /api/transactions
+Content-Type: application/json
+
+{
+  "type": "expense",
+  "amount": 1500,
+  "currency": "INR",
+  "category": "groceries",
+  "description": "Weekly groceries",
+  "date": "2024-12-03"
+}
+```
+
+### Get Transaction
+
+```bash
+GET /api/transactions/[id]
+```
+
+### Update Transaction
+
+```bash
+PUT /api/transactions/[id]
+Content-Type: application/json
+
+{
+  "amount": 1800,
+  "description": "Updated description"
+}
+```
+
+### Delete Transaction
+
+```bash
+DELETE /api/transactions/[id]
+```
+
+## Budgets API
+
+### List Budgets
+
+```bash
+GET /api/budgets
+```
+
+### Create Budget
+
+```bash
+POST /api/budgets
+Content-Type: application/json
+
+{
+  "category": "groceries",
+  "amount": 15000,
+  "currency": "INR",
+  "period": "monthly"
+}
+```
+
+## Goals API
+
+### List Goals
+
+```bash
+GET /api/goals
+```
+
+### Create Goal
+
+```bash
+POST /api/goals
+Content-Type: application/json
+
+{
+  "name": "Emergency Fund",
+  "targetAmount": 300000,
+  "currency": "INR",
+  "deadline": "2025-12-31",
+  "icon": "Shield",
+  "color": "#10B981"
+}
+```
+
+### Update Progress
+
+```bash
+PUT /api/goals/[id]
+Content-Type: application/json
+
+{
+  "currentAmount": 150000
+}
+```
+
+## Dashboard API
+
+### Get Dashboard Data
+
+```bash
+GET /api/dashboard
+```
+
+Response:
+
+```json
+{
+  "summary": {
+    "totalIncome": 105000,
+    "totalExpenses": 65000,
+    "balance": 40000,
+    "savingsRate": 38
+  },
+  "recentTransactions": [...],
+  "budgetOverview": [...],
+  "upcomingBills": [...],
+  "goalsProgress": [...]
+}
+```
+
+## Error Codes
+
+| Code  | Description                         |
+| ----- | ----------------------------------- |
+| `400` | Bad Request - Invalid input         |
+| `401` | Unauthorized - Not logged in        |
+| `404` | Not Found - Resource doesn't exist  |
+| `500` | Server Error - Something went wrong |
+
+## Rate Limiting
+
+Currently no rate limiting for local development.

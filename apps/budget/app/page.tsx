@@ -1,14 +1,14 @@
-import { 
-  LandingHeader, 
-  HeroSection, 
+import {
+  CTASection,
+  FAQSection,
   FeaturesSection,
+  HeroSection,
+  LandingFooter,
+  LandingHeader,
   PagesOutlineSection,
-  TestimonialsSection, 
-  FAQSection, 
-  CTASection, 
-  LandingFooter 
-} from '@/apps/components/landing/landing-components';
-import { PricingSection } from '@/apps/components/landing/pricing-section';
+  TestimonialsSection,
+} from '@/components/landing/landing-components';
+import { PricingSection } from '@/components/landing/pricing-section';
 
 export default function LandingPage() {
   return (

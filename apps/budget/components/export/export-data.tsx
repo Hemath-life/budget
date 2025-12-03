@@ -3,18 +3,18 @@
 import { useState } from 'react';
 import { exportToCSV, formatDate } from '@/lib/utils';
 import { useTransactions, useCategories, useBudgets, useGoals, useReminders, useRecurring } from '@/lib/hooks';
-import { Card, CardContent } from '@/apps/components/ui/card';
-import { Button } from '@/apps/components/ui/button';
-import { Label } from '@/apps/components/ui/label';
-import { Calendar } from '@/apps/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/apps/components/ui/popover';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/apps/components/ui/select';
+} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import { CalendarIcon, Download, FileSpreadsheet, Check, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';

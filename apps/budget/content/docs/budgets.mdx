@@ -1,0 +1,152 @@
+---
+title: Budgets
+description: Creating and managing budgets to control spending.
+---
+
+# Budgets
+
+Budgets help you set spending limits for different categories and track your progress.
+
+## Overview
+
+A budget defines:
+
+- **Category** - What spending area (groceries, entertainment, etc.)
+- **Amount** - Maximum spending limit
+- **Period** - Time frame (weekly, monthly, quarterly, yearly)
+- **Spent** - Current spending in that period
+
+## Budget Properties
+
+| Property    | Type   | Description        |
+| ----------- | ------ | ------------------ |
+| `id`        | string | Unique identifier  |
+| `category`  | string | Category ID        |
+| `amount`    | number | Budget limit       |
+| `currency`  | string | Currency code      |
+| `period`    | string | Budget period      |
+| `spent`     | number | Amount spent       |
+| `startDate` | string | Period start date  |
+| `createdAt` | string | Creation timestamp |
+
+## Data Model
+
+```typescript
+interface Budget {
+  id: string;
+  category: string;
+  amount: number;
+  currency: string;
+  period: "weekly" | "monthly" | "quarterly" | "yearly";
+  spent: number;
+  startDate: string;
+  createdAt: string;
+}
+```
+
+## Budget Periods
+
+| Period      | Duration  | Use Case              |
+| ----------- | --------- | --------------------- |
+| `weekly`    | 7 days    | Groceries, dining out |
+| `monthly`   | 1 month   | Most common budgets   |
+| `quarterly` | 3 months  | Seasonal expenses     |
+| `yearly`    | 12 months | Annual subscriptions  |
+
+## Creating a Budget
+
+### Via UI
+
+1. Go to **Budgets** page
+2. Click **Create Budget**
+3. Select a category
+4. Enter budget amount
+5. Choose period
+6. Click **Save**
+
+### Via API
+
+```bash
+POST /api/budgets
+Content-Type: application/json
+
+{
+  "category": "groceries",
+  "amount": 15000,
+  "currency": "INR",
+  "period": "monthly"
+}
+```
+
+## Budget Progress
+
+The app calculates progress automatically:
+
+```typescript
+const progress = (spent / amount) * 100;
+
+// Status based on progress
+if (progress >= 100) return "exceeded";
+if (progress >= 80) return "warning";
+return "on-track";
+```
+
+### Visual Indicators
+
+- 🟢 **Green (0-79%)** - On track
+- 🟡 **Yellow (80-99%)** - Approaching limit
+- 🔴 **Red (100%+)** - Budget exceeded
+
+## Budget Dashboard Widget
+
+The dashboard shows budget cards with:
+
+```
+┌─────────────────────────────┐
+│ 🛒 Groceries                │
+│                             │
+│ ████████████░░░░  80%       │
+│                             │
+│ ₹12,000 / ₹15,000           │
+│ ₹3,000 remaining            │
+└─────────────────────────────┘
+```
+
+## Auto-Tracking
+
+When you add an expense:
+
+1. System finds matching budget by category
+2. Updates `spent` amount automatically
+3. Recalculates progress
+
+## Budget Rollover
+
+Budgets reset based on period:
+
+- **Weekly** - Every Sunday/Monday
+- **Monthly** - 1st of each month
+- **Quarterly** - Jan 1, Apr 1, Jul 1, Oct 1
+- **Yearly** - January 1st
+
+## Tips for Budgeting
+
+1. **Start with Essentials** - Rent, utilities, groceries
+2. **Be Realistic** - Base on actual spending history
+3. **Include Buffer** - Add 10-20% for unexpected expenses
+4. **Review Monthly** - Adjust based on patterns
+5. **Prioritize Goals** - Allocate for savings first
+
+## Example Budgets
+
+```typescript
+const monthlyBudgets = [
+  { category: "rent", amount: 25000, period: "monthly" },
+  { category: "groceries", amount: 15000, period: "monthly" },
+  { category: "utilities", amount: 8000, period: "monthly" },
+  { category: "transport", amount: 6000, period: "monthly" },
+  { category: "dining", amount: 8000, period: "monthly" },
+  { category: "entertainment", amount: 5000, period: "monthly" },
+  { category: "shopping", amount: 10000, period: "monthly" },
+];
+```

@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Button } from '@/apps/components/ui/button';
-import { Switch } from '@/apps/components/ui/switch';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { Check, ArrowRight } from 'lucide-react';
 import { PLANS, formatPrice } from '@/lib/plans';
 import type { Plan } from '@/lib/types';

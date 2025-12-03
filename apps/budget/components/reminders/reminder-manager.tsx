@@ -4,29 +4,29 @@ import { useState } from 'react';
 import { useReminders, useCategories, useSettings, useCreateReminder, useUpdateReminder, useDeleteReminder, useMarkReminderPaid, useMarkReminderUnpaid } from '@/lib/hooks';
 import { Reminder } from '@/lib/types';
 import { formatCurrency, getDaysUntil, isOverdue, formatDate } from '@/lib/utils';
-import { Card, CardContent } from '@/apps/components/ui/card';
-import { Button } from '@/apps/components/ui/button';
-import { Input } from '@/apps/components/ui/input';
-import { Label } from '@/apps/components/ui/label';
-import { Switch } from '@/apps/components/ui/switch';
-import { Badge } from '@/apps/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/apps/components/ui/dialog';
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/apps/components/ui/select';
-import { Calendar } from '@/apps/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/apps/components/ui/popover';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/apps/components/ui/tabs';
+} from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import {
   Pencil,
@@ -49,7 +49,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/apps/components/ui/alert-dialog';
+} from '@/components/ui/alert-dialog';
 
 interface ReminderManagerProps {
   isDialogOpen: boolean;

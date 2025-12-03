@@ -1,14 +1,14 @@
 'use client';
 
 import { useTransactions, useSettings } from '@/lib/hooks';
-import { SummaryCard } from '@/apps/components/dashboard/summary-card';
-import { RecentTransactions } from '@/apps/components/dashboard/recent-transactions';
-import { BudgetOverview } from '@/apps/components/dashboard/budget-overview';
-import { GoalsProgress } from '@/apps/components/dashboard/goals-progress';
-import { ExpenseChart } from '@/apps/components/dashboard/expense-chart';
-import { UpcomingBills } from '@/apps/components/dashboard/upcoming-bills';
-import { EmptyState } from '@/apps/components/shared/empty-state';
-import { Button } from '@/apps/components/ui/button';
+import { SummaryCard } from '@/components/dashboard/summary-card';
+import { RecentTransactions } from '@/components/dashboard/recent-transactions';
+import { BudgetOverview } from '@/components/dashboard/budget-overview';
+import { GoalsProgress } from '@/components/dashboard/goals-progress';
+import { ExpenseChart } from '@/components/dashboard/expense-chart';
+import { UpcomingBills } from '@/components/dashboard/upcoming-bills';
+import { EmptyState } from '@/components/shared/empty-state';
+import { Button } from '@/components/ui/button';
 import { Plus, Loader2, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 

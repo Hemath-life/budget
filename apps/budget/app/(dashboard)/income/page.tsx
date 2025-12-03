@@ -1,10 +1,10 @@
 'use client';
 
 import { useTransactions, useCategories, useSettings } from '@/lib/hooks';
-import { TransactionList } from '@/apps/components/transactions/transaction-list';
-import { SummaryCard } from '@/apps/components/dashboard/summary-card';
-import { Card, CardContent, CardHeader, CardTitle } from '@/apps/components/ui/card';
-import { Button } from '@/apps/components/ui/button';
+import { TransactionList } from '@/components/transactions/transaction-list';
+import { SummaryCard } from '@/components/dashboard/summary-card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import {
   PieChart,
   Pie,

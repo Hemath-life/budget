@@ -1,0 +1,215 @@
+---
+title: Goals
+description: Setting and tracking financial goals with Budget App.
+---
+
+# Financial Goals
+
+Goals help you save for specific targets like emergencies, vacations, or major purchases.
+
+## Overview
+
+A goal defines:
+
+- **Target Amount** - How much you want to save
+- **Current Amount** - How much you've saved
+- **Deadline** - When you want to achieve it
+- **Progress** - Visual tracking
+
+## Goal Properties
+
+| Property        | Type    | Description        |
+| --------------- | ------- | ------------------ |
+| `id`            | string  | Unique identifier  |
+| `name`          | string  | Goal name          |
+| `targetAmount`  | number  | Target savings     |
+| `currentAmount` | number  | Current savings    |
+| `currency`      | string  | Currency code      |
+| `deadline`      | string  | Target date        |
+| `category`      | string? | Optional category  |
+| `icon`          | string  | Display icon       |
+| `color`         | string  | Theme color        |
+| `isCompleted`   | boolean | Completion status  |
+| `createdAt`     | string  | Creation timestamp |
+
+## Data Model
+
+```typescript
+interface Goal {
+  id: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  currency: string;
+  deadline: string;
+  category?: string;
+  icon: string;
+  color: string;
+  isCompleted: boolean;
+  createdAt: string;
+}
+```
+
+## Creating Goals
+
+### Via UI
+
+1. Go to **Goals** page
+2. Click **Create Goal**
+3. Enter goal details:
+   - Name (e.g., "Emergency Fund")
+   - Target amount
+   - Deadline
+   - Choose icon and color
+4. Click **Save**
+
+### Via API
+
+```bash
+POST /api/goals
+Content-Type: application/json
+
+{
+  "name": "Emergency Fund",
+  "targetAmount": 300000,
+  "currentAmount": 0,
+  "currency": "INR",
+  "deadline": "2025-12-31",
+  "icon": "Shield",
+  "color": "#10B981"
+}
+```
+
+## Goal Progress
+
+Progress is calculated automatically:
+
+```typescript
+const progress = (currentAmount / targetAmount) * 100;
+const remaining = targetAmount - currentAmount;
+const daysLeft = differenceInDays(deadline, new Date());
+const requiredPerDay = remaining / daysLeft;
+```
+
+### Progress Card
+
+```
+┌─────────────────────────────┐
+│ 🛡️ Emergency Fund           │
+│                             │
+│ ██████████████░░░░░  62%    │
+│                             │
+│ ₹1,85,000 / ₹3,00,000       │
+│ ₹1,15,000 remaining         │
+│                             │
+│ 📅 Deadline: Jun 30, 2025   │
+│ 💰 ₹640/day to reach goal   │
+└─────────────────────────────┘
+```
+
+## Adding to Goals
+
+Update current amount:
+
+```bash
+PUT /api/goals/[id]
+Content-Type: application/json
+
+{
+  "currentAmount": 200000
+}
+```
+
+## Goal Icons
+
+Available icons:
+
+| Icon            | Use Case          |
+| --------------- | ----------------- |
+| `Shield`        | Emergency fund    |
+| `Home`          | House/property    |
+| `Car`           | Vehicle           |
+| `Plane`         | Travel/vacation   |
+| `GraduationCap` | Education         |
+| `Laptop`        | Electronics       |
+| `Smartphone`    | Gadgets           |
+| `Heart`         | Healthcare        |
+| `Gift`          | Special occasions |
+| `Briefcase`     | Business/career   |
+
+## Goal Colors
+
+Suggested color palette:
+
+```typescript
+const goalColors = [
+  "#10B981", // Green - Emergency
+  "#3B82F6", // Blue - Tech
+  "#F59E0B", // Amber - Travel
+  "#8B5CF6", // Purple - Property
+  "#EC4899", // Pink - Personal
+  "#06B6D4", // Cyan - Education
+  "#EF4444", // Red - Urgent
+];
+```
+
+## Goal Strategies
+
+### 1. Emergency Fund
+
+- Target: 3-6 months expenses
+- Priority: High
+- Timeline: 6-12 months
+
+### 2. Short-term Goals (< 1 year)
+
+- Gadgets, vacation, courses
+- Aggressive saving possible
+
+### 3. Medium-term Goals (1-3 years)
+
+- Vehicle, wedding, down payment
+- Regular monthly contributions
+
+### 4. Long-term Goals (3+ years)
+
+- Retirement, property, education
+- Invest for growth
+
+## Tips for Goal Success
+
+1. **Be Specific** - "₹3L Emergency Fund" not "Save money"
+2. **Set Deadlines** - Creates urgency and focus
+3. **Break Down** - Calculate monthly/weekly targets
+4. **Automate** - Set up recurring transfers
+5. **Visualize** - Use icons and colors for motivation
+6. **Review Weekly** - Track progress regularly
+7. **Celebrate Milestones** - 25%, 50%, 75%, 100%
+
+## Example Goals
+
+```typescript
+const goals = [
+  {
+    name: "Emergency Fund",
+    targetAmount: 300000,
+    deadline: "2025-06-30",
+    icon: "Shield",
+    color: "#10B981",
+  },
+  {
+    name: "New Laptop",
+    targetAmount: 120000,
+    deadline: "2025-03-31",
+    icon: "Laptop",
+    color: "#3B82F6",
+  },
+  {
+    name: "Europe Trip",
+    targetAmount: 500000,
+    deadline: "2025-12-31",
+    icon: "Plane",
+    color: "#F59E0B",
+  },
+];
+```

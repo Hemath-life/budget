@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { RecurringManager } from '@/apps/components/recurring/recurring-manager';
-import { Button } from '@/apps/components/ui/button';
+import { RecurringManager } from '@/components/recurring/recurring-manager';
+import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 
 export default function RecurringPage() {

@@ -1,0 +1,152 @@
+---
+title: Transactions
+description: Understanding how transactions work in Budget App.
+---
+
+# Transactions
+
+Transactions are the core of Budget App. Every income and expense is recorded as a transaction.
+
+## Transaction Types
+
+### Income
+
+Money coming in:
+
+- Salary
+- Freelance payments
+- Investment returns
+- Rental income
+- Gifts received
+- Other income
+
+### Expense
+
+Money going out:
+
+- Rent/Mortgage
+- Groceries
+- Utilities
+- Transportation
+- Entertainment
+- Shopping
+- Healthcare
+- And more...
+
+## Transaction Properties
+
+| Property      | Type                  | Description              |
+| ------------- | --------------------- | ------------------------ |
+| `id`          | string                | Unique identifier        |
+| `type`        | 'income' \| 'expense' | Transaction type         |
+| `amount`      | number                | Amount in currency       |
+| `currency`    | string                | Currency code (INR, USD) |
+| `category`    | string                | Category ID              |
+| `description` | string                | Transaction note         |
+| `date`        | string                | Transaction date         |
+| `isRecurring` | boolean               | Is recurring transaction |
+| `recurringId` | string?               | Linked recurring ID      |
+| `tags`        | string[]              | Optional tags            |
+| `createdAt`   | string                | Creation timestamp       |
+| `updatedAt`   | string                | Last update timestamp    |
+
+## Data Model
+
+```typescript
+interface Transaction {
+  id: string;
+  type: "income" | "expense";
+  amount: number;
+  currency: string;
+  category: string;
+  description: string;
+  date: string;
+  isRecurring: boolean;
+  recurringId?: string;
+  tags?: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+## Creating Transactions
+
+### Via UI
+
+1. Navigate to **Transactions** or **Income/Expenses**
+2. Click **Add Transaction**
+3. Fill in the form:
+   - Select type (Income/Expense)
+   - Enter amount
+   - Choose category
+   - Add description
+   - Select date
+   - Optionally add tags
+4. Click **Save**
+
+### Via API
+
+```bash
+POST /api/transactions
+Content-Type: application/json
+
+{
+  "type": "expense",
+  "amount": 1500,
+  "currency": "INR",
+  "category": "groceries",
+  "description": "Weekly groceries",
+  "date": "2024-12-03"
+}
+```
+
+## Filtering Transactions
+
+Filter by:
+
+- **Type** - Income, Expense, or All
+- **Category** - Any category
+- **Date Range** - From/To dates
+- **Amount Range** - Min/Max amounts
+- **Search** - Text search in description
+
+```typescript
+interface FilterOptions {
+  type?: "income" | "expense" | "all";
+  category?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  minAmount?: number;
+  maxAmount?: number;
+  search?: string;
+}
+```
+
+## Tags
+
+Tags provide additional categorization:
+
+```typescript
+// Transaction with tags
+{
+  "type": "expense",
+  "amount": 3500,
+  "category": "dining",
+  "description": "Birthday dinner",
+  "tags": ["birthday", "social", "restaurant"]
+}
+```
+
+Use tags to:
+
+- Track spending by occasion
+- Group related transactions
+- Create custom reports
+
+## Best Practices
+
+1. **Be Consistent** - Use the same category for similar transactions
+2. **Add Descriptions** - Makes it easier to remember later
+3. **Use Tags** - For cross-category grouping
+4. **Record Promptly** - Don't let transactions pile up
+5. **Review Regularly** - Check for duplicates or errors

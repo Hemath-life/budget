@@ -1,0 +1,19 @@
+{
+  "title": "Budget App Documentation",
+  "pages": [
+    "index",
+    "installation",
+    "structure",
+    "---Getting Started---",
+    "transactions",
+    "budgets",
+    "goals",
+    "categories",
+    "---Features---",
+    "recurring",
+    "reminders",
+    "---Reference---",
+    "api",
+    "database"
+  ]
+}
