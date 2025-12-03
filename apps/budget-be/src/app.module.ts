@@ -10,6 +10,7 @@ import { GoalsModule } from './modules/goals/goals.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
 import { RecurringModule } from './modules/recurring/recurring.module';
 import { RemindersModule } from './modules/reminders/reminders.module';
+import { SeedModule } from './modules/seed/seed.module';
 import { SettingsModule } from './modules/settings/settings.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { UsersModule } from './modules/users/users.module';
@@ -28,6 +29,7 @@ import { UsersModule } from './modules/users/users.module';
     SettingsModule,
     CurrenciesModule,
     DashboardModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
