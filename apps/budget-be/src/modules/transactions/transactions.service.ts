@@ -5,6 +5,7 @@ import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 
 interface FilterParams {
+  userId: string;
   type?: string;
   category?: string;
   search?: string;
@@ -22,14 +23,19 @@ interface PaginationParams extends FilterParams {
 export class TransactionsService {
   constructor(private prisma: PrismaService) {}
 
-  create(createTransactionDto: CreateTransactionDto) {
+  create(createTransactionDto: CreateTransactionDto, userId: string) {
     return this.prisma.transaction.create({
-      data: createTransactionDto,
+      data: {
+        ...createTransactionDto,
+        userId,
+      },
     });
   }
 
   private buildWhereClause(params: FilterParams): Prisma.TransactionWhereInput {
-    const where: Prisma.TransactionWhereInput = {};
+    const where: Prisma.TransactionWhereInput = {
+      userId: params.userId,
+    };
 
     if (params.type && params.type !== 'all') {
       where.type = params.type;
@@ -95,23 +101,27 @@ export class TransactionsService {
     };
   }
 
-  findOne(id: string) {
-    return this.prisma.transaction.findUnique({
-      where: { id },
+  findOne(id: string, userId: string) {
+    return this.prisma.transaction.findFirst({
+      where: { id, userId },
       include: { category: true },
     });
   }
 
-  update(id: string, updateTransactionDto: UpdateTransactionDto) {
-    return this.prisma.transaction.update({
-      where: { id },
+  update(
+    id: string,
+    userId: string,
+    updateTransactionDto: UpdateTransactionDto,
+  ) {
+    return this.prisma.transaction.updateMany({
+      where: { id, userId },
       data: updateTransactionDto,
     });
   }
 
-  remove(id: string) {
-    return this.prisma.transaction.delete({
-      where: { id },
+  remove(id: string, userId: string) {
+    return this.prisma.transaction.deleteMany({
+      where: { id, userId },
     });
   }
 }

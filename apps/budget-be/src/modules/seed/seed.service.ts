@@ -367,7 +367,12 @@ export class SeedService {
     for (const tx of transactions) {
       await this.prisma.transaction.create({
         data: {
-          ...tx,
+          type: tx.type,
+          amount: tx.amount,
+          description: tx.description,
+          date: tx.date,
+          userId: demoUser.id,
+          categoryId: tx.categoryId,
           currency: 'INR',
           isRecurring: false,
         },

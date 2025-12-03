@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -23,12 +24,16 @@ export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
-  create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionsService.create(createTransactionDto);
+  create(@Request() req, @Body() createTransactionDto: CreateTransactionDto) {
+    return this.transactionsService.create(
+      createTransactionDto,
+      req.user.userId,
+    );
   }
 
   @Get()
   findAll(
+    @Request() req,
     @Query('type') type?: string,
     @Query('category') category?: string,
     @Query('search') search?: string,
@@ -38,9 +43,11 @@ export class TransactionsController {
     @Query('pageSize') pageSize?: string,
     @Query('limit') limit?: string,
   ) {
+    const userId = req.user.userId;
     // If pagination params are provided, return paginated response
     if (page && pageSize) {
       return this.transactionsService.findAllPaginated({
+        userId,
         type,
         category,
         search,
@@ -52,6 +59,7 @@ export class TransactionsController {
     }
     // Otherwise return all (optionally filtered)
     return this.transactionsService.findAll({
+      userId,
       type,
       category,
       search,
@@ -62,20 +70,25 @@ export class TransactionsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.transactionsService.findOne(id);
+  findOne(@Request() req, @Param('id') id: string) {
+    return this.transactionsService.findOne(id, req.user.userId);
   }
 
   @Patch(':id')
   update(
+    @Request() req,
     @Param('id') id: string,
     @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
-    return this.transactionsService.update(id, updateTransactionDto);
+    return this.transactionsService.update(
+      id,
+      req.user.userId,
+      updateTransactionDto,
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.transactionsService.remove(id);
+  remove(@Request() req, @Param('id') id: string) {
+    return this.transactionsService.remove(id, req.user.userId);
   }
 }
