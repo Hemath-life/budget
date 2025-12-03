@@ -1,5 +1,6 @@
 'use client';
 
+import { authApi } from '@/lib/api';
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
 import { Label } from '@repo/ui/components/ui/label';
@@ -19,27 +20,26 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setError('');
 
-    if (
-      email === DUMMY_CREDENTIALS.email &&
-      password === DUMMY_CREDENTIALS.password
-    ) {
-      localStorage.setItem('isAuthenticated', 'true');
+    try {
+      const response = await authApi.login({ email, password });
+      authApi.setToken(response.access_token);
       localStorage.setItem(
         'user',
         JSON.stringify({
-          id: 'demo-user',
-          email: DUMMY_CREDENTIALS.email,
-          name: 'Demo User',
+          email,
+          name: email.split('@')[0],
         })
       );
       router.push('/dashboard');
-    } else {
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed');
       setLoading(false);
     }
   };
@@ -68,6 +68,14 @@ export default function LoginPage() {
           ✨ Click to use demo credentials
         </span>
       </button>
+
+      {error && (
+        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
+          <span className="text-sm font-medium text-red-700 dark:text-red-300">
+            {error}
+          </span>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">

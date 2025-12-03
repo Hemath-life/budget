@@ -1,5 +1,6 @@
 'use client';
 
+import { authApi } from '@/lib/api';
 import { Button } from '@repo/ui/components/ui/button';
 import { Checkbox } from '@repo/ui/components/ui/checkbox';
 import { Input } from '@repo/ui/components/ui/input';
@@ -17,25 +18,30 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password.length < 6 || !agreedToTerms) return;
 
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setError('');
 
-    localStorage.setItem('isAuthenticated', 'true');
-    localStorage.setItem(
-      'user',
-      JSON.stringify({
-        id: 'new-user-' + Date.now(),
-        email,
-        name,
-      })
-    );
-
-    router.push('/dashboard');
+    try {
+      const response = await authApi.signup({ email, password, name });
+      authApi.setToken(response.access_token);
+      localStorage.setItem(
+        'user',
+        JSON.stringify({
+          email,
+          name,
+        })
+      );
+      router.push('/dashboard');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Signup failed');
+      setLoading(false);
+    }
   };
 
   return (
@@ -46,6 +52,14 @@ export default function SignupPage() {
           Start your financial journey today
         </p>
       </div>
+
+      {error && (
+        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800">
+          <span className="text-sm font-medium text-red-700 dark:text-red-300">
+            {error}
+          </span>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
