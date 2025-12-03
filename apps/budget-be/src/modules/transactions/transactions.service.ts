@@ -121,7 +121,7 @@ export class TransactionsService {
     return this.prisma.transaction.findMany({
       where,
       include: { category: true },
-      orderBy: { date: 'desc' },
+      orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
       take: params?.limit,
     });
   }
@@ -134,7 +134,7 @@ export class TransactionsService {
       this.prisma.transaction.findMany({
         where,
         include: { category: true },
-        orderBy: { date: 'desc' },
+        orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
         skip,
         take: params.pageSize,
       }),
