@@ -1,11 +1,49 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import type { Category } from './types';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
-export function formatCurrency(amount: number, currency: string = 'USD'): string {
+// Category helper type
+type CategoryLike = string | { id: string; name?: string; color?: string };
+
+// Get category name from category object or ID
+export function getCategoryName(
+  category: CategoryLike,
+  categories: Category[]
+): string {
+  if (typeof category === 'object' && category.name) {
+    return category.name;
+  }
+  const categoryId = typeof category === 'object' ? category.id : category;
+  const cat = categories.find((c) => c.id === categoryId);
+  return cat?.name || categoryId;
+}
+
+// Get category color from category object or ID
+export function getCategoryColor(
+  category: CategoryLike,
+  categories: Category[]
+): string {
+  if (typeof category === 'object' && category.color) {
+    return category.color;
+  }
+  const categoryId = typeof category === 'object' ? category.id : category;
+  const cat = categories.find((c) => c.id === categoryId);
+  return cat?.color || '#6B7280';
+}
+
+// Get category ID from category object or ID
+export function getCategoryId(category: CategoryLike): string {
+  return typeof category === 'object' ? category.id : category;
+}
+
+export function formatCurrency(
+  amount: number,
+  currency: string = 'USD'
+): string {
   // If currency is empty or invalid, just return the number formatted
   if (!currency) {
     return new Intl.NumberFormat('en-US', {
@@ -21,15 +59,44 @@ export function formatCurrency(amount: number, currency: string = 'USD'): string
   }).format(amount);
 }
 
-export function formatDate(date: string | Date, format: string = 'MMM dd, yyyy'): string {
+export function formatDate(
+  date: string | Date,
+  format: string = 'MMM dd, yyyy'
+): string {
   const d = new Date(date);
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  const fullMonths = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  const fullMonths = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
   const day = d.getDate();
   const month = d.getMonth();
   const year = d.getFullYear();
-  
+
   return format
     .replace('MMMM', fullMonths[month])
     .replace('MMM', months[month])
@@ -45,13 +112,19 @@ export function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
 
-export function getMonthRange(date: Date = new Date()): { start: Date; end: Date } {
+export function getMonthRange(date: Date = new Date()): {
+  start: Date;
+  end: Date;
+} {
   const start = new Date(date.getFullYear(), date.getMonth(), 1);
   const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
   return { start, end };
 }
 
-export function getWeekRange(date: Date = new Date()): { start: Date; end: Date } {
+export function getWeekRange(date: Date = new Date()): {
+  start: Date;
+  end: Date;
+} {
   const start = new Date(date);
   start.setDate(date.getDate() - date.getDay());
   const end = new Date(start);
@@ -59,7 +132,10 @@ export function getWeekRange(date: Date = new Date()): { start: Date; end: Date 
   return { start, end };
 }
 
-export function getYearRange(date: Date = new Date()): { start: Date; end: Date } {
+export function getYearRange(date: Date = new Date()): {
+  start: Date;
+  end: Date;
+} {
   const start = new Date(date.getFullYear(), 0, 1);
   const end = new Date(date.getFullYear(), 11, 31);
   return { start, end };
@@ -75,27 +151,39 @@ export function calculateChange(current: number, previous: number): number {
   return Math.round(((current - previous) / previous) * 100);
 }
 
-export function convertCurrency(amount: number, fromRate: number, toRate: number): number {
+export function convertCurrency(
+  amount: number,
+  fromRate: number,
+  toRate: number
+): number {
   return (amount / fromRate) * toRate;
 }
 
-export function exportToCSV(data: Record<string, unknown>[], filename: string): void {
+export function exportToCSV(
+  data: Record<string, unknown>[],
+  filename: string
+): void {
   if (data.length === 0) return;
-  
+
   const headers = Object.keys(data[0]);
   const csvContent = [
     headers.join(','),
-    ...data.map(row => 
-      headers.map(header => {
-        const value = row[header];
-        if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
-          return `"${value.replace(/"/g, '""')}"`;
-        }
-        return value;
-      }).join(',')
-    )
+    ...data.map((row) =>
+      headers
+        .map((header) => {
+          const value = row[header];
+          if (
+            typeof value === 'string' &&
+            (value.includes(',') || value.includes('"'))
+          ) {
+            return `"${value.replace(/"/g, '""')}"`;
+          }
+          return value;
+        })
+        .join(',')
+    ),
   ].join('\n');
-  
+
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
@@ -122,10 +210,16 @@ export function isOverdue(date: string | Date): boolean {
 
 export function getNextRecurringDate(
   currentDate: string,
-  frequency: 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly'
+  frequency:
+    | 'daily'
+    | 'weekly'
+    | 'biweekly'
+    | 'monthly'
+    | 'quarterly'
+    | 'yearly'
 ): string {
   const date = new Date(currentDate);
-  
+
   switch (frequency) {
     case 'daily':
       date.setDate(date.getDate() + 1);
@@ -146,6 +240,6 @@ export function getNextRecurringDate(
       date.setFullYear(date.getFullYear() + 1);
       break;
   }
-  
+
   return date.toISOString().split('T')[0];
 }

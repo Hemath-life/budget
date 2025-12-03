@@ -117,7 +117,7 @@ export function ExportData() {
     const exportData = data.map((t) => ({
       Date: formatDate(t.date),
       Type: t.type,
-      Category: getCategoryName(t.category),
+      Category: t.category ? getCategoryName(t.category) : '',
       Description: t.description,
       Amount: t.amount,
       Currency: t.currency,

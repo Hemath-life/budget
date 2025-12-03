@@ -280,17 +280,19 @@ export function TransactionList({
                             </div>
                           </TableCell>
                           <TableCell className="w-[15%]">
-                            <Badge
-                              variant="outline"
-                              style={{
-                                borderColor: getCategoryColor(
-                                  transaction.category
-                                ),
-                                color: getCategoryColor(transaction.category),
-                              }}
-                            >
-                              {getCategoryName(transaction.category)}
-                            </Badge>
+                            {transaction.category && (
+                              <Badge
+                                variant="outline"
+                                style={{
+                                  borderColor: getCategoryColor(
+                                    transaction.category
+                                  ),
+                                  color: getCategoryColor(transaction.category),
+                                }}
+                              >
+                                {getCategoryName(transaction.category)}
+                              </Badge>
+                            )}
                           </TableCell>
                           <TableCell className="w-[15%] text-muted-foreground">
                             {formatDate(transaction.date)}
