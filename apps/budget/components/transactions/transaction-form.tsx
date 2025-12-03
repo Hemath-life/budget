@@ -1,24 +1,34 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Transaction, TransactionType, Category, Currency } from '@/lib/types';
-import { Button } from '@repo/ui/components/ui';
-import { Input } from '@repo/ui/components/ui';
-import { Label } from '@repo/ui/components/ui';
-import { Switch } from '@repo/ui/components/ui';
+import { categoriesApi, settingsApi, transactionsApi } from '@/lib/api';
+import { Category, Currency, Transaction, TransactionType } from '@/lib/types';
+import { cn, formatDate } from '@/lib/utils';
 import {
+  Button,
+  Calendar,
+  Input,
+  Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Switch,
 } from '@repo/ui/components/ui';
-import { Calendar } from '@repo/ui/components/ui';
-import { Popover, PopoverContent, PopoverTrigger } from '@repo/ui/components/ui';
-import { cn, formatDate } from '@/lib/utils';
-import { CalendarIcon, ArrowLeft, Loader2, TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
+import {
+  ArrowLeft,
+  CalendarIcon,
+  Loader2,
+  RefreshCw,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 interface TransactionFormProps {
@@ -34,15 +44,21 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
-  const [type, setType] = useState<TransactionType>(transaction?.type || 'expense');
+  const [type, setType] = useState<TransactionType>(
+    transaction?.type || 'expense'
+  );
   const [amount, setAmount] = useState(transaction?.amount?.toString() || '');
   const [currency, setCurrency] = useState(transaction?.currency || '');
   const [category, setCategory] = useState(transaction?.category || '');
-  const [description, setDescription] = useState(transaction?.description || '');
+  const [description, setDescription] = useState(
+    transaction?.description || ''
+  );
   const [date, setDate] = useState<Date>(
     transaction?.date ? new Date(transaction.date) : new Date()
   );
-  const [isRecurring, setIsRecurring] = useState(transaction?.isRecurring || false);
+  const [isRecurring, setIsRecurring] = useState(
+    transaction?.isRecurring || false
+  );
   const [tags, setTags] = useState(transaction?.tags?.join(', ') || '');
 
   useEffect(() => {
@@ -52,14 +68,9 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
 
   const fetchData = async () => {
     try {
-      const [catRes, settingsRes] = await Promise.all([
-        fetch('/api/categories'),
-        fetch('/api/settings'),
-      ]);
-      
       const [catData, settingsData] = await Promise.all([
-        catRes.json(),
-        settingsRes.json(),
+        categoriesApi.getAll(),
+        settingsApi.get(),
       ]);
 
       setCategories(catData);
@@ -77,7 +88,7 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
   };
 
   const filteredCategories = categories.filter((c) => c.type === type);
-  const selectedCurrency = currencies.find(c => c.code === currency);
+  const selectedCurrency = currencies.find((c) => c.code === currency);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,40 +118,27 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
       description: description.trim(),
       date: date.toISOString().split('T')[0],
       isRecurring,
-      tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
+      tags: tags
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean),
     };
 
     try {
       if (mode === 'add') {
-        const res = await fetch('/api/transactions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(transactionData),
-        });
-        
-        if (res.ok) {
-          toast.success('Transaction added successfully');
-          router.push('/transactions');
-        } else {
-          toast.error('Failed to add transaction');
-        }
+        await transactionsApi.create(transactionData);
+        toast.success('Transaction added successfully');
+        router.push('/transactions');
       } else if (transaction) {
-        const res = await fetch(`/api/transactions/${transaction.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(transactionData),
-        });
-        
-        if (res.ok) {
-          toast.success('Transaction updated successfully');
-          router.push('/transactions');
-        } else {
-          toast.error('Failed to update transaction');
-        }
+        await transactionsApi.update(transaction.id, transactionData);
+        toast.success('Transaction updated successfully');
+        router.push('/transactions');
       }
     } catch (error) {
       console.error('Error saving transaction:', error);
-      toast.error('Failed to save transaction');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to save transaction'
+      );
     } finally {
       setSubmitting(false);
     }
@@ -173,7 +171,10 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
         <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
           <button
             type="button"
-            onClick={() => { setType('income'); setCategory(''); }}
+            onClick={() => {
+              setType('income');
+              setCategory('');
+            }}
             className={cn(
               'flex items-center justify-center gap-1.5 py-2 text-sm font-medium rounded-md transition-all',
               type === 'income'
@@ -186,7 +187,10 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
           </button>
           <button
             type="button"
-            onClick={() => { setType('expense'); setCategory(''); }}
+            onClick={() => {
+              setType('expense');
+              setCategory('');
+            }}
             className={cn(
               'flex items-center justify-center gap-1.5 py-2 text-sm font-medium rounded-md transition-all',
               type === 'expense'
@@ -202,7 +206,9 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
         {/* Amount & Currency */}
         <div className="flex gap-2">
           <div className="flex-1">
-            <Label className="text-xs text-muted-foreground mb-1.5 block">Amount</Label>
+            <Label className="text-xs text-muted-foreground mb-1.5 block">
+              Amount
+            </Label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
                 {selectedCurrency?.symbol || '₹'}
@@ -219,7 +225,9 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
             </div>
           </div>
           <div className="w-24">
-            <Label className="text-xs text-muted-foreground mb-1.5 block">Currency</Label>
+            <Label className="text-xs text-muted-foreground mb-1.5 block">
+              Currency
+            </Label>
             <Select value={currency} onValueChange={setCurrency}>
               <SelectTrigger className="h-10 rounded-lg">
                 <SelectValue placeholder="INR" />
@@ -237,7 +245,9 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
 
         {/* Category */}
         <div>
-          <Label className="text-xs text-muted-foreground mb-1.5 block">Category</Label>
+          <Label className="text-xs text-muted-foreground mb-1.5 block">
+            Category
+          </Label>
           <Select value={category} onValueChange={setCategory}>
             <SelectTrigger className="h-10 rounded-lg">
               <SelectValue placeholder="Select category" />
@@ -251,7 +261,10 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
                 filteredCategories.map((c) => (
                   <SelectItem key={c.id} value={c.id}>
                     <div className="flex items-center gap-2">
-                      <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: c.color }} />
+                      <div
+                        className="h-2.5 w-2.5 rounded-full"
+                        style={{ backgroundColor: c.color }}
+                      />
                       {c.name}
                     </div>
                   </SelectItem>
@@ -263,7 +276,9 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
 
         {/* Description */}
         <div>
-          <Label className="text-xs text-muted-foreground mb-1.5 block">Description</Label>
+          <Label className="text-xs text-muted-foreground mb-1.5 block">
+            Description
+          </Label>
           <Input
             placeholder="What's this for?"
             value={description}
@@ -274,7 +289,9 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
 
         {/* Date */}
         <div>
-          <Label className="text-xs text-muted-foreground mb-1.5 block">Date</Label>
+          <Label className="text-xs text-muted-foreground mb-1.5 block">
+            Date
+          </Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -286,7 +303,12 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
-              <Calendar mode="single" selected={date} onSelect={(d) => d && setDate(d)} initialFocus />
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={(d) => d && setDate(d)}
+                initialFocus
+              />
             </PopoverContent>
           </Popover>
         </div>
@@ -328,12 +350,14 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
           >
             Cancel
           </Button>
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             disabled={submitting}
             className={cn(
               'flex-1 h-10 rounded-lg font-medium',
-              type === 'income' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'
+              type === 'income'
+                ? 'bg-green-500 hover:bg-green-600'
+                : 'bg-red-500 hover:bg-red-600'
             )}
           >
             {submitting && <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />}

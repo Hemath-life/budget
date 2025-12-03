@@ -1,5 +1,7 @@
 'use client';
 
+import { categoriesApi } from '@/lib/api';
+import { Category, TransactionType } from '@/lib/types';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,28 +11,27 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@repo/ui/components/ui';
-import { Badge } from '@repo/ui/components/ui';
-import { Button } from '@repo/ui/components/ui';
-import { Card, CardContent } from '@repo/ui/components/ui';
-import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@repo/ui/components/ui';
-import { Input } from '@repo/ui/components/ui';
-import { Label } from '@repo/ui/components/ui';
-import {
+  Input,
+  Label,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
 } from '@repo/ui/components/ui';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/components/ui';
-import { Category, TransactionType } from '@/lib/types';
 import { Loader2, Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -108,8 +109,7 @@ export function CategoryManager({
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch('/api/categories');
-      const data = await res.json();
+      const data = await categoriesApi.getAll();
       setCategories(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -153,35 +153,25 @@ export function CategoryManager({
     setSubmitting(true);
     try {
       if (editCategory) {
-        const res = await fetch(`/api/categories/${editCategory.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, type, icon, color }),
+        const updated = await categoriesApi.update(editCategory.id, {
+          name,
+          type,
+          icon,
+          color,
         });
-
-        if (res.ok) {
-          const updated = await res.json();
-          setCategories(
-            categories.map((c) => (c.id === editCategory.id ? updated : c))
-          );
-          toast.success('Category updated');
-        } else {
-          toast.error('Failed to update category');
-        }
+        setCategories(
+          categories.map((c) => (c.id === editCategory.id ? updated : c))
+        );
+        toast.success('Category updated');
       } else {
-        const res = await fetch('/api/categories', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, type, icon, color }),
+        const newCategory = await categoriesApi.create({
+          name,
+          type,
+          icon,
+          color,
         });
-
-        if (res.ok) {
-          const newCategory = await res.json();
-          setCategories([...categories, newCategory]);
-          toast.success('Category added');
-        } else {
-          toast.error('Failed to add category');
-        }
+        setCategories([...categories, newCategory]);
+        toast.success('Category added');
       }
 
       setIsDialogOpen(false);
@@ -197,20 +187,14 @@ export function CategoryManager({
   const handleDelete = async () => {
     if (deleteId) {
       try {
-        const res = await fetch(`/api/categories/${deleteId}`, {
-          method: 'DELETE',
-        });
-
-        if (res.ok) {
-          setCategories(categories.filter((c) => c.id !== deleteId));
-          toast.success('Category deleted');
-        } else {
-          const data = await res.json();
-          toast.error(data.error || 'Failed to delete category');
-        }
+        await categoriesApi.delete(deleteId);
+        setCategories(categories.filter((c) => c.id !== deleteId));
+        toast.success('Category deleted');
       } catch (error) {
         console.error('Error deleting category:', error);
-        toast.error('Failed to delete category');
+        toast.error(
+          error instanceof Error ? error.message : 'Failed to delete category'
+        );
       }
       setDeleteId(null);
     }

@@ -425,3 +425,23 @@ export const subscriptionApi = {
     );
   },
 };
+
+// ============ SEED ============
+export interface SeedResponse {
+  message: string;
+  counts: {
+    categories: number;
+    transactions: number;
+    budgets: number;
+    goals: number;
+    reminders: number;
+    recurring: number;
+  };
+}
+
+export const seedApi = {
+  seed: () =>
+    fetchApi<SeedResponse>('/seed', {
+      method: 'POST',
+    }),
+};
