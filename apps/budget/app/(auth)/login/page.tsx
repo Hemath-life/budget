@@ -1,5 +1,6 @@
 'use client';
 
+import { useAuth } from '@/components/providers/auth-provider';
 import { authApi } from '@/lib/api';
 import { Button } from '@repo/ui/components/ui/button';
 import { Input } from '@repo/ui/components/ui/input';
@@ -7,7 +8,7 @@ import { Label } from '@repo/ui/components/ui/label';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const DUMMY_CREDENTIALS = {
   email: 'demo@budgetapp.com',
@@ -16,11 +17,19 @@ const DUMMY_CREDENTIALS = {
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login, isAuthenticated } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,18 +38,7 @@ export default function LoginPage() {
 
     try {
       const response = await authApi.login({ email, password });
-      authApi.setToken(response.access_token);
-      if (response.user) {
-        localStorage.setItem('user', JSON.stringify(response.user));
-      } else {
-        localStorage.setItem(
-          'user',
-          JSON.stringify({
-            email,
-            name: email.split('@')[0],
-          })
-        );
-      }
+      login(response.access_token, response.user);
       router.push('/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
