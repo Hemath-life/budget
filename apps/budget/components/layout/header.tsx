@@ -5,13 +5,13 @@ import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { useTransactions, useCategories, useBudgets, useGoals, useSettings, useReminders } from "@/lib/hooks";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@repo/ui/components/ui/dropdown-menu";
 import {
   CommandDialog,
   CommandEmpty,
@@ -20,7 +20,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@/components/ui/command";
+} from "@repo/ui/components/ui/command";
 import { MobileSidebar, useSidebar } from "./sidebar";
 import { 
   Moon, Sun, PanelLeftClose, PanelLeft, Search,
@@ -28,10 +28,10 @@ import {
   PiggyBank, Target, BarChart3, Repeat, Bell, Download, Palette, DollarSign,
   Plus, ArrowUpRight, ArrowDownRight, Settings, LogOut
 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/ui/avatar";
+import { Badge } from "@repo/ui/components/ui/badge";
 import Link from "next/link";
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@repo/ui/components/ui/tooltip";
 
 export function Header() {
   const [open, setOpen] = useState(false);
