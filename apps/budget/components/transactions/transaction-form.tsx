@@ -110,19 +110,26 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
 
     setSubmitting(true);
 
+    // Create date at noon UTC to avoid timezone issues
+    const utcDate = new Date(
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0)
+    );
+
+    const tagsValue = tags
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean)
+      .join(',');
+
     const transactionData = {
       type,
       amount: parseFloat(amount),
       currency: currency || defaultCurrency,
       categoryId: category,
       description: description.trim(),
-      date: date.toISOString().split('T')[0],
+      date: utcDate.toISOString(),
       isRecurring,
-      tags: tags
-        .split(',')
-        .map((t) => t.trim())
-        .filter(Boolean)
-        .join(','),
+      ...(tagsValue ? { tags: tagsValue } : {}),
     };
 
     try {

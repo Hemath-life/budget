@@ -26,7 +26,15 @@ export class TransactionsService {
   create(createTransactionDto: CreateTransactionDto, userId: string) {
     return this.prisma.transaction.create({
       data: {
-        ...createTransactionDto,
+        type: createTransactionDto.type,
+        amount: createTransactionDto.amount,
+        currency: createTransactionDto.currency || 'INR',
+        categoryId: createTransactionDto.categoryId,
+        description: createTransactionDto.description,
+        date: new Date(createTransactionDto.date),
+        isRecurring: createTransactionDto.isRecurring || false,
+        recurringId: createTransactionDto.recurringId,
+        tags: createTransactionDto.tags,
         userId,
       },
     });
