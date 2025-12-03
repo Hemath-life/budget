@@ -28,6 +28,15 @@ export class TransactionsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createTransactionDto: CreateTransactionDto, userId: string) {
+    // Verify user exists
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID "${userId}" not found`);
+    }
+
     // Verify the category exists
     const category = await this.prisma.category.findUnique({
       where: { id: createTransactionDto.categoryId },
@@ -65,7 +74,9 @@ export class TransactionsService {
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2003') {
-          throw new BadRequestException('Invalid foreign key reference');
+          throw new BadRequestException(
+            `Invalid foreign key reference. Please ensure the user and category exist.`,
+          );
         }
       }
       throw error;
