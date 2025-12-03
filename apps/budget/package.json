@@ -1,5 +1,5 @@
 {
-  "name": "@budget/web",
+  "name": "@repo/web",
   "description": "Main Next.js web application for budget management",
   "version": "0.1.0",
   "private": true,

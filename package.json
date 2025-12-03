@@ -1,6 +1,9 @@
 {
+  "name": "@repo/monorepo",
+  "description": "Personal finance and budget management app - Turborepo monorepo",
   "private": true,
   "type": "module",
+  "license": "MIT",
   "scripts": {
     "auth:schema:generate": "turbo run auth:schema:generate",
     "postauth:schema:generate": "echo NOTE: you will also need to fix styles and db:push your new schema",

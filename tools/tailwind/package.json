@@ -1,5 +1,8 @@
 {
   "name": "@repo/tailwind-config",
+  "description": "Shared Tailwind CSS configuration",
+  "private": true,
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "clean": "git clean -xdf .cache .turbo node_modules",
