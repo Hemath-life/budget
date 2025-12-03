@@ -3,16 +3,16 @@
 import { useState, useMemo } from 'react';
 import { useTransactions, useCategories, useSettings } from '@/lib/hooks';
 import { formatCurrency, formatDate, calculatePercentage } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/components/ui';
+import { Button } from '@repo/ui/components/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from '@repo/ui/components/ui';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/components/ui';
 import {
   BarChart,
   Bar,

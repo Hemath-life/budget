@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { CategoryManager } from '@/components/categories/category-manager';
-import { Button } from '@/components/ui/button';
+import { Button } from '@repo/ui/components/ui';
 import { Plus } from 'lucide-react';
 
 export default function CategoriesPage() {

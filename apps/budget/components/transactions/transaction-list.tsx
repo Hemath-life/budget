@@ -3,15 +3,15 @@
 import { useState, useEffect } from 'react';
 import { usePaginatedTransactions, useCategories, useSettings, useDeleteTransaction } from '@/lib/hooks';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from '@repo/ui/components/ui';
+import { Input } from '@repo/ui/components/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@repo/ui/components/ui';
 import {
   Table,
   TableBody,
@@ -19,14 +19,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from '@repo/ui/components/ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
+} from '@repo/ui/components/ui';
+import { Badge } from '@repo/ui/components/ui';
 import {
   ArrowUpRight,
   ArrowDownRight,
@@ -50,7 +50,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@repo/ui/components/ui';
 import { toast } from 'sonner';
 import { EmptyState } from '@/components/shared/empty-state';
 

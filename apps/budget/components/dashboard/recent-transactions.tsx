@@ -1,10 +1,10 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/components/ui';
 import { useTransactions, useCategories, useSettings } from '@/lib/hooks';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@repo/ui/components/ui';
+import { ScrollArea } from '@repo/ui/components/ui';
 import Link from 'next/link';
 import { ArrowUpRight, ArrowDownRight, Loader2 } from 'lucide-react';
 

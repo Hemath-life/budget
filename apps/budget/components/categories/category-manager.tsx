@@ -9,27 +9,27 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+} from '@repo/ui/components/ui';
+import { Badge } from '@repo/ui/components/ui';
+import { Button } from '@repo/ui/components/ui';
+import { Card, CardContent } from '@repo/ui/components/ui';
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '@repo/ui/components/ui';
+import { Input } from '@repo/ui/components/ui';
+import { Label } from '@repo/ui/components/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from '@repo/ui/components/ui';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/components/ui';
 import { Category, TransactionType } from '@/lib/types';
 import { Loader2, Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';

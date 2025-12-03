@@ -4,25 +4,25 @@ import { useState } from 'react';
 import { useBudgets, useCategories, useSettings, useCreateBudget, useUpdateBudget, useDeleteBudget } from '@/lib/hooks';
 import { Budget } from '@/lib/types';
 import { formatCurrency, calculatePercentage } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
+import { Card, CardContent } from '@repo/ui/components/ui';
+import { Button } from '@repo/ui/components/ui';
+import { Input } from '@repo/ui/components/ui';
+import { Label } from '@repo/ui/components/ui';
+import { Progress } from '@repo/ui/components/ui';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
+} from '@repo/ui/components/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@repo/ui/components/ui';
 import { Pencil, Trash2, AlertTriangle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -34,7 +34,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@repo/ui/components/ui';
 
 interface BudgetManagerProps {
   isDialogOpen: boolean;

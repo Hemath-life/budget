@@ -2,9 +2,9 @@
 
 import { useTheme } from 'next-themes';
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@repo/ui/components/ui';
+import { Label } from '@repo/ui/components/ui';
+import { RadioGroup, RadioGroupItem } from '@repo/ui/components/ui';
 import { cn } from '@/lib/utils';
 import { Sun, Moon, Monitor, Check } from 'lucide-react';
 

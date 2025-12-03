@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/components/ui';
 import { useTransactions, useCategories } from '@/lib/hooks';
 import { formatDate } from '@/lib/utils';
 import {
@@ -18,7 +18,7 @@ import {
   LineChart,
   Line,
 } from 'recharts';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/components/ui';
 import { Loader2 } from 'lucide-react';
 
 export function ExpenseChart() {

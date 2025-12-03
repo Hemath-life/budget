@@ -1,16 +1,16 @@
 'use client';
 
 import { useSettings, useCurrencies, usePatchSettings } from '@/lib/hooks';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@repo/ui/components/ui';
+import { Label } from '@repo/ui/components/ui';
+import { Switch } from '@repo/ui/components/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from '@repo/ui/components/ui';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 

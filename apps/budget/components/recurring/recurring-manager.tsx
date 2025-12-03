@@ -4,28 +4,28 @@ import { useState } from 'react';
 import { useRecurring, useCategories, useSettings, useCreateRecurring, useUpdateRecurring, useDeleteRecurring, useToggleRecurring } from '@/lib/hooks';
 import { RecurringTransaction, TransactionType } from '@/lib/types';
 import { formatCurrency, formatDate, getNextRecurringDate } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent } from '@repo/ui/components/ui';
+import { Button } from '@repo/ui/components/ui';
+import { Input } from '@repo/ui/components/ui';
+import { Label } from '@repo/ui/components/ui';
+import { Badge } from '@repo/ui/components/ui';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/components/ui';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
+} from '@repo/ui/components/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+} from '@repo/ui/components/ui';
+import { Calendar } from '@repo/ui/components/ui';
+import { Popover, PopoverContent, PopoverTrigger } from '@repo/ui/components/ui';
 import { cn } from '@/lib/utils';
 import {
   Pencil,
@@ -48,7 +48,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@repo/ui/components/ui';
 
 interface RecurringManagerProps {
   isDialogOpen: boolean;

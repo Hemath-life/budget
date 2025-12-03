@@ -4,29 +4,29 @@ import { useState } from 'react';
 import { useReminders, useCategories, useSettings, useCreateReminder, useUpdateReminder, useDeleteReminder, useMarkReminderPaid, useMarkReminderUnpaid } from '@/lib/hooks';
 import { Reminder } from '@/lib/types';
 import { formatCurrency, getDaysUntil, isOverdue, formatDate } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@repo/ui/components/ui';
+import { Button } from '@repo/ui/components/ui';
+import { Input } from '@repo/ui/components/ui';
+import { Label } from '@repo/ui/components/ui';
+import { Switch } from '@repo/ui/components/ui';
+import { Badge } from '@repo/ui/components/ui';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
+} from '@repo/ui/components/ui';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from '@repo/ui/components/ui';
+import { Calendar } from '@repo/ui/components/ui';
+import { Popover, PopoverContent, PopoverTrigger } from '@repo/ui/components/ui';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/components/ui';
 import { cn } from '@/lib/utils';
 import {
   Pencil,
@@ -49,7 +49,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@repo/ui/components/ui';
 
 interface ReminderManagerProps {
   isDialogOpen: boolean;

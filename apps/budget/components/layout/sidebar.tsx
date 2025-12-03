@@ -19,9 +19,9 @@ import {
   Menu,
 } from 'lucide-react';
 import { useState, createContext, useContext } from 'react';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
+import { Button } from '@repo/ui/components/ui';
+import { Sheet, SheetContent, SheetTrigger } from '@repo/ui/components/ui';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@repo/ui/components/ui';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },

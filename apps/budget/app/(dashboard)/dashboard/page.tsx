@@ -8,7 +8,7 @@ import { GoalsProgress } from '@/components/dashboard/goals-progress';
 import { ExpenseChart } from '@/components/dashboard/expense-chart';
 import { UpcomingBills } from '@/components/dashboard/upcoming-bills';
 import { EmptyState } from '@/components/shared/empty-state';
-import { Button } from '@/components/ui/button';
+import { Button } from '@repo/ui/components/ui';
 import { Plus, Loader2, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 

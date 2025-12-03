@@ -3,8 +3,8 @@
 import { useTransactions, useCategories, useSettings } from '@/lib/hooks';
 import { TransactionList } from '@/components/transactions/transaction-list';
 import { SummaryCard } from '@/components/dashboard/summary-card';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/components/ui';
+import { Button } from '@repo/ui/components/ui';
 import {
   PieChart,
   Pie,

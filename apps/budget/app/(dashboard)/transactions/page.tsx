@@ -1,5 +1,5 @@
 import { TransactionList } from '@/components/transactions/transaction-list';
-import { Button } from '@/components/ui/button';
+import { Button } from '@repo/ui/components/ui';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 

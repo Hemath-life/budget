@@ -4,21 +4,21 @@ import { useState } from 'react';
 import { useGoals, useSettings, useCreateGoal, useUpdateGoal, useDeleteGoal, useContributeToGoal } from '@/lib/hooks';
 import { Goal } from '@/lib/types';
 import { formatCurrency, calculatePercentage, getDaysUntil } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@repo/ui/components/ui';
+import { Button } from '@repo/ui/components/ui';
+import { Input } from '@repo/ui/components/ui';
+import { Label } from '@repo/ui/components/ui';
+import { Progress } from '@repo/ui/components/ui';
+import { Badge } from '@repo/ui/components/ui';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+} from '@repo/ui/components/ui';
+import { Calendar } from '@repo/ui/components/ui';
+import { Popover, PopoverContent, PopoverTrigger } from '@repo/ui/components/ui';
 import { cn, formatDate } from '@/lib/utils';
 import { Pencil, Trash2, CalendarIcon, Target, Trophy, PlusCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -31,7 +31,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+} from '@repo/ui/components/ui';
 
 const COLORS = [
   '#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444',

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { ReminderManager } from '@/components/reminders/reminder-manager';
-import { Button } from '@/components/ui/button';
+import { Button } from '@repo/ui/components/ui';
 import { Plus } from 'lucide-react';
 
 export default function RemindersPage() {
