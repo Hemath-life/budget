@@ -1,4 +1,3 @@
-import { cn } from '../lib/utils';
 import {
   Dialog,
   DialogContent,
@@ -6,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '#/components/ui/dialog';
+import { cn } from '../lib/utils';
 
 export interface BaseDialogProps {
   open: boolean;
@@ -40,19 +40,17 @@ export function BaseDialog({
 }: BaseDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent 
+      <DialogContent
         className={cn(
           sizeClasses[size],
           size === 'full' && 'overflow-hidden',
           contentClassName,
-          className
+          className,
         )}
       >
         <DialogHeader className={cn('text-left', headerClassName)}>
           <DialogTitle>{title}</DialogTitle>
-          {description && (
-            <DialogDescription>{description}</DialogDescription>
-          )}
+          {description && <DialogDescription>{description}</DialogDescription>}
         </DialogHeader>
         {children}
       </DialogContent>

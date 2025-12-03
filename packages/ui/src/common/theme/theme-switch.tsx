@@ -1,6 +1,3 @@
-import { useEffect } from 'react';
-import { IconCheck, IconMoon, IconSun, IconPalette } from '@tabler/icons-react';
-import { cn } from '../../lib/utils';
 import { Button } from '#/components/ui/button';
 import {
   DropdownMenu,
@@ -9,6 +6,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '#/components/ui/dropdown-menu';
+import { IconCheck, IconMoon, IconPalette, IconSun } from '@tabler/icons-react';
+import { useEffect } from 'react';
+import { cn } from '../../lib/utils';
 import { useTheme } from './theme-context';
 import type { Theme } from './themes';
 
@@ -40,7 +40,7 @@ export function ThemeSwitch() {
           return '#ffffff';
       }
     };
-    
+
     const themeColor = getThemeColor(theme);
     const metaThemeColor = document.querySelector("meta[name='theme-color']");
     if (metaThemeColor) metaThemeColor.setAttribute('content', themeColor);
@@ -81,12 +81,13 @@ export function ThemeSwitch() {
             className={cn('ml-auto', theme !== 'system' && 'hidden')}
           />
         </DropdownMenuItem>
-        
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => setTheme('monday')}>
           <div
             className="mr-2 size-4 rounded-full border border-border"
-            style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899)' }}
+            style={{
+              background: 'linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899)',
+            }}
           />
           Monday
           <IconCheck
@@ -94,8 +95,7 @@ export function ThemeSwitch() {
             className={cn('ml-auto', theme !== 'monday' && 'hidden')}
           />
         </DropdownMenuItem>
-        
-        <DropdownMenuSeparator />        {/* Color themes */}
+        <DropdownMenuSeparator /> {/* Color themes */}
         <DropdownMenuItem onClick={() => setTheme('blue')}>
           <div className="mr-2 size-4 rounded-full bg-blue-500" />
           Blue

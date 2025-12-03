@@ -1,11 +1,12 @@
-import { useState, useCallback } from 'react';
-import { Upload, X, FileText, Image, File } from 'lucide-react';
-import { cn } from '../lib/utils';
 import { Button } from '#/components/ui/button';
 import { DialogFooter } from '#/components/ui/dialog';
+import { File, FileText, Image, Upload, X } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { cn } from '../lib/utils';
 import { BaseDialog, type BaseDialogProps } from './base-dialog';
 
-export interface FileUploadDialogProps extends Omit<BaseDialogProps, 'children'> {
+export interface FileUploadDialogProps
+  extends Omit<BaseDialogProps, 'children'> {
   onUpload: (files: File[]) => void | Promise<void>;
   onCancel?: () => void;
   acceptedFileTypes?: string[];
@@ -24,7 +25,8 @@ interface FileWithPreview {
 
 const getFileIcon = (fileType: string) => {
   if (fileType.startsWith('image/')) return Image;
-  if (fileType.includes('text') || fileType.includes('document')) return FileText;
+  if (fileType.includes('text') || fileType.includes('document'))
+    return FileText;
   return File;
 };
 
@@ -62,9 +64,9 @@ export function FileUploadDialog({
 
   const handleUpload = async () => {
     if (selectedFiles.length === 0) return;
-    
+
     try {
-      await onUpload(selectedFiles.map(f => f.file));
+      await onUpload(selectedFiles.map((f) => f.file));
       setSelectedFiles([]);
       setError(null);
       onOpenChange(false);
@@ -77,55 +79,61 @@ export function FileUploadDialog({
     if (maxFileSize && file.size > maxFileSize) {
       return `File size exceeds ${formatFileSize(maxFileSize)}`;
     }
-    
-    if (acceptedFileTypes && !acceptedFileTypes.some(type => 
-      file.type.match(type.replace('*', '.*'))
-    )) {
+
+    if (
+      acceptedFileTypes &&
+      !acceptedFileTypes.some((type) =>
+        file.type.match(type.replace('*', '.*')),
+      )
+    ) {
       return `File type not accepted. Accepted types: ${acceptedFileTypes.join(', ')}`;
     }
-    
+
     return null;
   };
 
-  const handleFileSelect = useCallback((files: FileList | null) => {
-    if (!files) return;
-    
-    const newFiles: FileWithPreview[] = [];
-    const errors: string[] = [];
-    
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (!file) continue;
-      
-      if (selectedFiles.length + newFiles.length >= maxFiles) {
-        errors.push(`Maximum ${maxFiles} files allowed`);
-        break;
+  const handleFileSelect = useCallback(
+    (files: FileList | null) => {
+      if (!files) return;
+
+      const newFiles: FileWithPreview[] = [];
+      const errors: string[] = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!file) continue;
+
+        if (selectedFiles.length + newFiles.length >= maxFiles) {
+          errors.push(`Maximum ${maxFiles} files allowed`);
+          break;
+        }
+
+        const validationError = validateFile(file);
+        if (validationError) {
+          errors.push(`${file.name}: ${validationError}`);
+          continue;
+        }
+
+        const preview = file.type.startsWith('image/')
+          ? URL.createObjectURL(file)
+          : '';
+
+        newFiles.push({ file, preview });
       }
-      
-      const validationError = validateFile(file);
-      if (validationError) {
-        errors.push(`${file.name}: ${validationError}`);
-        continue;
+
+      if (errors.length > 0) {
+        setError(errors[0] || null);
+        return;
       }
-      
-      const preview = file.type.startsWith('image/') 
-        ? URL.createObjectURL(file)
-        : '';
-        
-      newFiles.push({ file, preview });
-    }
-    
-    if (errors.length > 0) {
-      setError(errors[0] || null);
-      return;
-    }
-    
-    setError(null);
-    setSelectedFiles(prev => [...prev, ...newFiles]);
-  }, [selectedFiles.length, maxFiles, maxFileSize, acceptedFileTypes]);
+
+      setError(null);
+      setSelectedFiles((prev) => [...prev, ...newFiles]);
+    },
+    [selectedFiles.length, maxFiles, maxFileSize, acceptedFileTypes],
+  );
 
   const removeFile = (index: number) => {
-    setSelectedFiles(prev => {
+    setSelectedFiles((prev) => {
       const newFiles = [...prev];
       const removed = newFiles.splice(index, 1)[0];
       if (removed?.preview && removed.file.type.startsWith('image/')) {
@@ -161,7 +169,9 @@ export function FileUploadDialog({
           onDrop={handleDrop}
           className={cn(
             'border-2 border-dashed rounded-lg p-8 text-center transition-colors',
-            dragOver ? 'border-primary bg-primary/10' : 'border-muted-foreground/25',
+            dragOver
+              ? 'border-primary bg-primary/10'
+              : 'border-muted-foreground/25',
           )}
         >
           <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
@@ -205,7 +215,7 @@ export function FileUploadDialog({
               {selectedFiles.map((fileWithPreview, index) => {
                 const { file, preview } = fileWithPreview;
                 const FileIcon = getFileIcon(file.type);
-                
+
                 return (
                   <div
                     key={`${file.name}-${index}`}
@@ -221,7 +231,9 @@ export function FileUploadDialog({
                       <FileIcon className="h-8 w-8 text-muted-foreground" />
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{file.name}</p>
+                      <p className="text-sm font-medium truncate">
+                        {file.name}
+                      </p>
                       <p className="text-xs text-muted-foreground">
                         {formatFileSize(file.size)}
                       </p>
@@ -256,7 +268,8 @@ export function FileUploadDialog({
             onClick={handleUpload}
             disabled={isLoading || selectedFiles.length === 0}
           >
-            {uploadText} {selectedFiles.length > 0 && `(${selectedFiles.length})`}
+            {uploadText}{' '}
+            {selectedFiles.length > 0 && `(${selectedFiles.length})`}
           </Button>
         </DialogFooter>
       </div>

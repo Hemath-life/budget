@@ -1,10 +1,11 @@
-import { AlertTriangle, CheckCircle, XCircle, Info } from 'lucide-react';
-import { cn } from '../lib/utils';
 import { Button } from '#/components/ui/button';
 import { DialogFooter } from '#/components/ui/dialog';
+import { AlertTriangle, CheckCircle, Info, XCircle } from 'lucide-react';
+import { cn } from '../lib/utils';
 import { BaseDialog, type BaseDialogProps } from './base-dialog';
 
-export interface ConfirmationDialogProps extends Omit<BaseDialogProps, 'children'> {
+export interface ConfirmationDialogProps
+  extends Omit<BaseDialogProps, 'children'> {
   type?: 'info' | 'success' | 'warning' | 'error';
   onConfirm: () => void;
   onCancel?: () => void;
@@ -68,9 +69,13 @@ export function ConfirmationDialog({
     >
       <div className="flex flex-col gap-4">
         <div className="flex items-start gap-3">
-          <IconComponent className={cn('mt-1 h-5 w-5 flex-shrink-0', config.className)} />
+          <IconComponent
+            className={cn('mt-1 h-5 w-5 flex-shrink-0', config.className)}
+          />
           <div className="flex-1">
-            {message && <div className="text-sm text-muted-foreground">{message}</div>}
+            {message && (
+              <div className="text-sm text-muted-foreground">{message}</div>
+            )}
           </div>
         </div>
         <DialogFooter>

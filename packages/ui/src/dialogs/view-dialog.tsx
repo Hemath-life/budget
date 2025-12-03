@@ -1,7 +1,7 @@
-import { X } from 'lucide-react';
-import { cn } from '../lib/utils';
 import { Button } from '#/components/ui/button';
 import { ScrollArea } from '#/components/ui/scroll-area';
+import { X } from 'lucide-react';
+import { cn } from '../lib/utils';
 import { BaseDialog, type BaseDialogProps } from './base-dialog';
 
 export interface ViewDialogProps extends BaseDialogProps {
@@ -29,9 +29,7 @@ export function ViewDialog({
       <div className="p-1">{children}</div>
     </ScrollArea>
   ) : (
-    <div className={cn('w-full', maxHeight, 'overflow-hidden')}>
-      {children}
-    </div>
+    <div className={cn('w-full', maxHeight, 'overflow-hidden')}>{children}</div>
   );
 
   return (
@@ -44,7 +42,7 @@ export function ViewDialog({
             size="sm"
             className={cn(
               'absolute right-0 top-0 h-6 w-6 p-0 hover:bg-muted',
-              closeButtonClassName
+              closeButtonClassName,
             )}
             onClick={handleClose}
           >

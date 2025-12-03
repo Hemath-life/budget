@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { Search, X } from 'lucide-react';
-import { cn } from '../lib/utils';
-import { Input } from '#/components/ui/input';
 import { Button } from '#/components/ui/button';
 import { DialogFooter } from '#/components/ui/dialog';
+import { Input } from '#/components/ui/input';
+import { Search, X } from 'lucide-react';
+import { useState } from 'react';
+import { cn } from '../lib/utils';
 import { BaseDialog, type BaseDialogProps } from './base-dialog';
 
 export interface SearchItem {
@@ -14,7 +14,8 @@ export interface SearchItem {
   data?: any;
 }
 
-export interface SearchDialogProps<T = SearchItem> extends Omit<BaseDialogProps, 'children'> {
+export interface SearchDialogProps<T = SearchItem>
+  extends Omit<BaseDialogProps, 'children'> {
   items: T[];
   onSelect: (item: T) => void;
   onCancel?: () => void;
@@ -29,25 +30,30 @@ export interface SearchDialogProps<T = SearchItem> extends Omit<BaseDialogProps,
   maxHeight?: string;
 }
 
-const defaultFilterItems = <T extends SearchItem>(items: T[], searchTerm: string): T[] => {
+const defaultFilterItems = <T extends SearchItem>(
+  items: T[],
+  searchTerm: string,
+): T[] => {
   if (!searchTerm.trim()) return items;
-  
+
   const term = searchTerm.toLowerCase();
-  return items.filter(item => 
-    item.title.toLowerCase().includes(term) ||
-    item.subtitle?.toLowerCase().includes(term)
+  return items.filter(
+    (item) =>
+      item.title.toLowerCase().includes(term) ||
+      item.subtitle?.toLowerCase().includes(term),
   );
 };
 
 const defaultRenderItem = <T extends SearchItem>(item: T, index: number) => (
-  <div key={item.id} className="p-3 hover:bg-muted rounded-md cursor-pointer transition-colors">
+  <div
+    key={item.id}
+    className="p-3 hover:bg-muted rounded-md cursor-pointer transition-colors"
+  >
     <div className="font-medium">{item.title}</div>
     {item.subtitle && (
       <div className="text-sm text-muted-foreground mt-1">{item.subtitle}</div>
     )}
-    {item.content && (
-      <div className="mt-2">{item.content}</div>
-    )}
+    {item.content && <div className="mt-2">{item.content}</div>}
   </div>
 );
 
@@ -137,7 +143,8 @@ export function SearchDialog<T extends SearchItem = SearchItem>({
                   onClick={() => handleItemClick(item)}
                   className={cn(
                     'cursor-pointer transition-colors rounded-md',
-                    selectedItem?.id === item.id && 'bg-primary/10 border border-primary'
+                    selectedItem?.id === item.id &&
+                      'bg-primary/10 border border-primary',
                   )}
                 >
                   {renderItem(item, index)}

@@ -1,6 +1,6 @@
-import { cn } from '../lib/utils';
 import { Button } from '#/components/ui/button';
 import { DialogFooter } from '#/components/ui/dialog';
+import { cn } from '../lib/utils';
 import { BaseDialog, type BaseDialogProps } from './base-dialog';
 
 export interface FormDialogProps extends Omit<BaseDialogProps, 'children'> {
@@ -13,7 +13,13 @@ export interface FormDialogProps extends Omit<BaseDialogProps, 'children'> {
   footerClassName?: string;
   showCancel?: boolean;
   showSubmit?: boolean;
-  submitVariant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  submitVariant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
   children: React.ReactNode;
 }
 
