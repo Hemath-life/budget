@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -15,6 +16,16 @@ export class SeedService {
     await this.prisma.category.deleteMany();
     await this.prisma.currency.deleteMany();
     await this.prisma.settings.deleteMany();
+    await this.prisma.user.deleteMany();
+
+    // Seed Demo User
+    const hashedPassword = await bcrypt.hash('demo123', 10);
+    const demoUser = await this.prisma.user.create({
+      data: {
+        email: 'demo@budgetapp.com',
+        password: hashedPassword,
+      },
+    });
 
     // Seed Categories
     const categories = await Promise.all([
@@ -585,6 +596,7 @@ export class SeedService {
       success: true,
       message: 'Database seeded successfully',
       data: {
+        users: 1,
         categories: categories.length,
         currencies: 4,
         transactions: transactions.length,
@@ -592,6 +604,10 @@ export class SeedService {
         goals: 4,
         reminders: 4,
         recurringTransactions: 4,
+      },
+      demoCredentials: {
+        email: 'demo@budgetapp.com',
+        password: 'demo123',
       },
     };
   }
