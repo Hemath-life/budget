@@ -94,7 +94,6 @@ export function RecurringManager({
 
   const incomeItems = recurring.filter((r) => r.type === 'income');
   const expenseItems = recurring.filter((r) => r.type === 'expense');
-  const activeItems = recurring.filter((r) => r.isActive);
 
   const getCategoryName = (
     category: string | { id: string; name?: string }
