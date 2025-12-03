@@ -1,19 +1,31 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  transactionsApi,
-  categoriesApi,
+  authApi,
   budgetsApi,
-  goalsApi,
-  remindersApi,
-  recurringApi,
-  settingsApi,
+  categoriesApi,
   currenciesApi,
   dashboardApi,
+  goalsApi,
+  recurringApi,
+  remindersApi,
+  settingsApi,
   subscriptionApi,
+  transactionsApi,
 } from './api';
-import type { Transaction, Category, Budget, Goal, Reminder, RecurringTransaction, AppSettings, Currency, Subscription } from './types';
+import type {
+  Budget,
+  Category,
+  Currency,
+  Goal,
+  RecurringTransaction,
+  Reminder,
+  Transaction,
+} from './types';
+
+// Helper to check if user is authenticated
+const isAuthenticated = () => authApi.isAuthenticated();
 
 // Query Keys
 export const queryKeys = {
@@ -36,18 +48,24 @@ export const queryKeys = {
 };
 
 // ============ TRANSACTIONS HOOKS ============
-export function useTransactions(params?: Parameters<typeof transactionsApi.getAll>[0]) {
+export function useTransactions(
+  params?: Parameters<typeof transactionsApi.getAll>[0]
+) {
   return useQuery({
     queryKey: [...queryKeys.transactions, params],
     queryFn: () => transactionsApi.getAll(params),
+    enabled: isAuthenticated(),
   });
 }
 
-export function usePaginatedTransactions(params: Parameters<typeof transactionsApi.getPaginated>[0]) {
+export function usePaginatedTransactions(
+  params: Parameters<typeof transactionsApi.getPaginated>[0]
+) {
   return useQuery({
     queryKey: [...queryKeys.transactions, 'paginated', params],
     queryFn: () => transactionsApi.getPaginated(params),
     placeholderData: (previousData) => previousData,
+    enabled: isAuthenticated(),
   });
 }
 
@@ -55,7 +73,7 @@ export function useTransaction(id: string) {
   return useQuery({
     queryKey: queryKeys.transaction(id),
     queryFn: () => transactionsApi.getById(id),
-    enabled: !!id,
+    enabled: !!id && isAuthenticated(),
   });
 }
 
@@ -102,6 +120,7 @@ export function useCategories(type?: 'income' | 'expense') {
   return useQuery({
     queryKey: [...queryKeys.categories, type],
     queryFn: () => categoriesApi.getAll(type),
+    enabled: isAuthenticated(),
   });
 }
 
@@ -141,6 +160,7 @@ export function useBudgets() {
   return useQuery({
     queryKey: queryKeys.budgets,
     queryFn: budgetsApi.getAll,
+    enabled: isAuthenticated(),
   });
 }
 
@@ -183,6 +203,7 @@ export function useGoals() {
   return useQuery({
     queryKey: queryKeys.goals,
     queryFn: goalsApi.getAll,
+    enabled: isAuthenticated(),
   });
 }
 
@@ -237,6 +258,7 @@ export function useReminders(status?: 'paid' | 'unpaid') {
   return useQuery({
     queryKey: [...queryKeys.reminders, status],
     queryFn: () => remindersApi.getAll(status),
+    enabled: isAuthenticated(),
   });
 }
 
@@ -301,6 +323,7 @@ export function useRecurring(status?: 'active' | 'inactive') {
   return useQuery({
     queryKey: [...queryKeys.recurring, status],
     queryFn: () => recurringApi.getAll(status),
+    enabled: isAuthenticated(),
   });
 }
 
@@ -317,8 +340,13 @@ export function useCreateRecurring() {
 export function useUpdateRecurring() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<RecurringTransaction> }) =>
-      recurringApi.update(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: Partial<RecurringTransaction>;
+    }) => recurringApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.recurring });
     },
@@ -350,6 +378,7 @@ export function useSettings() {
   return useQuery({
     queryKey: queryKeys.settings,
     queryFn: settingsApi.get,
+    enabled: isAuthenticated(),
   });
 }
 
@@ -378,6 +407,7 @@ export function useCurrencies() {
   return useQuery({
     queryKey: queryKeys.currencies,
     queryFn: currenciesApi.getAll,
+    enabled: isAuthenticated(),
   });
 }
 
@@ -420,6 +450,7 @@ export function useDashboard() {
   return useQuery({
     queryKey: queryKeys.dashboard,
     queryFn: dashboardApi.get,
+    enabled: isAuthenticated(),
   });
 }
 
@@ -428,6 +459,7 @@ export function useSubscription(userId?: string) {
   return useQuery({
     queryKey: [...queryKeys.subscription, userId],
     queryFn: () => subscriptionApi.get(userId),
+    enabled: isAuthenticated(),
   });
 }
 
