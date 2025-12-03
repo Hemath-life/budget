@@ -1,0 +1,92 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "tasks": {
+    "dev": {
+      "dependsOn": ["^build"],
+      "persistent": true,
+      "cache": false,
+      "env": ["PUBLIC_*", "PROD", "NODE_ENV"]
+    },
+    "clean": {
+      "cache": false
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*", "tsconfig*.json"],
+      "outputs": ["dist/**", "build/**", ".next/**", "storybook-static/**"],
+      "env": ["PUBLIC_*", "PROD", "NODE_ENV"]
+    },
+    "preview": {
+      "dependsOn": ["build"],
+      "cache": false,
+      "persistent": true
+    },
+    "gen:route": {
+      "cache": false,
+      "inputs": ["src/routes/**"]
+    },
+    "auth:schema:generate": {
+      "cache": false,
+      "interactive": true
+    },
+    "format": {
+      "outputs": [".cache/.prettiercache"],
+      "outputLogs": "new-only"
+    },
+    "lint": {
+      "dependsOn": ["^build"],
+      "outputs": [".cache/.eslintcache"],
+      "inputs": ["$TURBO_DEFAULT$", ".eslintrc*", "eslint.config.*"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": [".cache/tsbuildinfo.json", "tsconfig.tsbuildinfo"],
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"]
+    },
+    "push": {
+      "env": ["DB_POSTGRES_URL"],
+      "cache": false,
+      "interactive": true
+    },
+    "start": {
+      "dependsOn": ["^build"],
+      "persistent": true,
+      "env": ["PUBLIC_*", "PROD", "NODE_ENV"]
+    },
+    "studio": {
+      "cache": false,
+      "persistent": true
+    },
+    "ui-add": {
+      "cache": false,
+      "interactive": true
+    },
+    "postui-add": {
+      "cache": false,
+      "dependsOn": ["ui-add"]
+    },
+    "env:copy-example": {
+      "cache": false
+    },
+    "env:remove": {
+      "cache": false
+    },
+    "knip": {
+      "cache": false,
+      "inputs": ["knip.config.*", "package.json", "src/**"]
+    },
+    "storybook": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "build-storybook": {
+      "dependsOn": ["^build"],
+      "outputs": ["storybook-static/**"],
+      "inputs": ["$TURBO_DEFAULT$", ".storybook/**", "src/stories/**"]
+    }
+  },
+  "globalEnv": ["NODE_ENV", "CI", "VERCEL", "NEXT_PUBLIC_*", "PUBLIC_*"],
+  "globalPassThroughEnv": ["NODE_ENV", "CI", "npm_lifecycle_event", "VERCEL", "VERCEL_*", "PUBLIC_*"]
+}

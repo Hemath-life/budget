@@ -1,0 +1,53 @@
+{
+    "name": "@repo/utils",
+    "private": true,
+    "version": "0.1.0",
+    "type": "module",
+    "sideEffects": false,
+    "files": [
+        "dist"
+    ],
+    "imports": {
+        "#/*": "./src/*"
+    },
+    "exports": {
+        ".": {
+            "types": "./dist/src/index.d.ts",
+            "default": "./src/index.ts"
+        },
+        "./tanstack": {
+            "types": "./dist/src/tanstack/index.d.ts",
+            "default": "./src/tanstack/index.ts"
+        }
+    },
+    "scripts": {
+        "build": "tsc && tsc --emitDeclarationOnly",
+        "clean": "git clean -xdf .cache .turbo dist node_modules",
+        "dev": "tsc --watch",
+        "format": "prettier --check . --ignore-path ../../.gitignore",
+        "lint": "eslint",
+        "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    },
+    "dependencies": {
+        "@tanstack/react-query": "catalog:",
+        "@tanstack/react-router": "catalog:",
+        "date-fns": "^4.1.0",
+        "zod": "^3.23.8"
+    },
+    "devDependencies": {
+        "@repo/eslint-config": "workspace:*",
+        "@repo/prettier-config": "workspace:*",
+        "@repo/typescript-config": "workspace:*",
+        "@types/react": "catalog:",
+        "eslint": "catalog:",
+        "prettier": "catalog:",
+        "typescript": "catalog:"
+    },
+    "peerDependencies": {
+        "@tanstack/react-query": "catalog:",
+        "@tanstack/react-router": "catalog:",
+        "react": "catalog:",
+        "react-dom": "catalog:"
+    },
+    "prettier": "@repo/prettier-config"
+}

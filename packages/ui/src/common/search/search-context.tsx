@@ -1,0 +1,58 @@
+import React from 'react';
+import { CommandMenu } from './command-menu';
+import type { SidebarData } from '#/layout';
+
+interface SearchContextType {
+    open: boolean;
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const SearchContext = React.createContext<SearchContextType | null>(null);
+
+interface Props {
+    children: React.ReactNode;
+    customSidebarData?: SidebarData;
+    placeholder?: string;
+}
+
+export function SearchProvider({
+    children,
+    customSidebarData,
+    placeholder,
+}: Props) {
+    const [open, setOpen] = React.useState(false);
+
+    React.useEffect(() => {
+        const down = (e: KeyboardEvent) => {
+            if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                setOpen((open) => !open);
+            }
+        };
+        document.addEventListener('keydown', down);
+        return () => document.removeEventListener('keydown', down);
+    }, []);
+
+    return (
+        <SearchContext.Provider value={{ open, setOpen }}>
+            {children}
+            <CommandMenu
+                customSidebarData={customSidebarData}
+                placeholder={placeholder}
+            />
+        </SearchContext.Provider>
+    );
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export const useSearch = () => {
+    const searchContext = React.useContext(SearchContext);
+
+    if (!searchContext) {
+        throw new Error(
+            'useSearch has to be used within <SearchContext.Provider>',
+        );
+    }
+
+    return searchContext;
+};
