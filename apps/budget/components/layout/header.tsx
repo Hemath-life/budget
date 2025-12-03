@@ -66,8 +66,8 @@ import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { MobileSidebar, useSidebar } from './sidebar';
 import { useAuth } from '../providers/auth-provider';
+import { MobileSidebar, useSidebar } from './sidebar';
 
 export function Header() {
   const [open, setOpen] = useState(false);
@@ -364,8 +364,10 @@ export function Header() {
                       )}
                       <span>{transaction.description}</span>
                       <span className="ml-auto text-xs text-muted-foreground">
-                        {getCategoryName(transaction.category)} •{' '}
-                        {formatCurrency(transaction.amount, currency)}
+                        {transaction.category
+                          ? getCategoryName(transaction.category)
+                          : 'Uncategorized'}{' '}
+                        • {formatCurrency(transaction.amount, currency)}
                       </span>
                     </CommandItem>
                   ))}
