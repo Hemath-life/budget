@@ -8,11 +8,11 @@ This package provides base TypeScript configurations that can be extended by oth
 
 ## 📦 Available Configurations
 
-| Config | Description | Use For |
-|--------|-------------|---------|
-| `base.json` | Base configuration | General packages |
+| Config                  | Description                  | Use For            |
+| ----------------------- | ---------------------------- | ------------------ |
+| `base.json`             | Base configuration           | General packages   |
 | `internal-package.json` | For internal shared packages | `@repo/*` packages |
-| `vite.json` | Vite applications | Vite-based apps |
+| `vite.json`             | Vite applications            | Vite-based apps    |
 
 ## 🚀 Usage
 
