@@ -1,24 +1,21 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { useTheme } from 'next-themes';
-import { useRouter } from 'next/navigation';
 import {
-  useTransactions,
-  useCategories,
   useBudgets,
+  useCategories,
   useGoals,
-  useSettings,
   useReminders,
+  useSettings,
+  useTransactions,
 } from '@/lib/hooks';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { Button } from '@repo/ui/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@repo/ui/components/ui/dropdown-menu';
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@repo/ui/components/ui/avatar';
+import { Badge } from '@repo/ui/components/ui/badge';
+import { Button } from '@repo/ui/components/ui/button';
 import {
   CommandDialog,
   CommandEmpty,
@@ -28,45 +25,48 @@ import {
   CommandList,
   CommandSeparator,
 } from '@repo/ui/components/ui/command';
-import { MobileSidebar, useSidebar } from './sidebar';
 import {
-  Moon,
-  Sun,
-  PanelLeftClose,
-  PanelLeft,
-  Search,
-  LayoutDashboard,
-  ArrowLeftRight,
-  TrendingUp,
-  TrendingDown,
-  FolderOpen,
-  PiggyBank,
-  Target,
-  BarChart3,
-  Repeat,
-  Bell,
-  Download,
-  Palette,
-  DollarSign,
-  Plus,
-  ArrowUpRight,
-  ArrowDownRight,
-  Settings,
-  LogOut,
-} from 'lucide-react';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@repo/ui/components/ui/avatar';
-import { Badge } from '@repo/ui/components/ui/badge';
-import Link from 'next/link';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@repo/ui/components/ui/dropdown-menu';
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger,
   TooltipProvider,
+  TooltipTrigger,
 } from '@repo/ui/components/ui/tooltip';
+import {
+  ArrowDownRight,
+  ArrowLeftRight,
+  ArrowUpRight,
+  BarChart3,
+  Bell,
+  DollarSign,
+  Download,
+  FolderOpen,
+  LayoutDashboard,
+  LogOut,
+  Moon,
+  Palette,
+  PanelLeft,
+  PanelLeftClose,
+  PiggyBank,
+  Plus,
+  Repeat,
+  Search,
+  Settings,
+  Sun,
+  Target,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-react';
+import { useTheme } from 'next-themes';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { MobileSidebar, useSidebar } from './sidebar';
 
 export function Header() {
   const [open, setOpen] = useState(false);
@@ -210,9 +210,15 @@ export function Header() {
     [transactions]
   );
 
-  const getCategoryName = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return category?.name || categoryId;
+  const getCategoryName = (
+    category: string | { id: string; name?: string }
+  ) => {
+    if (typeof category === 'object' && category.name) {
+      return category.name;
+    }
+    const categoryId = typeof category === 'object' ? category.id : category;
+    const cat = categories.find((c) => c.id === categoryId);
+    return cat?.name || categoryId;
   };
 
   const runCommand = (command: () => void) => {

@@ -1,44 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import { useRecurring, useCategories, useSettings, useCreateRecurring, useUpdateRecurring, useDeleteRecurring, useToggleRecurring } from '@/lib/hooks';
+import {
+  useCategories,
+  useCreateRecurring,
+  useDeleteRecurring,
+  useRecurring,
+  useSettings,
+  useToggleRecurring,
+  useUpdateRecurring,
+} from '@/lib/hooks';
 import { RecurringTransaction, TransactionType } from '@/lib/types';
-import { formatCurrency, formatDate, getNextRecurringDate } from '@/lib/utils';
-import { Card, CardContent } from '@repo/ui/components/ui';
-import { Button } from '@repo/ui/components/ui';
-import { Input } from '@repo/ui/components/ui';
-import { Label } from '@repo/ui/components/ui';
-import { Badge } from '@repo/ui/components/ui';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/components/ui';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@repo/ui/components/ui';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@repo/ui/components/ui';
-import { Calendar } from '@repo/ui/components/ui';
-import { Popover, PopoverContent, PopoverTrigger } from '@repo/ui/components/ui';
-import { cn } from '@/lib/utils';
-import {
-  Pencil,
-  Trash2,
-  CalendarIcon,
-  Repeat,
-  ArrowUpRight,
-  ArrowDownRight,
-  Pause,
-  Play,
-  Loader2,
-} from 'lucide-react';
-import { toast } from 'sonner';
+  cn,
+  formatCurrency,
+  formatDate,
+  getNextRecurringDate,
+} from '@/lib/utils';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -48,14 +25,54 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  Badge,
+  Button,
+  Calendar,
+  Card,
+  CardContent,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input,
+  Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
 } from '@repo/ui/components/ui';
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  CalendarIcon,
+  Loader2,
+  Pause,
+  Pencil,
+  Play,
+  Repeat,
+  Trash2,
+} from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface RecurringManagerProps {
   isDialogOpen: boolean;
   setIsDialogOpen: (open: boolean) => void;
 }
 
-export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringManagerProps) {
+export function RecurringManager({
+  isDialogOpen,
+  setIsDialogOpen,
+}: RecurringManagerProps) {
   const { data: recurring = [], isLoading } = useRecurring();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
@@ -71,19 +88,32 @@ export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringMan
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
-  const [frequency, setFrequency] = useState<RecurringTransaction['frequency']>('monthly');
+  const [frequency, setFrequency] =
+    useState<RecurringTransaction['frequency']>('monthly');
   const [startDate, setStartDate] = useState<Date>(new Date());
 
   const incomeItems = recurring.filter((r) => r.type === 'income');
   const expenseItems = recurring.filter((r) => r.type === 'expense');
   const activeItems = recurring.filter((r) => r.isActive);
 
-  const getCategoryName = (categoryId: string) => {
+  const getCategoryName = (
+    category: string | { id: string; name?: string }
+  ) => {
+    if (typeof category === 'object' && category.name) {
+      return category.name;
+    }
+    const categoryId = typeof category === 'object' ? category.id : category;
     const cat = categories.find((c) => c.id === categoryId);
     return cat?.name || categoryId;
   };
 
-  const getCategoryColor = (categoryId: string) => {
+  const getCategoryColor = (
+    category: string | { id: string; color?: string }
+  ) => {
+    if (typeof category === 'object' && category.color) {
+      return category.color;
+    }
+    const categoryId = typeof category === 'object' ? category.id : category;
     const cat = categories.find((c) => c.id === categoryId);
     return cat?.color || '#6B7280';
   };
@@ -104,7 +134,11 @@ export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringMan
     setEditItem(item);
     setType(item.type);
     setAmount(item.amount.toString());
-    setCategory(item.category);
+    const categoryId =
+      typeof item.category === 'object'
+        ? (item.category as { id: string }).id
+        : item.category;
+    setCategory(categoryId);
     setDescription(item.description);
     setFrequency(item.frequency);
     setStartDate(new Date(item.startDate));
@@ -140,13 +174,16 @@ export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringMan
     };
 
     if (editItem) {
-      updateRecurringMutation.mutate({ id: editItem.id, data: itemData }, {
-        onSuccess: () => {
-          toast.success('Recurring transaction updated');
-          setIsDialogOpen(false);
-          resetForm();
-        },
-      });
+      updateRecurringMutation.mutate(
+        { id: editItem.id, data: itemData },
+        {
+          onSuccess: () => {
+            toast.success('Recurring transaction updated');
+            setIsDialogOpen(false);
+            resetForm();
+          },
+        }
+      );
     } else {
       createRecurring.mutate(itemData, {
         onSuccess: () => {
@@ -271,8 +308,12 @@ export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringMan
       <Tabs defaultValue="all">
         <TabsList className="mb-4">
           <TabsTrigger value="all">All ({recurring.length})</TabsTrigger>
-          <TabsTrigger value="income">Income ({incomeItems.length})</TabsTrigger>
-          <TabsTrigger value="expense">Expense ({expenseItems.length})</TabsTrigger>
+          <TabsTrigger value="income">
+            Income ({incomeItems.length})
+          </TabsTrigger>
+          <TabsTrigger value="expense">
+            Expense ({expenseItems.length})
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="all">
           {recurring.length === 0 ? (
@@ -329,14 +370,19 @@ export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringMan
       </Tabs>
 
       {/* Recurring Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={(open) => {
-        setIsDialogOpen(open);
-        if (!open) resetForm();
-      }}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) resetForm();
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {editItem ? 'Edit Recurring Transaction' : 'Create Recurring Transaction'}
+              {editItem
+                ? 'Edit Recurring Transaction'
+                : 'Create Recurring Transaction'}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
@@ -408,7 +454,10 @@ export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringMan
             </div>
             <div className="space-y-2">
               <Label>Frequency</Label>
-              <Select value={frequency} onValueChange={(v) => setFrequency(v as typeof frequency)}>
+              <Select
+                value={frequency}
+                onValueChange={(v) => setFrequency(v as typeof frequency)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -464,12 +513,16 @@ export function RecurringManager({ isDialogOpen, setIsDialogOpen }: RecurringMan
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Recurring Transaction</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this recurring transaction? This will not affect past transactions.
+              Are you sure you want to delete this recurring transaction? This
+              will not affect past transactions.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -1,25 +1,42 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/components/ui';
 import { useBudgets, useCategories, useSettings } from '@/lib/hooks';
-import { formatCurrency, calculatePercentage } from '@/lib/utils';
-import { Progress } from '@repo/ui/components/ui';
-import Link from 'next/link';
+import { calculatePercentage, formatCurrency } from '@/lib/utils';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Progress,
+} from '@repo/ui/components/ui';
 import { Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
 export function BudgetOverview() {
   const { data: budgets = [], isLoading: budgetsLoading } = useBudgets();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
 
-  const getCategoryName = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return category?.name || categoryId;
+  const getCategoryName = (
+    category: string | { id: string; name?: string }
+  ) => {
+    if (typeof category === 'object' && category.name) {
+      return category.name;
+    }
+    const categoryId = typeof category === 'object' ? category.id : category;
+    const cat = categories.find((c) => c.id === categoryId);
+    return cat?.name || categoryId;
   };
 
-  const getCategoryColor = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return category?.color || '#6B7280';
+  const getCategoryColor = (
+    category: string | { id: string; color?: string }
+  ) => {
+    if (typeof category === 'object' && category.color) {
+      return category.color;
+    }
+    const categoryId = typeof category === 'object' ? category.id : category;
+    const cat = categories.find((c) => c.id === categoryId);
+    return cat?.color || '#6B7280';
   };
 
   const getProgressColor = (percentage: number) => {
@@ -50,38 +67,63 @@ export function BudgetOverview() {
         <div className="space-y-4">
           {budgets.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">
-              No budgets set. <Link href="/budgets" className="text-primary hover:underline">Create one</Link>
+              No budgets set.{' '}
+              <Link href="/budgets" className="text-primary hover:underline">
+                Create one
+              </Link>
             </p>
           ) : (
             budgets.slice(0, 4).map((budget) => {
-              const percentage = calculatePercentage(budget.spent, budget.amount);
+              const percentage = calculatePercentage(
+                budget.spent,
+                budget.amount
+              );
               return (
                 <div key={budget.id} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <div
                         className="h-3 w-3 rounded-full"
-                        style={{ backgroundColor: getCategoryColor(budget.category) }}
+                        style={{
+                          backgroundColor: getCategoryColor(budget.category),
+                        }}
                       />
                       <span className="text-sm font-medium">
                         {getCategoryName(budget.category)}
                       </span>
                     </div>
                     <span className="text-sm text-muted-foreground">
-                      {formatCurrency(budget.spent, budget.currency || settings?.defaultCurrency || 'INR')} / {formatCurrency(budget.amount, budget.currency || settings?.defaultCurrency || 'INR')}
+                      {formatCurrency(
+                        budget.spent,
+                        budget.currency || settings?.defaultCurrency || 'INR'
+                      )}{' '}
+                      /{' '}
+                      {formatCurrency(
+                        budget.amount,
+                        budget.currency || settings?.defaultCurrency || 'INR'
+                      )}
                     </span>
                   </div>
                   <div className="relative">
-                    <Progress value={Math.min(percentage, 100)} className="h-2" />
+                    <Progress
+                      value={Math.min(percentage, 100)}
+                      className="h-2"
+                    />
                     <div
-                      className={`absolute top-0 left-0 h-2 rounded-full transition-all ${getProgressColor(percentage)}`}
+                      className={`absolute top-0 left-0 h-2 rounded-full transition-all ${getProgressColor(
+                        percentage
+                      )}`}
                       style={{ width: `${Math.min(percentage, 100)}%` }}
                     />
                   </div>
                   <div className="flex justify-between text-xs text-muted-foreground">
                     <span>{percentage}% used</span>
                     <span>
-                      {formatCurrency(Math.max(budget.amount - budget.spent, 0), budget.currency || settings?.defaultCurrency || 'INR')} remaining
+                      {formatCurrency(
+                        Math.max(budget.amount - budget.spent, 0),
+                        budget.currency || settings?.defaultCurrency || 'INR'
+                      )}{' '}
+                      remaining
                     </span>
                   </div>
                 </div>

@@ -1,15 +1,21 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/components/ui';
-import { useTransactions, useCategories, useSettings } from '@/lib/hooks';
+import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { Badge } from '@repo/ui/components/ui';
-import { ScrollArea } from '@repo/ui/components/ui';
+import {
+  Badge,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  ScrollArea,
+} from '@repo/ui/components/ui';
+import { ArrowDownRight, ArrowUpRight, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { ArrowUpRight, ArrowDownRight, Loader2 } from 'lucide-react';
 
 export function RecentTransactions() {
-  const { data: transactions = [], isLoading: transLoading } = useTransactions();
+  const { data: transactions = [], isLoading: transLoading } =
+    useTransactions();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
 
@@ -17,14 +23,31 @@ export function RecentTransactions() {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
 
-  const getCategoryName = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return category?.name || categoryId;
+  // Handle both categoryId (string) and category object from API
+  const getCategoryId = (category: string | { id: string }) => {
+    return typeof category === 'object' ? category.id : category;
   };
 
-  const getCategoryColor = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return category?.color || '#6B7280';
+  const getCategoryName = (
+    category: string | { id: string; name?: string }
+  ) => {
+    if (typeof category === 'object' && category.name) {
+      return category.name;
+    }
+    const categoryId = getCategoryId(category);
+    const cat = categories.find((c) => c.id === categoryId);
+    return cat?.name || categoryId;
+  };
+
+  const getCategoryColor = (
+    category: string | { id: string; color?: string }
+  ) => {
+    if (typeof category === 'object' && category.color) {
+      return category.color;
+    }
+    const categoryId = getCategoryId(category);
+    const cat = categories.find((c) => c.id === categoryId);
+    return cat?.color || '#6B7280';
   };
 
   if (transLoading) {
@@ -41,7 +64,10 @@ export function RecentTransactions() {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Recent Transactions</CardTitle>
-        <Link href="/transactions" className="text-sm text-primary hover:underline">
+        <Link
+          href="/transactions"
+          className="text-sm text-primary hover:underline"
+        >
           View all
         </Link>
       </CardHeader>
@@ -61,7 +87,10 @@ export function RecentTransactions() {
                   <div className="flex items-center gap-3">
                     <div
                       className="h-10 w-10 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: getCategoryColor(transaction.category) + '20' }}
+                      style={{
+                        backgroundColor:
+                          getCategoryColor(transaction.category) + '20',
+                      }}
                     >
                       {transaction.type === 'income' ? (
                         <ArrowUpRight className="h-5 w-5 text-green-500" />
@@ -95,7 +124,10 @@ export function RecentTransactions() {
                     }`}
                   >
                     {transaction.type === 'income' ? '+' : '-'}
-                    {formatCurrency(transaction.amount, transaction.currency || settings?.defaultCurrency || 'INR')}
+                    {formatCurrency(
+                      transaction.amount,
+                      transaction.currency || settings?.defaultCurrency || 'INR'
+                    )}
                   </div>
                 </div>
               ))

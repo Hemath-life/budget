@@ -1,45 +1,23 @@
 'use client';
 
-import { useState } from 'react';
-import { useReminders, useCategories, useSettings, useCreateReminder, useUpdateReminder, useDeleteReminder, useMarkReminderPaid, useMarkReminderUnpaid } from '@/lib/hooks';
+import {
+  useCategories,
+  useCreateReminder,
+  useDeleteReminder,
+  useMarkReminderPaid,
+  useMarkReminderUnpaid,
+  useReminders,
+  useSettings,
+  useUpdateReminder,
+} from '@/lib/hooks';
 import { Reminder } from '@/lib/types';
-import { formatCurrency, getDaysUntil, isOverdue, formatDate } from '@/lib/utils';
-import { Card, CardContent } from '@repo/ui/components/ui';
-import { Button } from '@repo/ui/components/ui';
-import { Input } from '@repo/ui/components/ui';
-import { Label } from '@repo/ui/components/ui';
-import { Switch } from '@repo/ui/components/ui';
-import { Badge } from '@repo/ui/components/ui';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@repo/ui/components/ui';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@repo/ui/components/ui';
-import { Calendar } from '@repo/ui/components/ui';
-import { Popover, PopoverContent, PopoverTrigger } from '@repo/ui/components/ui';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/components/ui';
-import { cn } from '@/lib/utils';
-import {
-  Pencil,
-  Trash2,
-  CalendarIcon,
-  Bell,
-  Check,
-  X,
-  AlertTriangle,
-  Clock,
-  Loader2,
-} from 'lucide-react';
-import { toast } from 'sonner';
+  cn,
+  formatCurrency,
+  formatDate,
+  getDaysUntil,
+  isOverdue,
+} from '@/lib/utils';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,14 +27,55 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  Badge,
+  Button,
+  Calendar,
+  Card,
+  CardContent,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input,
+  Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Switch,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
 } from '@repo/ui/components/ui';
+import {
+  AlertTriangle,
+  Bell,
+  CalendarIcon,
+  Check,
+  Clock,
+  Loader2,
+  Pencil,
+  Trash2,
+  X,
+} from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface ReminderManagerProps {
   isDialogOpen: boolean;
   setIsDialogOpen: (open: boolean) => void;
 }
 
-export function ReminderManager({ isDialogOpen, setIsDialogOpen }: ReminderManagerProps) {
+export function ReminderManager({
+  isDialogOpen,
+  setIsDialogOpen,
+}: ReminderManagerProps) {
   const { data: reminders = [], isLoading } = useReminders();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
@@ -74,13 +93,21 @@ export function ReminderManager({ isDialogOpen, setIsDialogOpen }: ReminderManag
   const [category, setCategory] = useState('');
   const [dueDate, setDueDate] = useState<Date>(new Date());
   const [isRecurring, setIsRecurring] = useState(false);
-  const [frequency, setFrequency] = useState<'daily' | 'monthly' | 'weekly' | 'biweekly' | 'quarterly' | 'yearly'>('monthly');
+  const [frequency, setFrequency] = useState<
+    'daily' | 'monthly' | 'weekly' | 'biweekly' | 'quarterly' | 'yearly'
+  >('monthly');
   const [notifyBefore, setNotifyBefore] = useState('3');
 
   const upcomingReminders = reminders.filter((r) => !r.isPaid);
   const paidReminders = reminders.filter((r) => r.isPaid);
 
-  const getCategoryName = (categoryId: string) => {
+  const getCategoryName = (
+    category: string | { id: string; name?: string }
+  ) => {
+    if (typeof category === 'object' && category.name) {
+      return category.name;
+    }
+    const categoryId = typeof category === 'object' ? category.id : category;
     const cat = categories.find((c) => c.id === categoryId);
     return cat?.name || categoryId;
   };
@@ -100,7 +127,11 @@ export function ReminderManager({ isDialogOpen, setIsDialogOpen }: ReminderManag
     setEditReminder(reminder);
     setTitle(reminder.title);
     setAmount(reminder.amount.toString());
-    setCategory(reminder.category);
+    const categoryId =
+      typeof reminder.category === 'object'
+        ? (reminder.category as { id: string }).id
+        : reminder.category;
+    setCategory(categoryId);
     setDueDate(new Date(reminder.dueDate));
     setIsRecurring(reminder.isRecurring);
     setFrequency(reminder.frequency || 'monthly');
@@ -136,13 +167,16 @@ export function ReminderManager({ isDialogOpen, setIsDialogOpen }: ReminderManag
     };
 
     if (editReminder) {
-      updateReminderMutation.mutate({ id: editReminder.id, data: reminderData }, {
-        onSuccess: () => {
-          toast.success('Reminder updated');
-          setIsDialogOpen(false);
-          resetForm();
-        },
-      });
+      updateReminderMutation.mutate(
+        { id: editReminder.id, data: reminderData },
+        {
+          onSuccess: () => {
+            toast.success('Reminder updated');
+            setIsDialogOpen(false);
+            resetForm();
+          },
+        }
+      );
     } else {
       createReminder.mutate(reminderData, {
         onSuccess: () => {
@@ -294,7 +328,9 @@ export function ReminderManager({ isDialogOpen, setIsDialogOpen }: ReminderManag
     <>
       <Tabs defaultValue="upcoming">
         <TabsList className="mb-4">
-          <TabsTrigger value="upcoming">Upcoming ({upcomingReminders.length})</TabsTrigger>
+          <TabsTrigger value="upcoming">
+            Upcoming ({upcomingReminders.length})
+          </TabsTrigger>
           <TabsTrigger value="paid">Paid ({paidReminders.length})</TabsTrigger>
         </TabsList>
         <TabsContent value="upcoming">
@@ -310,7 +346,11 @@ export function ReminderManager({ isDialogOpen, setIsDialogOpen }: ReminderManag
           ) : (
             <div className="space-y-4">
               {upcomingReminders
-                .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+                .sort(
+                  (a, b) =>
+                    new Date(a.dueDate).getTime() -
+                    new Date(b.dueDate).getTime()
+                )
                 .map((reminder) => (
                   <ReminderCard key={reminder.id} reminder={reminder} />
                 ))}
@@ -338,10 +378,13 @@ export function ReminderManager({ isDialogOpen, setIsDialogOpen }: ReminderManag
       </Tabs>
 
       {/* Reminder Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={(open) => {
-        setIsDialogOpen(open);
-        if (!open) resetForm();
-      }}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) resetForm();
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
@@ -421,15 +464,15 @@ export function ReminderManager({ isDialogOpen, setIsDialogOpen }: ReminderManag
                   Repeat this reminder
                 </p>
               </div>
-              <Switch
-                checked={isRecurring}
-                onCheckedChange={setIsRecurring}
-              />
+              <Switch checked={isRecurring} onCheckedChange={setIsRecurring} />
             </div>
             {isRecurring && (
               <div className="space-y-2">
                 <Label>Frequency</Label>
-                <Select value={frequency} onValueChange={(v) => setFrequency(v as typeof frequency)}>
+                <Select
+                  value={frequency}
+                  onValueChange={(v) => setFrequency(v as typeof frequency)}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -471,12 +514,16 @@ export function ReminderManager({ isDialogOpen, setIsDialogOpen }: ReminderManag
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Reminder</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this reminder? This action cannot be undone.
+              Are you sure you want to delete this reminder? This action cannot
+              be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -1,30 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { useBudgets, useCategories, useSettings, useCreateBudget, useUpdateBudget, useDeleteBudget } from '@/lib/hooks';
+import {
+  useBudgets,
+  useCategories,
+  useCreateBudget,
+  useDeleteBudget,
+  useSettings,
+  useUpdateBudget,
+} from '@/lib/hooks';
 import { Budget } from '@/lib/types';
-import { formatCurrency, calculatePercentage } from '@/lib/utils';
-import { Card, CardContent } from '@repo/ui/components/ui';
-import { Button } from '@repo/ui/components/ui';
-import { Input } from '@repo/ui/components/ui';
-import { Label } from '@repo/ui/components/ui';
-import { Progress } from '@repo/ui/components/ui';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@repo/ui/components/ui';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@repo/ui/components/ui';
-import { Pencil, Trash2, AlertTriangle, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { calculatePercentage, formatCurrency } from '@/lib/utils';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,14 +19,36 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  Button,
+  Card,
+  CardContent,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Input,
+  Label,
+  Progress,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@repo/ui/components/ui';
+import { AlertTriangle, Loader2, Pencil, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface BudgetManagerProps {
   isDialogOpen: boolean;
   setIsDialogOpen: (open: boolean) => void;
 }
 
-export function BudgetManager({ isDialogOpen, setIsDialogOpen }: BudgetManagerProps) {
+export function BudgetManager({
+  isDialogOpen,
+  setIsDialogOpen,
+}: BudgetManagerProps) {
   const { data: budgets = [], isLoading: budgetsLoading } = useBudgets();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
@@ -54,20 +61,43 @@ export function BudgetManager({ isDialogOpen, setIsDialogOpen }: BudgetManagerPr
 
   const [category, setCategory] = useState('');
   const [amount, setAmount] = useState('');
-  const [period, setPeriod] = useState<'weekly' | 'monthly' | 'quarterly' | 'yearly'>('monthly');
+  const [period, setPeriod] = useState<
+    'weekly' | 'monthly' | 'quarterly' | 'yearly'
+  >('monthly');
 
   const expenseCategories = categories.filter((c) => c.type === 'expense');
-  const usedCategories = budgets.map((b) => b.category);
+  const usedCategories = budgets.map((b) =>
+    typeof b.category === 'object'
+      ? (b.category as { id: string }).id
+      : b.category
+  );
+  const editCategoryId = editBudget?.category
+    ? typeof editBudget.category === 'object'
+      ? (editBudget.category as { id: string }).id
+      : editBudget.category
+    : null;
   const availableCategories = expenseCategories.filter(
-    (c) => !usedCategories.includes(c.id) || editBudget?.category === c.id
+    (c) => !usedCategories.includes(c.id) || editCategoryId === c.id
   );
 
-  const getCategoryName = (categoryId: string) => {
+  const getCategoryName = (
+    category: string | { id: string; name?: string }
+  ) => {
+    if (typeof category === 'object' && category.name) {
+      return category.name;
+    }
+    const categoryId = typeof category === 'object' ? category.id : category;
     const cat = categories.find((c) => c.id === categoryId);
     return cat?.name || categoryId;
   };
 
-  const getCategoryColor = (categoryId: string) => {
+  const getCategoryColor = (
+    category: string | { id: string; color?: string }
+  ) => {
+    if (typeof category === 'object' && category.color) {
+      return category.color;
+    }
+    const categoryId = typeof category === 'object' ? category.id : category;
     const cat = categories.find((c) => c.id === categoryId);
     return cat?.color || '#6B7280';
   };
@@ -81,7 +111,11 @@ export function BudgetManager({ isDialogOpen, setIsDialogOpen }: BudgetManagerPr
 
   const openEditDialog = (budget: Budget) => {
     setEditBudget(budget);
-    setCategory(budget.category);
+    const categoryId =
+      typeof budget.category === 'object'
+        ? (budget.category as { id: string }).id
+        : budget.category;
+    setCategory(categoryId);
     setAmount(budget.amount.toString());
     setPeriod(budget.period);
     setIsDialogOpen(true);
@@ -108,7 +142,10 @@ export function BudgetManager({ isDialogOpen, setIsDialogOpen }: BudgetManagerPr
 
     try {
       if (editBudget) {
-        await updateBudgetMutation.mutateAsync({ id: editBudget.id, data: budgetData });
+        await updateBudgetMutation.mutateAsync({
+          id: editBudget.id,
+          data: budgetData,
+        });
         toast.success('Budget updated');
       } else {
         await createBudget.mutateAsync(budgetData as Omit<Budget, 'id'>);
@@ -156,7 +193,9 @@ export function BudgetManager({ isDialogOpen, setIsDialogOpen }: BudgetManagerPr
           <CardContent className="pt-6">
             <div className="text-center py-12 text-muted-foreground">
               <p>No budgets set yet</p>
-              <p className="text-sm">Create a budget to start tracking your spending</p>
+              <p className="text-sm">
+                Create a budget to start tracking your spending
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -173,15 +212,22 @@ export function BudgetManager({ isDialogOpen, setIsDialogOpen }: BudgetManagerPr
                   <div className="flex items-center gap-3">
                     <div
                       className="h-10 w-10 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: getCategoryColor(budget.category) + '20' }}
+                      style={{
+                        backgroundColor:
+                          getCategoryColor(budget.category) + '20',
+                      }}
                     >
                       <div
                         className="h-4 w-4 rounded-full"
-                        style={{ backgroundColor: getCategoryColor(budget.category) }}
+                        style={{
+                          backgroundColor: getCategoryColor(budget.category),
+                        }}
                       />
                     </div>
                     <div>
-                      <p className="font-medium">{getCategoryName(budget.category)}</p>
+                      <p className="font-medium">
+                        {getCategoryName(budget.category)}
+                      </p>
                       <p className="text-sm text-muted-foreground capitalize">
                         {budget.period} budget
                       </p>
@@ -204,30 +250,56 @@ export function BudgetManager({ isDialogOpen, setIsDialogOpen }: BudgetManagerPr
                     </Button>
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Spent</span>
                     <span className="font-medium">
-                      {formatCurrency(budget.spent, budget.currency)} / {formatCurrency(budget.amount, budget.currency)}
+                      {formatCurrency(budget.spent, budget.currency)} /{' '}
+                      {formatCurrency(budget.amount, budget.currency)}
                     </span>
                   </div>
                   <div className="relative">
-                    <Progress value={Math.min(percentage, 100)} className="h-3" />
+                    <Progress
+                      value={Math.min(percentage, 100)}
+                      className="h-3"
+                    />
                     <div
-                      className={`absolute top-0 left-0 h-3 rounded-full transition-all ${getProgressColor(percentage)}`}
+                      className={`absolute top-0 left-0 h-3 rounded-full transition-all ${getProgressColor(
+                        percentage
+                      )}`}
                       style={{ width: `${Math.min(percentage, 100)}%` }}
                     />
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className={`flex items-center gap-1 ${isOverBudget ? 'text-red-500' : isNearLimit ? 'text-yellow-500' : 'text-muted-foreground'}`}>
-                      {(isOverBudget || isNearLimit) && <AlertTriangle className="h-3 w-3" />}
+                    <span
+                      className={`flex items-center gap-1 ${
+                        isOverBudget
+                          ? 'text-red-500'
+                          : isNearLimit
+                          ? 'text-yellow-500'
+                          : 'text-muted-foreground'
+                      }`}
+                    >
+                      {(isOverBudget || isNearLimit) && (
+                        <AlertTriangle className="h-3 w-3" />
+                      )}
                       {percentage}% used
                     </span>
-                    <span className={isOverBudget ? 'text-red-500' : 'text-muted-foreground'}>
+                    <span
+                      className={
+                        isOverBudget ? 'text-red-500' : 'text-muted-foreground'
+                      }
+                    >
                       {isOverBudget
-                        ? `${formatCurrency(budget.spent - budget.amount, budget.currency)} over`
-                        : `${formatCurrency(budget.amount - budget.spent, budget.currency)} remaining`}
+                        ? `${formatCurrency(
+                            budget.spent - budget.amount,
+                            budget.currency
+                          )} over`
+                        : `${formatCurrency(
+                            budget.amount - budget.spent,
+                            budget.currency
+                          )} remaining`}
                     </span>
                   </div>
                 </div>
@@ -238,10 +310,13 @@ export function BudgetManager({ isDialogOpen, setIsDialogOpen }: BudgetManagerPr
       )}
 
       {/* Budget Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={(open) => {
-        setIsDialogOpen(open);
-        if (!open) resetForm();
-      }}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) resetForm();
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
@@ -284,7 +359,10 @@ export function BudgetManager({ isDialogOpen, setIsDialogOpen }: BudgetManagerPr
             </div>
             <div className="space-y-2">
               <Label>Period</Label>
-              <Select value={period} onValueChange={(v) => setPeriod(v as typeof period)}>
+              <Select
+                value={period}
+                onValueChange={(v) => setPeriod(v as typeof period)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -313,12 +391,16 @@ export function BudgetManager({ isDialogOpen, setIsDialogOpen }: BudgetManagerPr
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Budget</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this budget? This action cannot be undone.
+              Are you sure you want to delete this budget? This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

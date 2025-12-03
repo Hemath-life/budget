@@ -1,44 +1,73 @@
 'use client';
 
-import { useState } from 'react';
-import { exportToCSV, formatDate } from '@/lib/utils';
-import { useTransactions, useCategories, useBudgets, useGoals, useReminders, useRecurring } from '@/lib/hooks';
-import { Card, CardContent } from '@repo/ui/components/ui';
-import { Button } from '@repo/ui/components/ui';
-import { Label } from '@repo/ui/components/ui';
-import { Calendar } from '@repo/ui/components/ui';
-import { Popover, PopoverContent, PopoverTrigger } from '@repo/ui/components/ui';
 import {
+  useBudgets,
+  useCategories,
+  useGoals,
+  useRecurring,
+  useReminders,
+  useTransactions,
+} from '@/lib/hooks';
+import { cn, exportToCSV, formatDate } from '@/lib/utils';
+import {
+  Button,
+  Calendar,
+  Card,
+  CardContent,
+  Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@repo/ui/components/ui';
-import { cn } from '@/lib/utils';
-import { CalendarIcon, Download, FileSpreadsheet, Check, Loader2 } from 'lucide-react';
+import { CalendarIcon, Check, Download } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
-type ExportType = 'transactions' | 'budgets' | 'goals' | 'recurring' | 'reminders' | 'all';
+type ExportType =
+  | 'transactions'
+  | 'budgets'
+  | 'goals'
+  | 'recurring'
+  | 'reminders'
+  | 'all';
 
 export function ExportData() {
   // Use React Query hooks for data fetching with automatic caching
-  const { data: transactions = [], isLoading: loadingTrans } = useTransactions();
+  const { data: transactions = [], isLoading: loadingTrans } =
+    useTransactions();
   const { data: budgets = [], isLoading: loadingBudgets } = useBudgets();
   const { data: goals = [], isLoading: loadingGoals } = useGoals();
   const { data: recurring = [], isLoading: loadingRecurring } = useRecurring();
   const { data: reminders = [], isLoading: loadingReminders } = useReminders();
-  const { data: categories = [], isLoading: loadingCategories } = useCategories();
-  
-  const loading = loadingTrans || loadingBudgets || loadingGoals || loadingRecurring || loadingReminders || loadingCategories;
+  const { data: categories = [], isLoading: loadingCategories } =
+    useCategories();
+
+  const loading =
+    loadingTrans ||
+    loadingBudgets ||
+    loadingGoals ||
+    loadingRecurring ||
+    loadingReminders ||
+    loadingCategories;
 
   const [exportType, setExportType] = useState<ExportType>('transactions');
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
 
-  const getCategoryName = (categoryId: string) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return category?.name || categoryId;
+  const getCategoryName = (
+    category: string | { id: string; name?: string }
+  ) => {
+    if (typeof category === 'object' && category.name) {
+      return category.name;
+    }
+    const categoryId = typeof category === 'object' ? category.id : category;
+    const cat = categories.find((c) => c.id === categoryId);
+    return cat?.name || categoryId;
   };
 
   const handleExport = () => {
@@ -106,7 +135,10 @@ export function ExportData() {
       Tags: t.tags?.join(', ') || '',
     }));
 
-    exportToCSV(exportData, `transactions_${formatDate(new Date(), 'yyyy-MM-dd')}`);
+    exportToCSV(
+      exportData,
+      `transactions_${formatDate(new Date(), 'yyyy-MM-dd')}`
+    );
   };
 
   const exportBudgets = () => {
@@ -152,7 +184,10 @@ export function ExportData() {
       IsActive: r.isActive ? 'Yes' : 'No',
     }));
 
-    exportToCSV(exportData, `recurring_${formatDate(new Date(), 'yyyy-MM-dd')}`);
+    exportToCSV(
+      exportData,
+      `recurring_${formatDate(new Date(), 'yyyy-MM-dd')}`
+    );
   };
 
   const exportReminders = () => {
@@ -168,14 +203,25 @@ export function ExportData() {
       NotifyBefore: `${r.notifyBefore} days`,
     }));
 
-    exportToCSV(exportData, `reminders_${formatDate(new Date(), 'yyyy-MM-dd')}`);
+    exportToCSV(
+      exportData,
+      `reminders_${formatDate(new Date(), 'yyyy-MM-dd')}`
+    );
   };
 
   const exportOptions = [
-    { value: 'transactions', label: 'Transactions', count: transactions.length },
+    {
+      value: 'transactions',
+      label: 'Transactions',
+      count: transactions.length,
+    },
     { value: 'budgets', label: 'Budgets', count: budgets.length },
     { value: 'goals', label: 'Goals', count: goals.length },
-    { value: 'recurring', label: 'Recurring Transactions', count: recurring.length },
+    {
+      value: 'recurring',
+      label: 'Recurring Transactions',
+      count: recurring.length,
+    },
     { value: 'reminders', label: 'Reminders', count: reminders.length },
     { value: 'all', label: 'Export All', count: null },
   ];
@@ -187,7 +233,10 @@ export function ExportData() {
           {/* Export Type Selection */}
           <div className="space-y-2">
             <Label>What would you like to export?</Label>
-            <Select value={exportType} onValueChange={(v) => setExportType(v as ExportType)}>
+            <Select
+              value={exportType}
+              onValueChange={(v) => setExportType(v as ExportType)}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
@@ -287,7 +336,9 @@ export function ExportData() {
         <CardContent className="pt-6">
           <div className="mb-4">
             <h3 className="text-lg font-semibold">Export Preview</h3>
-            <p className="text-sm text-muted-foreground">Preview of data that will be exported</p>
+            <p className="text-sm text-muted-foreground">
+              Preview of data that will be exported
+            </p>
           </div>
           <div className="space-y-4">
             {exportType === 'transactions' && (
@@ -296,7 +347,10 @@ export function ExportData() {
                   {transactions.length} transactions will be exported
                 </p>
                 <div className="text-sm">
-                  <p>Columns: Date, Type, Category, Description, Amount, Currency, IsRecurring, Tags</p>
+                  <p>
+                    Columns: Date, Type, Category, Description, Amount,
+                    Currency, IsRecurring, Tags
+                  </p>
                 </div>
               </div>
             )}
@@ -306,7 +360,10 @@ export function ExportData() {
                   {budgets.length} budgets will be exported
                 </p>
                 <div className="text-sm">
-                  <p>Columns: Category, BudgetAmount, Spent, Remaining, PercentUsed, Period, Currency, StartDate</p>
+                  <p>
+                    Columns: Category, BudgetAmount, Spent, Remaining,
+                    PercentUsed, Period, Currency, StartDate
+                  </p>
                 </div>
               </div>
             )}
@@ -316,7 +373,10 @@ export function ExportData() {
                   {goals.length} goals will be exported
                 </p>
                 <div className="text-sm">
-                  <p>Columns: Name, TargetAmount, CurrentAmount, Remaining, PercentComplete, Deadline, Currency, IsCompleted</p>
+                  <p>
+                    Columns: Name, TargetAmount, CurrentAmount, Remaining,
+                    PercentComplete, Deadline, Currency, IsCompleted
+                  </p>
                 </div>
               </div>
             )}
@@ -326,7 +386,10 @@ export function ExportData() {
                   {recurring.length} recurring transactions will be exported
                 </p>
                 <div className="text-sm">
-                  <p>Columns: Description, Type, Category, Amount, Currency, Frequency, StartDate, NextDueDate, IsActive</p>
+                  <p>
+                    Columns: Description, Type, Category, Amount, Currency,
+                    Frequency, StartDate, NextDueDate, IsActive
+                  </p>
                 </div>
               </div>
             )}
@@ -336,7 +399,10 @@ export function ExportData() {
                   {reminders.length} reminders will be exported
                 </p>
                 <div className="text-sm">
-                  <p>Columns: Title, Amount, Currency, Category, DueDate, IsRecurring, Frequency, IsPaid, NotifyBefore</p>
+                  <p>
+                    Columns: Title, Amount, Currency, Category, DueDate,
+                    IsRecurring, Frequency, IsPaid, NotifyBefore
+                  </p>
                 </div>
               </div>
             )}
@@ -348,23 +414,28 @@ export function ExportData() {
                 <ul className="text-sm space-y-1">
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    transactions_{formatDate(new Date(), 'yyyy-MM-dd')}.csv ({transactions.length} items)
+                    transactions_{formatDate(new Date(), 'yyyy-MM-dd')}.csv (
+                    {transactions.length} items)
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    budgets_{formatDate(new Date(), 'yyyy-MM-dd')}.csv ({budgets.length} items)
+                    budgets_{formatDate(new Date(), 'yyyy-MM-dd')}.csv (
+                    {budgets.length} items)
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    goals_{formatDate(new Date(), 'yyyy-MM-dd')}.csv ({goals.length} items)
+                    goals_{formatDate(new Date(), 'yyyy-MM-dd')}.csv (
+                    {goals.length} items)
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    recurring_{formatDate(new Date(), 'yyyy-MM-dd')}.csv ({recurring.length} items)
+                    recurring_{formatDate(new Date(), 'yyyy-MM-dd')}.csv (
+                    {recurring.length} items)
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    reminders_{formatDate(new Date(), 'yyyy-MM-dd')}.csv ({reminders.length} items)
+                    reminders_{formatDate(new Date(), 'yyyy-MM-dd')}.csv (
+                    {reminders.length} items)
                   </li>
                 </ul>
               </div>
