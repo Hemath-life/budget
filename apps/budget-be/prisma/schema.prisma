@@ -1,0 +1,145 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String
+  type      String // 'income' | 'expense'
+  icon      String
+  color     String
+  createdAt DateTime @default(now())
+
+  transactions          Transaction[]
+  budgets               Budget[]
+  goals                 Goal[]
+  reminders             Reminder[]
+  recurringTransactions RecurringTransaction[]
+
+  @@map("categories")
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  type        String // 'income' | 'expense'
+  amount      Float
+  currency    String   @default("INR")
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  description String?
+  date        DateTime
+  isRecurring Boolean  @default(false)
+  recurringId String?
+  recurring   RecurringTransaction? @relation(fields: [recurringId], references: [id])
+  tags        String? // JSON array
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("transactions")
+}
+
+model Budget {
+  id         String   @id @default(uuid())
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+  amount     Float
+  currency   String   @default("INR")
+  period     String // 'weekly' | 'monthly' | 'quarterly' | 'yearly'
+  spent      Float    @default(0)
+  startDate  DateTime
+  createdAt  DateTime @default(now())
+
+  @@map("budgets")
+}
+
+model Goal {
+  id            String   @id @default(uuid())
+  name          String
+  targetAmount  Float
+  currentAmount Float    @default(0)
+  currency      String   @default("INR")
+  deadline      DateTime
+  categoryId    String?
+  category      Category? @relation(fields: [categoryId], references: [id])
+  icon          String
+  color         String
+  isCompleted   Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@map("goals")
+}
+
+model Reminder {
+  id           String   @id @default(uuid())
+  title        String
+  amount       Float
+  currency     String   @default("INR")
+  dueDate      DateTime
+  categoryId   String
+  category     Category @relation(fields: [categoryId], references: [id])
+  isRecurring  Boolean  @default(false)
+  frequency    String? // 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly'
+  isPaid       Boolean  @default(false)
+  notifyBefore Int      @default(3)
+  createdAt    DateTime @default(now())
+
+  @@map("reminders")
+}
+
+model RecurringTransaction {
+  id          String   @id @default(uuid())
+  type        String // 'income' | 'expense'
+  amount      Float
+  currency    String   @default("INR")
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  description String?
+  frequency   String // 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly'
+  startDate   DateTime
+  endDate     DateTime?
+  nextDueDate DateTime
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  transactions Transaction[]
+
+  @@map("recurring_transactions")
+}
+
+model Settings {
+  id                   Int     @id @default(1)
+  defaultCurrency      String  @default("INR")
+  theme                String  @default("system")
+  dateFormat           String  @default("MMM dd, yyyy")
+  language             String  @default("en")
+  notificationsEnabled Boolean @default(true)
+
+  @@map("settings")
+}
+
+model Currency {
+  code   String @id
+  name   String
+  symbol String
+  rate   Float  @default(1)
+
+  @@map("currencies")
+}
