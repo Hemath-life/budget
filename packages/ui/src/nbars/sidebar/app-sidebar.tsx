@@ -1,3 +1,4 @@
+import type { SidebarData } from '../../layout/types';
 import { sidebarData as defaultSidebarData } from './data/sidebar-data';
 import { NavGroup } from './nav-group';
 import { NavUser } from './nav-user';
@@ -9,7 +10,6 @@ import {
     SidebarRail,
 } from './sidebar';
 import { TeamSwitcher } from './team-switcher';
-import type { SidebarData } from '../../layout/types';
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     sidebarData?: SidebarData;
