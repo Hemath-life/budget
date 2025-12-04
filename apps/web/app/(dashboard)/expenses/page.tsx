@@ -1,6 +1,10 @@
 'use client';
 
 import { StatCard } from '@/components/dashboard/bento/stat-card';
+import {
+  DateFilter,
+  getDefaultDateRange,
+} from '@/components/shared/date-filter';
 import { DonutChart } from '@/components/shared/donut-chart';
 import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
 import {
@@ -13,51 +17,52 @@ import {
 } from '@repo/ui/components/ui';
 import { Loader2, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function ExpensesPage() {
   const { data: transactions = [], isLoading } = useTransactions();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
+  const [dateRange, setDateRange] = useState(getDefaultDateRange);
 
   const currency = settings?.defaultCurrency || 'INR';
   const expenseTransactions = transactions.filter((t) => t.type === 'expense');
-  const totalExpenses = expenseTransactions.reduce(
+
+  // Filter by date range
+  const filteredTransactions = expenseTransactions.filter((t) => {
+    const date = new Date(t.date);
+    return date >= dateRange.from && date <= dateRange.to;
+  });
+
+  const totalExpenses = filteredTransactions.reduce(
     (sum, t) => sum + t.amount,
     0
   );
 
-  // Current month expenses
-  const now = new Date();
-  const currentMonthExpenses = expenseTransactions
-    .filter((t) => {
-      const date = new Date(t.date);
-      return (
-        date.getMonth() === now.getMonth() &&
-        date.getFullYear() === now.getFullYear()
-      );
-    })
-    .reduce((sum, t) => sum + t.amount, 0);
+  // Previous period calculation (same duration before the selected range)
+  const rangeDuration = dateRange.to.getTime() - dateRange.from.getTime();
+  const prevPeriodEnd = new Date(dateRange.from.getTime() - 1);
+  const prevPeriodStart = new Date(prevPeriodEnd.getTime() - rangeDuration);
 
-  // Last month expenses
-  const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
-  const lastMonthExpenses = expenseTransactions
-    .filter((t) => {
-      const date = new Date(t.date);
-      return date >= lastMonth && date <= lastMonthEnd;
-    })
-    .reduce((sum, t) => sum + t.amount, 0);
+  const prevPeriodTransactions = expenseTransactions.filter((t) => {
+    const date = new Date(t.date);
+    return date >= prevPeriodStart && date <= prevPeriodEnd;
+  });
+  const prevPeriodExpenses = prevPeriodTransactions.reduce(
+    (sum, t) => sum + t.amount,
+    0
+  );
 
   // Calculate change percentage
   const expenseChange =
-    lastMonthExpenses > 0
+    prevPeriodExpenses > 0
       ? Math.round(
-          ((currentMonthExpenses - lastMonthExpenses) / lastMonthExpenses) * 100
+          ((totalExpenses - prevPeriodExpenses) / prevPeriodExpenses) * 100
         )
       : 0;
 
-  // Expenses by category
-  const expensesByCategory = expenseTransactions.reduce((acc, t) => {
+  // Expenses by category (filtered)
+  const expensesByCategory = filteredTransactions.reduce((acc, t) => {
     const categoryKey = t.category?.id || t.categoryId;
     acc[categoryKey] = (acc[categoryKey] || 0) + t.amount;
     return acc;
@@ -74,6 +79,12 @@ export default function ExpensesPage() {
     }
   );
 
+  // All time totals for stats
+  const allTimeExpenses = expenseTransactions.reduce(
+    (sum, t) => sum + t.amount,
+    0
+  );
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -84,39 +95,42 @@ export default function ExpensesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Expenses</h1>
           <p className="text-muted-foreground">
             Track and analyze your spending
           </p>
         </div>
-        <Link href="/transactions/add">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Expense
-          </Button>
-        </Link>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <DateFilter onFilterChange={setDateRange} />
+          <Link href="/transactions/add">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Expense
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Total Expenses"
+          title="Period Expenses"
           value={totalExpenses}
-          change={0}
-          currency={currency}
-          type="expense"
-        />
-        <StatCard
-          title="This Month"
-          value={currentMonthExpenses}
           change={expenseChange}
           currency={currency}
           type="expense"
         />
         <StatCard
-          title="Last Month"
-          value={lastMonthExpenses}
+          title="Previous Period"
+          value={prevPeriodExpenses}
+          change={0}
+          currency={currency}
+          type="expense"
+        />
+        <StatCard
+          title="All Time"
+          value={allTimeExpenses}
           change={0}
           currency={currency}
           type="expense"
@@ -138,7 +152,7 @@ export default function ExpensesPage() {
         <CardContent className="h-[280px]">
           {chartData.length === 0 ? (
             <div className="flex items-center justify-center h-full text-muted-foreground">
-              No expense data yet
+              No expense data for this period
             </div>
           ) : (
             <DonutChart

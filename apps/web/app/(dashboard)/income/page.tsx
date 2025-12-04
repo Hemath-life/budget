@@ -1,6 +1,10 @@
 'use client';
 
 import { StatCard } from '@/components/dashboard/bento/stat-card';
+import {
+  DateFilter,
+  getDefaultDateRange,
+} from '@/components/shared/date-filter';
 import { DonutChart } from '@/components/shared/donut-chart';
 import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
 import {
@@ -13,48 +17,50 @@ import {
 } from '@repo/ui/components/ui';
 import { Loader2, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function IncomePage() {
   const { data: transactions = [], isLoading } = useTransactions();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
+  const [dateRange, setDateRange] = useState(getDefaultDateRange);
 
   const currency = settings?.defaultCurrency || 'INR';
   const incomeTransactions = transactions.filter((t) => t.type === 'income');
-  const totalIncome = incomeTransactions.reduce((sum, t) => sum + t.amount, 0);
 
-  // Current month income
-  const now = new Date();
-  const currentMonthIncome = incomeTransactions
-    .filter((t) => {
-      const date = new Date(t.date);
-      return (
-        date.getMonth() === now.getMonth() &&
-        date.getFullYear() === now.getFullYear()
-      );
-    })
-    .reduce((sum, t) => sum + t.amount, 0);
+  // Filter by date range
+  const filteredTransactions = incomeTransactions.filter((t) => {
+    const date = new Date(t.date);
+    return date >= dateRange.from && date <= dateRange.to;
+  });
 
-  // Last month income
-  const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
-  const lastMonthIncome = incomeTransactions
-    .filter((t) => {
-      const date = new Date(t.date);
-      return date >= lastMonth && date <= lastMonthEnd;
-    })
-    .reduce((sum, t) => sum + t.amount, 0);
+  const totalIncome = filteredTransactions.reduce(
+    (sum, t) => sum + t.amount,
+    0
+  );
+
+  // Previous period calculation (same duration before the selected range)
+  const rangeDuration = dateRange.to.getTime() - dateRange.from.getTime();
+  const prevPeriodEnd = new Date(dateRange.from.getTime() - 1);
+  const prevPeriodStart = new Date(prevPeriodEnd.getTime() - rangeDuration);
+
+  const prevPeriodTransactions = incomeTransactions.filter((t) => {
+    const date = new Date(t.date);
+    return date >= prevPeriodStart && date <= prevPeriodEnd;
+  });
+  const prevPeriodIncome = prevPeriodTransactions.reduce(
+    (sum, t) => sum + t.amount,
+    0
+  );
 
   // Calculate change percentage
   const incomeChange =
-    lastMonthIncome > 0
-      ? Math.round(
-          ((currentMonthIncome - lastMonthIncome) / lastMonthIncome) * 100
-        )
+    prevPeriodIncome > 0
+      ? Math.round(((totalIncome - prevPeriodIncome) / prevPeriodIncome) * 100)
       : 0;
 
-  // Income by category
-  const incomeByCategory = incomeTransactions.reduce((acc, t) => {
+  // Income by category (filtered)
+  const incomeByCategory = filteredTransactions.reduce((acc, t) => {
     const categoryKey = t.category?.id || t.categoryId;
     acc[categoryKey] = (acc[categoryKey] || 0) + t.amount;
     return acc;
@@ -71,6 +77,12 @@ export default function IncomePage() {
     }
   );
 
+  // All time totals for stats
+  const allTimeIncome = incomeTransactions.reduce(
+    (sum, t) => sum + t.amount,
+    0
+  );
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
@@ -81,39 +93,42 @@ export default function IncomePage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Income</h1>
           <p className="text-muted-foreground">
             Track and analyze your income sources
           </p>
         </div>
-        <Link href="/transactions/add">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Income
-          </Button>
-        </Link>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <DateFilter onFilterChange={setDateRange} />
+          <Link href="/transactions/add">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Income
+            </Button>
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Total Income"
+          title="Period Income"
           value={totalIncome}
-          change={0}
-          currency={currency}
-          type="income"
-        />
-        <StatCard
-          title="This Month"
-          value={currentMonthIncome}
           change={incomeChange}
           currency={currency}
           type="income"
         />
         <StatCard
-          title="Last Month"
-          value={lastMonthIncome}
+          title="Previous Period"
+          value={prevPeriodIncome}
+          change={0}
+          currency={currency}
+          type="income"
+        />
+        <StatCard
+          title="All Time"
+          value={allTimeIncome}
           change={0}
           currency={currency}
           type="income"
@@ -135,7 +150,7 @@ export default function IncomePage() {
         <CardContent className="h-[280px]">
           {chartData.length === 0 ? (
             <div className="flex items-center justify-center h-full text-muted-foreground">
-              No income data yet
+              No income data for this period
             </div>
           ) : (
             <DonutChart
