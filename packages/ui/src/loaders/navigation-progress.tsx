@@ -1,7 +1,7 @@
 'use client';
 
-import type { AppProgressBarProps } from 'next-nprogress-bar';
 import dynamic from 'next/dynamic';
+import type { AppProgressBarProps } from 'next-nprogress-bar';
 
 const AppRouterProgressBar = dynamic(
   () => import('next-nprogress-bar').then((mod) => mod.AppProgressBar),
@@ -22,10 +22,12 @@ export function NavigationProgress({
   shallowRouting = true,
   ...rest
 }: NavigationProgressProps) {
+  const resolvedHeight = typeof height === 'number' ? `${height}px` : height;
+
   return (
     <AppRouterProgressBar
       color={color}
-      height={height}
+      height={resolvedHeight}
       options={{ showSpinner: false }}
       shallowRouting={shallowRouting}
       {...rest}
