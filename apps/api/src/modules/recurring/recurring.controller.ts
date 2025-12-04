@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -21,35 +22,40 @@ export class RecurringController {
   constructor(private readonly recurringService: RecurringService) {}
 
   @Post()
-  create(@Body() createRecurringDto: CreateRecurringDto) {
-    return this.recurringService.create(createRecurringDto);
+  create(@Request() req, @Body() createRecurringDto: CreateRecurringDto) {
+    return this.recurringService.create(createRecurringDto, req.user.userId);
   }
 
   @Get()
-  findAll(@Query('status') status?: 'active' | 'inactive') {
-    return this.recurringService.findAll(status);
+  findAll(@Request() req, @Query('status') status?: 'active' | 'inactive') {
+    return this.recurringService.findAll(req.user.userId, status);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.recurringService.findOne(id);
+  findOne(@Request() req, @Param('id') id: string) {
+    return this.recurringService.findOne(id, req.user.userId);
   }
 
   @Put(':id')
   update(
+    @Request() req,
     @Param('id') id: string,
     @Body() updateRecurringDto: UpdateRecurringDto,
   ) {
-    return this.recurringService.update(id, updateRecurringDto);
+    return this.recurringService.update(
+      id,
+      updateRecurringDto,
+      req.user.userId,
+    );
   }
 
   @Patch(':id')
-  toggle(@Param('id') id: string) {
-    return this.recurringService.toggle(id);
+  toggle(@Request() req, @Param('id') id: string) {
+    return this.recurringService.toggle(id, req.user.userId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.recurringService.remove(id);
+  remove(@Request() req, @Param('id') id: string) {
+    return this.recurringService.remove(id, req.user.userId);
   }
 }

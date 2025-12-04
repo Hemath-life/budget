@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -21,40 +22,45 @@ export class RemindersController {
   constructor(private readonly remindersService: RemindersService) {}
 
   @Post()
-  create(@Body() createReminderDto: CreateReminderDto) {
-    return this.remindersService.create(createReminderDto);
+  create(@Request() req, @Body() createReminderDto: CreateReminderDto) {
+    return this.remindersService.create(createReminderDto, req.user.userId);
   }
 
   @Get()
-  findAll(@Query('status') status?: 'paid' | 'unpaid') {
-    return this.remindersService.findAll(status);
+  findAll(@Request() req, @Query('status') status?: 'paid' | 'unpaid') {
+    return this.remindersService.findAll(req.user.userId, status);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.remindersService.findOne(id);
+  findOne(@Request() req, @Param('id') id: string) {
+    return this.remindersService.findOne(id, req.user.userId);
   }
 
   @Put(':id')
   update(
+    @Request() req,
     @Param('id') id: string,
     @Body() updateReminderDto: UpdateReminderDto,
   ) {
-    return this.remindersService.update(id, updateReminderDto);
+    return this.remindersService.update(id, updateReminderDto, req.user.userId);
   }
 
   @Patch(':id')
-  async patch(@Param('id') id: string, @Body() body: { action?: string }) {
+  async patch(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() body: { action?: string },
+  ) {
     if (body.action === 'markPaid') {
-      return this.remindersService.markPaid(id);
+      return this.remindersService.markPaid(id, req.user.userId);
     } else if (body.action === 'markUnpaid') {
-      return this.remindersService.markUnpaid(id);
+      return this.remindersService.markUnpaid(id, req.user.userId);
     }
-    return this.remindersService.findOne(id);
+    return this.remindersService.findOne(id, req.user.userId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.remindersService.remove(id);
+  remove(@Request() req, @Param('id') id: string) {
+    return this.remindersService.remove(id, req.user.userId);
   }
 }

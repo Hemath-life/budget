@@ -6,16 +6,16 @@ import { UpdateSettingsDto } from './dto/update-settings.dto';
 export class SettingsService {
   constructor(private prisma: PrismaService) {}
 
-  async get() {
+  async get(userId: string) {
     const settings = await this.prisma.settings.findUnique({
-      where: { id: 1 },
+      where: { userId },
     });
 
     if (!settings) {
       // Create default settings if not exists
       const defaultSettings = await this.prisma.settings.create({
         data: {
-          id: 1,
+          userId,
           defaultCurrency: 'INR',
           theme: 'system',
           dateFormat: 'MMM dd, yyyy',
@@ -29,21 +29,21 @@ export class SettingsService {
     return this.mapToResponse(settings);
   }
 
-  async update(updateSettingsDto: UpdateSettingsDto) {
+  async update(userId: string, updateSettingsDto: UpdateSettingsDto) {
     // Ensure settings exist first
-    await this.get();
+    await this.get(userId);
 
     const settings = await this.prisma.settings.update({
-      where: { id: 1 },
+      where: { userId },
       data: updateSettingsDto,
     });
 
     return this.mapToResponse(settings);
   }
 
-  async patch(updateSettingsDto: UpdateSettingsDto) {
+  async patch(userId: string, updateSettingsDto: UpdateSettingsDto) {
     // Ensure settings exist first
-    await this.get();
+    await this.get(userId);
 
     const data: any = {};
 
@@ -64,7 +64,7 @@ export class SettingsService {
     }
 
     const settings = await this.prisma.settings.update({
-      where: { id: 1 },
+      where: { userId },
       data,
     });
 

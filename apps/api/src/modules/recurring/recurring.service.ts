@@ -7,7 +7,7 @@ import { UpdateRecurringDto } from './dto/update-recurring.dto';
 export class RecurringService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createRecurringDto: CreateRecurringDto) {
+  async create(createRecurringDto: CreateRecurringDto, userId: string) {
     const { category, startDate, endDate, nextDueDate, ...rest } =
       createRecurringDto;
 
@@ -15,6 +15,7 @@ export class RecurringService {
       data: {
         ...rest,
         categoryId: category,
+        userId,
         startDate: new Date(startDate),
         endDate: endDate ? new Date(endDate) : null,
         nextDueDate: nextDueDate ? new Date(nextDueDate) : new Date(startDate),
@@ -24,8 +25,8 @@ export class RecurringService {
     return this.mapToResponse(recurring);
   }
 
-  async findAll(status?: 'active' | 'inactive') {
-    const where: any = {};
+  async findAll(userId: string, status?: 'active' | 'inactive') {
+    const where: any = { userId };
 
     if (status === 'active') {
       where.isActive = true;
@@ -41,9 +42,9 @@ export class RecurringService {
     return recurring.map((r) => this.mapToResponse(r));
   }
 
-  async findOne(id: string) {
-    const recurring = await this.prisma.recurringTransaction.findUnique({
-      where: { id },
+  async findOne(id: string, userId: string) {
+    const recurring = await this.prisma.recurringTransaction.findFirst({
+      where: { id, userId },
     });
 
     if (!recurring) {
@@ -55,7 +56,11 @@ export class RecurringService {
     return this.mapToResponse(recurring);
   }
 
-  async update(id: string, updateRecurringDto: UpdateRecurringDto) {
+  async update(
+    id: string,
+    updateRecurringDto: UpdateRecurringDto,
+    userId: string,
+  ) {
     const { category, startDate, endDate, nextDueDate, ...rest } =
       updateRecurringDto;
     const data: any = { ...rest };
@@ -66,22 +71,26 @@ export class RecurringService {
       data.endDate = endDate ? new Date(endDate) : null;
     if (nextDueDate) data.nextDueDate = new Date(nextDueDate);
 
-    try {
-      const recurring = await this.prisma.recurringTransaction.update({
-        where: { id },
-        data,
-      });
-      return this.mapToResponse(recurring);
-    } catch (error) {
+    // Verify recurring transaction belongs to user
+    const existing = await this.prisma.recurringTransaction.findFirst({
+      where: { id, userId },
+    });
+    if (!existing) {
       throw new NotFoundException(
         `Recurring transaction with ID ${id} not found`,
       );
     }
+
+    const recurring = await this.prisma.recurringTransaction.update({
+      where: { id },
+      data,
+    });
+    return this.mapToResponse(recurring);
   }
 
-  async toggle(id: string) {
-    const recurring = await this.prisma.recurringTransaction.findUnique({
-      where: { id },
+  async toggle(id: string, userId: string) {
+    const recurring = await this.prisma.recurringTransaction.findFirst({
+      where: { id, userId },
     });
 
     if (!recurring) {
@@ -98,17 +107,21 @@ export class RecurringService {
     return this.mapToResponse(updatedRecurring);
   }
 
-  async remove(id: string) {
-    try {
-      await this.prisma.recurringTransaction.delete({
-        where: { id },
-      });
-      return { success: true };
-    } catch (error) {
+  async remove(id: string, userId: string) {
+    // Verify recurring transaction belongs to user
+    const existing = await this.prisma.recurringTransaction.findFirst({
+      where: { id, userId },
+    });
+    if (!existing) {
       throw new NotFoundException(
         `Recurring transaction with ID ${id} not found`,
       );
     }
+
+    await this.prisma.recurringTransaction.delete({
+      where: { id },
+    });
+    return { success: true };
   }
 
   private mapToResponse(recurring: any) {

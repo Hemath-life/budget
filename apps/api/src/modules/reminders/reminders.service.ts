@@ -7,13 +7,14 @@ import { UpdateReminderDto } from './dto/update-reminder.dto';
 export class RemindersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createReminderDto: CreateReminderDto) {
+  async create(createReminderDto: CreateReminderDto, userId: string) {
     const { category, dueDate, ...rest } = createReminderDto;
 
     const reminder = await this.prisma.reminder.create({
       data: {
         ...rest,
         categoryId: category,
+        userId,
         dueDate: new Date(dueDate),
       },
     });
@@ -21,8 +22,8 @@ export class RemindersService {
     return this.mapToResponse(reminder);
   }
 
-  async findAll(status?: 'paid' | 'unpaid') {
-    const where: any = {};
+  async findAll(userId: string, status?: 'paid' | 'unpaid') {
+    const where: any = { userId };
 
     if (status === 'paid') {
       where.isPaid = true;
@@ -38,9 +39,9 @@ export class RemindersService {
     return reminders.map((r) => this.mapToResponse(r));
   }
 
-  async findOne(id: string) {
-    const reminder = await this.prisma.reminder.findUnique({
-      where: { id },
+  async findOne(id: string, userId: string) {
+    const reminder = await this.prisma.reminder.findFirst({
+      where: { id, userId },
     });
 
     if (!reminder) {
@@ -50,26 +51,36 @@ export class RemindersService {
     return this.mapToResponse(reminder);
   }
 
-  async update(id: string, updateReminderDto: UpdateReminderDto) {
+  async update(
+    id: string,
+    updateReminderDto: UpdateReminderDto,
+    userId: string,
+  ) {
     const { category, dueDate, ...rest } = updateReminderDto;
     const data: any = { ...rest };
 
     if (category !== undefined) data.categoryId = category;
     if (dueDate) data.dueDate = new Date(dueDate);
 
-    try {
-      const reminder = await this.prisma.reminder.update({
-        where: { id },
-        data,
-      });
-      return this.mapToResponse(reminder);
-    } catch (error) {
+    // Verify reminder belongs to user
+    const existing = await this.prisma.reminder.findFirst({
+      where: { id, userId },
+    });
+    if (!existing) {
       throw new NotFoundException(`Reminder with ID ${id} not found`);
     }
+
+    const reminder = await this.prisma.reminder.update({
+      where: { id },
+      data,
+    });
+    return this.mapToResponse(reminder);
   }
 
-  async markPaid(id: string) {
-    const reminder = await this.prisma.reminder.findUnique({ where: { id } });
+  async markPaid(id: string, userId: string) {
+    const reminder = await this.prisma.reminder.findFirst({
+      where: { id, userId },
+    });
     if (!reminder)
       throw new NotFoundException(`Reminder with ID ${id} not found`);
 
@@ -103,27 +114,35 @@ export class RemindersService {
     return this.mapToResponse(updatedReminder);
   }
 
-  async markUnpaid(id: string) {
-    try {
-      const reminder = await this.prisma.reminder.update({
-        where: { id },
-        data: { isPaid: false },
-      });
-      return this.mapToResponse(reminder);
-    } catch (error) {
+  async markUnpaid(id: string, userId: string) {
+    // Verify reminder belongs to user
+    const existing = await this.prisma.reminder.findFirst({
+      where: { id, userId },
+    });
+    if (!existing) {
       throw new NotFoundException(`Reminder with ID ${id} not found`);
     }
+
+    const reminder = await this.prisma.reminder.update({
+      where: { id },
+      data: { isPaid: false },
+    });
+    return this.mapToResponse(reminder);
   }
 
-  async remove(id: string) {
-    try {
-      await this.prisma.reminder.delete({
-        where: { id },
-      });
-      return { success: true };
-    } catch (error) {
+  async remove(id: string, userId: string) {
+    // Verify reminder belongs to user
+    const existing = await this.prisma.reminder.findFirst({
+      where: { id, userId },
+    });
+    if (!existing) {
       throw new NotFoundException(`Reminder with ID ${id} not found`);
     }
+
+    await this.prisma.reminder.delete({
+      where: { id },
+    });
+    return { success: true };
   }
 
   private getNextRecurringDate(

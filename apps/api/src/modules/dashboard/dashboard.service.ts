@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class DashboardService {
   constructor(private prisma: PrismaService) {}
 
-  async getDashboard() {
+  async getDashboard(userId: string) {
     const now = new Date();
 
     // Get current month range
@@ -24,6 +24,7 @@ export class DashboardService {
     const currentMonthIncomeResult = await this.prisma.transaction.aggregate({
       _sum: { amount: true },
       where: {
+        userId,
         type: 'income',
         date: { gte: firstDayOfMonth, lte: lastDayOfMonth },
       },
@@ -32,6 +33,7 @@ export class DashboardService {
     const currentMonthExpensesResult = await this.prisma.transaction.aggregate({
       _sum: { amount: true },
       where: {
+        userId,
         type: 'expense',
         date: { gte: firstDayOfMonth, lte: lastDayOfMonth },
       },
@@ -41,6 +43,7 @@ export class DashboardService {
     const lastMonthIncomeResult = await this.prisma.transaction.aggregate({
       _sum: { amount: true },
       where: {
+        userId,
         type: 'income',
         date: { gte: firstDayOfLastMonth, lte: lastDayOfLastMonth },
       },
@@ -49,6 +52,7 @@ export class DashboardService {
     const lastMonthExpensesResult = await this.prisma.transaction.aggregate({
       _sum: { amount: true },
       where: {
+        userId,
         type: 'expense',
         date: { gte: firstDayOfLastMonth, lte: lastDayOfLastMonth },
       },
@@ -57,16 +61,17 @@ export class DashboardService {
     // Calculate all-time totals
     const allTimeIncomeResult = await this.prisma.transaction.aggregate({
       _sum: { amount: true },
-      where: { type: 'income' },
+      where: { userId, type: 'income' },
     });
 
     const allTimeExpensesResult = await this.prisma.transaction.aggregate({
       _sum: { amount: true },
-      where: { type: 'expense' },
+      where: { userId, type: 'expense' },
     });
 
     // Get recent transactions
     const recentTransactions = await this.prisma.transaction.findMany({
+      where: { userId },
       orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
       take: 5,
       include: { category: true },
@@ -77,6 +82,7 @@ export class DashboardService {
       by: ['categoryId'],
       _sum: { amount: true },
       where: {
+        userId,
         type: 'expense',
         date: { gte: firstDayOfMonth, lte: lastDayOfMonth },
       },
@@ -85,6 +91,7 @@ export class DashboardService {
     // Get upcoming reminders
     const upcomingReminders = await this.prisma.reminder.findMany({
       where: {
+        userId,
         isPaid: false,
         dueDate: { gte: now },
       },
@@ -93,11 +100,13 @@ export class DashboardService {
     });
 
     // Get budgets
-    const budgets = await this.prisma.budget.findMany();
+    const budgets = await this.prisma.budget.findMany({
+      where: { userId },
+    });
 
     // Get active goals
     const goals = await this.prisma.goal.findMany({
-      where: { isCompleted: false },
+      where: { userId, isCompleted: false },
       orderBy: { deadline: 'asc' },
     });
 
