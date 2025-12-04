@@ -27,8 +27,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  Input,
-  Label,
   Progress,
   Select,
   SelectContent,
@@ -36,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@repo/ui/components/ui';
+import { FormField } from '@repo/ui/forms';
 import { AlertTriangle, Loader2, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -325,9 +324,9 @@ export function BudgetManager({
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Category</Label>
+              <label className="text-sm font-medium">Category</label>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -345,25 +344,24 @@ export function BudgetManager({
                 </SelectContent>
               </Select>
             </div>
+            <FormField
+              id="amount"
+              label="Budget Amount"
+              type="number"
+              value={amount}
+              onChange={setAmount}
+              placeholder="0.00"
+              min={0}
+              step={0.01}
+              required
+            />
             <div className="space-y-2">
-              <Label htmlFor="amount">Budget Amount</Label>
-              <Input
-                id="amount"
-                type="number"
-                step="0.01"
-                min="0"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="0.00"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Period</Label>
+              <label className="text-sm font-medium">Period</label>
               <Select
                 value={period}
                 onValueChange={(v) => setPeriod(v as typeof period)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

@@ -20,8 +20,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  Input,
-  Label,
   Select,
   SelectContent,
   SelectItem,
@@ -32,6 +30,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@repo/ui/components/ui';
+import { FormField } from '@repo/ui/forms';
 import { Loader2, Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -288,22 +287,21 @@ export function CategoryManager({
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
+            <FormField
+              id="name"
+              label="Name"
+              value={name}
+              onChange={setName}
+              placeholder="Category name"
+              required
+            />
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Category name"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Type</Label>
+              <label className="text-sm font-medium">Type</label>
               <Select
                 value={type}
                 onValueChange={(v) => setType(v as TransactionType)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -313,7 +311,7 @@ export function CategoryManager({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Color</Label>
+              <label className="text-sm font-medium">Color</label>
               <div className="flex flex-wrap gap-2">
                 {COLORS.map((c) => (
                   <button
