@@ -79,6 +79,63 @@ export class BudgetsService {
     return { success: true };
   }
 
+  async loadDefaults(userId: string) {
+    const existingBudgets = await this.prisma.budget.findMany({
+      where: { userId },
+    });
+
+    if (existingBudgets.length > 0) {
+      return {
+        success: false,
+        message:
+          'Budgets already exist. Delete existing budgets first to load defaults.',
+        count: existingBudgets.length,
+      };
+    }
+
+    // Get expense categories to create budgets for
+    const expenseCategories = await this.prisma.category.findMany({
+      where: { type: 'expense' },
+      take: 5,
+    });
+
+    if (expenseCategories.length === 0) {
+      return {
+        success: false,
+        message: 'No expense categories found. Please create categories first.',
+        count: 0,
+      };
+    }
+
+    const defaultBudgets = [
+      { amount: 15000, period: 'monthly' },
+      { amount: 8000, period: 'monthly' },
+      { amount: 10000, period: 'monthly' },
+      { amount: 5000, period: 'monthly' },
+      { amount: 6000, period: 'monthly' },
+    ];
+
+    const budgetsToCreate = expenseCategories.map((cat, index) => ({
+      userId,
+      categoryId: cat.id,
+      amount: defaultBudgets[index]?.amount || 5000,
+      currency: 'INR',
+      period: defaultBudgets[index]?.period || 'monthly',
+      spent: 0,
+      startDate: new Date(),
+    }));
+
+    const created = await this.prisma.budget.createMany({
+      data: budgetsToCreate,
+    });
+
+    return {
+      success: true,
+      message: 'Default budgets loaded successfully',
+      count: created.count,
+    };
+  }
+
   private mapToResponse(budget: any) {
     return {
       id: budget.id,

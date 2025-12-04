@@ -96,6 +96,83 @@ export class GoalsService {
     return { success: true };
   }
 
+  async loadDefaults(userId: string) {
+    const existingGoals = await this.prisma.goal.findMany({
+      where: { userId },
+    });
+
+    if (existingGoals.length > 0) {
+      return {
+        success: false,
+        message:
+          'Goals already exist. Delete existing goals first to load defaults.',
+        count: existingGoals.length,
+      };
+    }
+
+    const defaultGoals = [
+      {
+        name: 'Emergency Fund',
+        targetAmount: 300000,
+        currentAmount: 0,
+        currency: 'INR',
+        deadline: new Date(
+          new Date().setFullYear(new Date().getFullYear() + 1),
+        ),
+        icon: 'Shield',
+        color: '#22C55E',
+        isCompleted: false,
+      },
+      {
+        name: 'Vacation Trip',
+        targetAmount: 100000,
+        currentAmount: 0,
+        currency: 'INR',
+        deadline: new Date(new Date().setMonth(new Date().getMonth() + 6)),
+        icon: 'Plane',
+        color: '#3B82F6',
+        isCompleted: false,
+      },
+      {
+        name: 'New Gadget',
+        targetAmount: 50000,
+        currentAmount: 0,
+        currency: 'INR',
+        deadline: new Date(new Date().setMonth(new Date().getMonth() + 3)),
+        icon: 'Laptop',
+        color: '#8B5CF6',
+        isCompleted: false,
+      },
+      {
+        name: 'Home Down Payment',
+        targetAmount: 1000000,
+        currentAmount: 0,
+        currency: 'INR',
+        deadline: new Date(
+          new Date().setFullYear(new Date().getFullYear() + 3),
+        ),
+        icon: 'Home',
+        color: '#F97316',
+        isCompleted: false,
+      },
+    ];
+
+    const goalsToCreate = defaultGoals.map((goal) => ({
+      ...goal,
+      userId,
+    }));
+
+    const created = await this.prisma.goal.createMany({
+      data: goalsToCreate,
+    });
+
+    return {
+      success: true,
+      message: 'Default goals loaded successfully',
+      count: created.count,
+    };
+  }
+
   private mapToResponse(goal: any) {
     return {
       id: goal.id,

@@ -25,6 +25,11 @@ export class GoalsController {
     return this.goalsService.create(createGoalDto, req.user.userId);
   }
 
+  @Post('load-defaults')
+  loadDefaults(@Request() req) {
+    return this.goalsService.loadDefaults(req.user.userId);
+  }
+
   @Get()
   findAll(@Request() req) {
     return this.goalsService.findAll(req.user.userId);

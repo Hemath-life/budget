@@ -1,5 +1,6 @@
 'use client';
 
+import { budgetsApi } from '@/lib/api';
 import {
   useBudgets,
   useCategories,
@@ -13,7 +14,14 @@ import { calculatePercentage, formatCurrency } from '@/lib/utils';
 import { Button, Card, CardContent, Progress } from '@repo/ui/components/ui';
 import { AlertDialog, EditDialog } from '@repo/ui/dialogs';
 import { FormField, SelectField } from '@repo/ui/forms';
-import { AlertTriangle, Loader2, Pencil, Trash2 } from 'lucide-react';
+import {
+  AlertTriangle,
+  Loader2,
+  Pencil,
+  Sparkles,
+  Trash2,
+  Wallet,
+} from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -35,6 +43,7 @@ export function BudgetManager({
 
   const [editBudget, setEditBudget] = useState<Budget | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [loadingDefaults, setLoadingDefaults] = useState(false);
 
   const [category, setCategory] = useState('');
   const [amount, setAmount] = useState('');
@@ -153,6 +162,24 @@ export function BudgetManager({
     return 'bg-green-500';
   };
 
+  const handleLoadDefaults = async () => {
+    setLoadingDefaults(true);
+    try {
+      const result = await budgetsApi.loadDefaults();
+      if (result.success) {
+        toast.success(`Loaded ${result.count} default budgets`);
+        window.location.reload();
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error('Error loading defaults:', error);
+      toast.error('Failed to load default budgets');
+    } finally {
+      setLoadingDefaults(false);
+    }
+  };
+
   if (budgetsLoading) {
     return (
       <Card>
@@ -167,12 +194,31 @@ export function BudgetManager({
     <>
       {budgets.length === 0 ? (
         <Card>
-          <CardContent className="pt-6">
-            <div className="text-center py-12 text-muted-foreground">
-              <p>No budgets set yet</p>
-              <p className="text-sm">
-                Create a budget to start tracking your spending
-              </p>
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="rounded-full bg-muted p-4 mb-4">
+              <Wallet className="h-10 w-10 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">No budgets set yet</h3>
+            <p className="text-muted-foreground mb-6 max-w-sm">
+              Budgets help you control your spending. Get started by loading
+              default budgets or create your own.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                variant="outline"
+                onClick={handleLoadDefaults}
+                disabled={loadingDefaults}
+              >
+                {loadingDefaults ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Sparkles className="h-4 w-4 mr-2" />
+                )}
+                Load Default Budgets
+              </Button>
+              <Button onClick={() => setIsDialogOpen(true)}>
+                Create Custom Budget
+              </Button>
             </div>
           </CardContent>
         </Card>

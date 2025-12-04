@@ -252,6 +252,12 @@ export const budgetsApi = {
 
   delete: (id: string) =>
     fetchApi<{ success: boolean }>(`/budgets/${id}`, { method: 'DELETE' }),
+
+  loadDefaults: () =>
+    fetchApi<{ success: boolean; message: string; count: number }>(
+      '/budgets/load-defaults',
+      { method: 'POST' }
+    ),
 };
 
 // ============ GOALS ============
@@ -277,6 +283,12 @@ export const goalsApi = {
       method: 'PATCH',
       body: JSON.stringify({ amount }),
     }),
+
+  loadDefaults: () =>
+    fetchApi<{ success: boolean; message: string; count: number }>(
+      '/goals/load-defaults',
+      { method: 'POST' }
+    ),
 };
 
 // ============ REMINDERS ============

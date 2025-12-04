@@ -24,6 +24,11 @@ export class BudgetsController {
     return this.budgetsService.create(createBudgetDto, req.user.userId);
   }
 
+  @Post('load-defaults')
+  loadDefaults(@Request() req) {
+    return this.budgetsService.loadDefaults(req.user.userId);
+  }
+
   @Get()
   findAll(@Request() req) {
     return this.budgetsService.findAll(req.user.userId);

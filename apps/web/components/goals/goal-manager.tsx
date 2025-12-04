@@ -1,5 +1,6 @@
 'use client';
 
+import { goalsApi } from '@/lib/api';
 import {
   useContributeToGoal,
   useCreateGoal,
@@ -69,6 +70,7 @@ export function GoalManager({
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [contributeId, setContributeId] = useState<string | null>(null);
   const [contributeAmount, setContributeAmount] = useState('');
+  const [loadingDefaults, setLoadingDefaults] = useState(false);
 
   const [name, setName] = useState('');
   const [targetAmount, setTargetAmount] = useState('');
@@ -172,6 +174,24 @@ export function GoalManager({
       } catch {
         toast.error('Failed to add contribution');
       }
+    }
+  };
+
+  const handleLoadDefaults = async () => {
+    setLoadingDefaults(true);
+    try {
+      const result = await goalsApi.loadDefaults();
+      if (result.success) {
+        toast.success(`Loaded ${result.count} default goals`);
+        window.location.reload();
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error('Error loading defaults:', error);
+      toast.error('Failed to load default goals');
+    } finally {
+      setLoadingDefaults(false);
     }
   };
 
@@ -281,11 +301,31 @@ export function GoalManager({
     <>
       {goals.length === 0 ? (
         <Card>
-          <CardContent className="pt-6">
-            <div className="text-center py-12 text-muted-foreground">
-              <Target className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No goals set yet</p>
-              <p className="text-sm">Create a goal to start saving</p>
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="rounded-full bg-muted p-4 mb-4">
+              <Target className="h-10 w-10 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">No goals set yet</h3>
+            <p className="text-muted-foreground mb-6 max-w-sm">
+              Goals help you save for what matters. Get started by loading
+              default goals or create your own.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                variant="outline"
+                onClick={handleLoadDefaults}
+                disabled={loadingDefaults}
+              >
+                {loadingDefaults ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Sparkles className="h-4 w-4 mr-2" />
+                )}
+                Load Default Goals
+              </Button>
+              <Button onClick={() => setIsDialogOpen(true)}>
+                Create Custom Goal
+              </Button>
             </div>
           </CardContent>
         </Card>
