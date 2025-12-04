@@ -18,23 +18,10 @@ import {
   isOverdue,
 } from '@/lib/utils';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   Badge,
   Button,
   Card,
   CardContent,
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -45,6 +32,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@repo/ui/components/ui';
+import { AlertDialog, EditDialog } from '@repo/ui/dialogs';
 import { DateField, FormField, SwitchField } from '@repo/ui/forms';
 import {
   AlertTriangle,
@@ -370,133 +358,108 @@ export function ReminderManager({
       </Tabs>
 
       {/* Reminder Dialog */}
-      <Dialog
+      <EditDialog
         open={isDialogOpen}
         onOpenChange={(open) => {
           setIsDialogOpen(open);
           if (!open) resetForm();
         }}
+        title={editReminder ? 'Edit Reminder' : 'Create Reminder'}
+        onSubmit={handleSubmit}
+        submitText={editReminder ? 'Update' : 'Create'}
       >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editReminder ? 'Edit Reminder' : 'Create Reminder'}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <FormField
-              id="title"
-              label="Title"
-              value={title}
-              onChange={setTitle}
-              placeholder="e.g., Rent Payment"
-              required
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                id="amount"
-                label="Amount"
-                type="number"
-                value={amount}
-                onChange={setAmount}
-                placeholder="0.00"
-                min={0}
-                step={0.01}
-                required
-              />
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Category</label>
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories
-                      .filter((c) => c.type === 'expense')
-                      .map((c) => (
-                        <SelectItem key={c.id} value={c.id}>
-                          {c.name}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <DateField
-              id="dueDate"
-              label="Due Date"
-              value={dueDate}
-              onChange={(d) => d && setDueDate(d)}
-              required
-            />
-            <SwitchField
-              id="isRecurring"
-              label="Recurring"
-              description="Repeat this reminder"
-              checked={isRecurring}
-              onChange={setIsRecurring}
-            />
-            {isRecurring && (
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Frequency</label>
-                <Select
-                  value={frequency}
-                  onValueChange={(v) => setFrequency(v as typeof frequency)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="weekly">Weekly</SelectItem>
-                    <SelectItem value="biweekly">Bi-weekly</SelectItem>
-                    <SelectItem value="monthly">Monthly</SelectItem>
-                    <SelectItem value="quarterly">Quarterly</SelectItem>
-                    <SelectItem value="yearly">Yearly</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-            <FormField
-              id="notify"
-              label="Notify Before (days)"
-              type="number"
-              value={notifyBefore}
-              onChange={setNotifyBefore}
-              min={1}
-              max={30}
-            />
+        <FormField
+          id="title"
+          label="Title"
+          value={title}
+          onChange={setTitle}
+          placeholder="e.g., Rent Payment"
+          required
+        />
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            id="amount"
+            label="Amount"
+            type="number"
+            value={amount}
+            onChange={setAmount}
+            placeholder="0.00"
+            min={0}
+            step={0.01}
+            required
+          />
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Category</label>
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories
+                  .filter((c) => c.type === 'expense')
+                  .map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmit}>
-              {editReminder ? 'Update' : 'Create'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Reminder</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this reminder? This action cannot
-              be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700"
+        </div>
+        <DateField
+          id="dueDate"
+          label="Due Date"
+          value={dueDate}
+          onChange={(d) => d && setDueDate(d)}
+          required
+        />
+        <SwitchField
+          id="isRecurring"
+          label="Recurring"
+          description="Repeat this reminder"
+          checked={isRecurring}
+          onChange={setIsRecurring}
+        />
+        {isRecurring && (
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Frequency</label>
+            <Select
+              value={frequency}
+              onValueChange={(v) => setFrequency(v as typeof frequency)}
             >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="weekly">Weekly</SelectItem>
+                <SelectItem value="biweekly">Bi-weekly</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="quarterly">Quarterly</SelectItem>
+                <SelectItem value="yearly">Yearly</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+        <FormField
+          id="notify"
+          label="Notify Before (days)"
+          type="number"
+          value={notifyBefore}
+          onChange={setNotifyBefore}
+          min={1}
+          max={30}
+        />
+      </EditDialog>
+
+      <AlertDialog
+        open={!!deleteId}
+        onOpenChange={() => setDeleteId(null)}
+        title="Delete Reminder"
+        description="Are you sure you want to delete this reminder? This action cannot be undone."
+        variant="delete"
+        onConfirm={handleDelete}
+        confirmText="Delete"
+      />
     </>
   );
 }

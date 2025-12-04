@@ -11,22 +11,9 @@ import {
 import { Budget } from '@/lib/types';
 import { calculatePercentage, formatCurrency } from '@/lib/utils';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   Button,
   Card,
   CardContent,
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   Progress,
   Select,
   SelectContent,
@@ -34,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@repo/ui/components/ui';
+import { AlertDialog, EditDialog } from '@repo/ui/dialogs';
 import { FormField } from '@repo/ui/forms';
 import { AlertTriangle, Loader2, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
@@ -309,101 +297,76 @@ export function BudgetManager({
       )}
 
       {/* Budget Dialog */}
-      <Dialog
+      <EditDialog
         open={isDialogOpen}
         onOpenChange={(open) => {
           setIsDialogOpen(open);
           if (!open) resetForm();
         }}
+        title={editBudget ? 'Edit Budget' : 'Create Budget'}
+        onSubmit={handleSubmit}
+        submitText={editBudget ? 'Update' : 'Create'}
       >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editBudget ? 'Edit Budget' : 'Create Budget'}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Category</label>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableCategories.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      <div className="flex items-center gap-2">
-                        <div
-                          className="h-3 w-3 rounded-full"
-                          style={{ backgroundColor: c.color }}
-                        />
-                        {c.name}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <FormField
-              id="amount"
-              label="Budget Amount"
-              type="number"
-              value={amount}
-              onChange={setAmount}
-              placeholder="0.00"
-              min={0}
-              step={0.01}
-              required
-            />
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Period</label>
-              <Select
-                value={period}
-                onValueChange={(v) => setPeriod(v as typeof period)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="quarterly">Quarterly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmit}>
-              {editBudget ? 'Update' : 'Create'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Category</label>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableCategories.map((c) => (
+                <SelectItem key={c.id} value={c.id}>
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="h-3 w-3 rounded-full"
+                      style={{ backgroundColor: c.color }}
+                    />
+                    {c.name}
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <FormField
+          id="amount"
+          label="Budget Amount"
+          type="number"
+          value={amount}
+          onChange={setAmount}
+          placeholder="0.00"
+          min={0}
+          step={0.01}
+          required
+        />
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Period</label>
+          <Select
+            value={period}
+            onValueChange={(v) => setPeriod(v as typeof period)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="weekly">Weekly</SelectItem>
+              <SelectItem value="monthly">Monthly</SelectItem>
+              <SelectItem value="quarterly">Quarterly</SelectItem>
+              <SelectItem value="yearly">Yearly</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </EditDialog>
 
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Budget</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this budget? This action cannot be
-              undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <AlertDialog
+        open={!!deleteId}
+        onOpenChange={() => setDeleteId(null)}
+        title="Delete Budget"
+        description="Are you sure you want to delete this budget? This action cannot be undone."
+        variant="delete"
+        onConfirm={handleDelete}
+        confirmText="Delete"
+      />
     </>
   );
 }

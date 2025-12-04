@@ -3,23 +3,10 @@
 import { categoriesApi } from '@/lib/api';
 import { Category, TransactionType } from '@/lib/types';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   Badge,
   Button,
   Card,
   CardContent,
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -30,6 +17,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@repo/ui/components/ui';
+import { AlertDialog, EditDialog } from '@repo/ui/dialogs';
 import { FormField } from '@repo/ui/forms';
 import { Loader2, Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -248,93 +236,69 @@ export function CategoryManager({
       </Tabs>
 
       {/* Category Dialog */}
-      <Dialog
+      <EditDialog
         open={isDialogOpen}
         onOpenChange={(open) => {
           setIsDialogOpen(open);
           if (!open) resetForm();
         }}
+        title={editCategory ? 'Edit Category' : 'Add Category'}
+        onSubmit={handleSubmit}
+        submitText={editCategory ? 'Update' : 'Add'}
+        isLoading={submitting}
       >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editCategory ? 'Edit Category' : 'Add Category'}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <FormField
-              id="name"
-              label="Name"
-              value={name}
-              onChange={setName}
-              placeholder="Category name"
-              required
-            />
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Type</label>
-              <Select
-                value={type}
-                onValueChange={(v) => setType(v as TransactionType)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="income">Income</SelectItem>
-                  <SelectItem value="expense">Expense</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Color</label>
-              <div className="flex flex-wrap gap-2">
-                {COLORS.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    className={`h-8 w-8 rounded-full transition-transform ${
-                      color === c
-                        ? 'ring-2 ring-offset-2 ring-primary scale-110'
-                        : ''
-                    }`}
-                    style={{ backgroundColor: c }}
-                    onClick={() => setColor(c)}
-                  />
-                ))}
-              </div>
-            </div>
+        <FormField
+          id="name"
+          label="Name"
+          value={name}
+          onChange={setName}
+          placeholder="Category name"
+          required
+        />
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Type</label>
+          <Select
+            value={type}
+            onValueChange={(v) => setType(v as TransactionType)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="income">Income</SelectItem>
+              <SelectItem value="expense">Expense</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Color</label>
+          <div className="flex flex-wrap gap-2">
+            {COLORS.map((c) => (
+              <button
+                key={c}
+                type="button"
+                className={`h-8 w-8 rounded-full transition-transform ${
+                  color === c
+                    ? 'ring-2 ring-offset-2 ring-primary scale-110'
+                    : ''
+                }`}
+                style={{ backgroundColor: c }}
+                onClick={() => setColor(c)}
+              />
+            ))}
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmit}>
-              {editCategory ? 'Update' : 'Add'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </EditDialog>
 
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Category</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this category? Transactions using
-              this category will not be affected.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <AlertDialog
+        open={!!deleteId}
+        onOpenChange={() => setDeleteId(null)}
+        title="Delete Category"
+        description="Are you sure you want to delete this category? Transactions using this category will not be affected."
+        variant="delete"
+        onConfirm={handleDelete}
+        confirmText="Delete"
+      />
     </>
   );
 }

@@ -16,25 +16,13 @@ import {
   getDaysUntil,
 } from '@/lib/utils';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   Badge,
   Button,
   Card,
   CardContent,
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   Progress,
 } from '@repo/ui/components/ui';
+import { AlertDialog, ContributeDialog, EditDialog } from '@repo/ui/dialogs';
 import { DateField, FormField } from '@repo/ui/forms';
 import {
   Loader2,
@@ -321,137 +309,104 @@ export function GoalManager({
       )}
 
       {/* Goal Dialog */}
-      <Dialog
+      <EditDialog
         open={isDialogOpen}
         onOpenChange={(open) => {
           setIsDialogOpen(open);
           if (!open) resetForm();
         }}
+        title={editGoal ? 'Edit Goal' : 'Create Goal'}
+        onSubmit={handleSubmit}
+        submitText={editGoal ? 'Update' : 'Create'}
       >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editGoal ? 'Edit Goal' : 'Create Goal'}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <FormField
-              id="name"
-              label="Goal Name"
-              value={name}
-              onChange={setName}
-              placeholder="e.g., Emergency Fund"
-              required
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                id="target"
-                label="Target Amount"
-                type="number"
-                value={targetAmount}
-                onChange={setTargetAmount}
-                placeholder="0.00"
-                min={0}
-                step={0.01}
-                required
+        <FormField
+          id="name"
+          label="Goal Name"
+          value={name}
+          onChange={setName}
+          placeholder="e.g., Emergency Fund"
+          required
+        />
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            id="target"
+            label="Target Amount"
+            type="number"
+            value={targetAmount}
+            onChange={setTargetAmount}
+            placeholder="0.00"
+            min={0}
+            step={0.01}
+            required
+          />
+          <FormField
+            id="current"
+            label="Current Amount"
+            type="number"
+            value={currentAmount}
+            onChange={setCurrentAmount}
+            placeholder="0.00"
+            min={0}
+            step={0.01}
+          />
+        </div>
+        <DateField
+          id="deadline"
+          label="Deadline"
+          value={deadline}
+          onChange={(d) => d && setDeadline(d)}
+          required
+        />
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Color</label>
+          <div className="flex flex-wrap gap-2">
+            {COLORS.map((c) => (
+              <button
+                key={c}
+                type="button"
+                className={`h-8 w-8 rounded-full transition-transform ${
+                  color === c
+                    ? 'ring-2 ring-offset-2 ring-primary scale-110'
+                    : ''
+                }`}
+                style={{ backgroundColor: c }}
+                onClick={() => setColor(c)}
               />
-              <FormField
-                id="current"
-                label="Current Amount"
-                type="number"
-                value={currentAmount}
-                onChange={setCurrentAmount}
-                placeholder="0.00"
-                min={0}
-                step={0.01}
-              />
-            </div>
-            <DateField
-              id="deadline"
-              label="Deadline"
-              value={deadline}
-              onChange={(d) => d && setDeadline(d)}
-              required
-            />
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Color</label>
-              <div className="flex flex-wrap gap-2">
-                {COLORS.map((c) => (
-                  <button
-                    key={c}
-                    type="button"
-                    className={`h-8 w-8 rounded-full transition-transform ${
-                      color === c
-                        ? 'ring-2 ring-offset-2 ring-primary scale-110'
-                        : ''
-                    }`}
-                    style={{ backgroundColor: c }}
-                    onClick={() => setColor(c)}
-                  />
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmit}>
-              {editGoal ? 'Update' : 'Create'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </EditDialog>
 
       {/* Contribute Dialog */}
-      <Dialog open={isContributeOpen} onOpenChange={setIsContributeOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add Contribution</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <FormField
-              id="contribute"
-              label="Amount"
-              type="number"
-              value={contributeAmount}
-              onChange={setContributeAmount}
-              placeholder="0.00"
-              min={0}
-              step={0.01}
-              required
-            />
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setIsContributeOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button onClick={handleContribute}>Add</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <ContributeDialog
+        open={isContributeOpen}
+        onOpenChange={setIsContributeOpen}
+        title="Add Contribution"
+        onSubmit={handleContribute}
+        submitText="Add"
+      >
+        <FormField
+          id="contribute"
+          label="Amount"
+          type="number"
+          value={contributeAmount}
+          onChange={setContributeAmount}
+          placeholder="0.00"
+          min={0}
+          step={0.01}
+          required
+        />
+      </ContributeDialog>
 
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Goal</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this goal? This action cannot be
-              undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <AlertDialog
+        open={!!deleteId}
+        onOpenChange={() => setDeleteId(null)}
+        title="Delete Goal"
+        description="Are you sure you want to delete this goal? This action cannot be undone."
+        variant="delete"
+        onConfirm={handleDelete}
+        confirmText="Delete"
+      />
     </>
   );
 }

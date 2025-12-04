@@ -1,23 +1,24 @@
 'use client';
 
-import { useState } from 'react';
-import { useSettings, useCurrencies, useCreateCurrency, useUpdateCurrency, usePatchSettings } from '@/lib/hooks';
-import { formatCurrency } from '@/lib/utils';
+import {
+  useCreateCurrency,
+  useCurrencies,
+  usePatchSettings,
+  useSettings,
+  useUpdateCurrency,
+} from '@/lib/hooks';
 import { Currency } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@repo/ui/components/ui';
-import { Button } from '@repo/ui/components/ui';
-import { Input } from '@repo/ui/components/ui';
-import { Label } from '@repo/ui/components/ui';
-import { Badge } from '@repo/ui/components/ui';
+import { formatCurrency } from '@/lib/utils';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from '@repo/ui/components/ui';
-import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Label,
   Table,
   TableBody,
   TableCell,
@@ -25,7 +26,9 @@ import {
   TableHeader,
   TableRow,
 } from '@repo/ui/components/ui';
-import { Check, Plus, RefreshCw, Loader2 } from 'lucide-react';
+import { EditDialog } from '@repo/ui/dialogs';
+import { Check, Loader2, Plus, RefreshCw } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 export function CurrencySettings() {
@@ -41,7 +44,10 @@ export function CurrencySettings() {
   const [newSymbol, setNewSymbol] = useState('');
   const [newRate, setNewRate] = useState('');
 
-  const [editingRate, setEditingRate] = useState<{ code: string; rate: string } | null>(null);
+  const [editingRate, setEditingRate] = useState<{
+    code: string;
+    rate: string;
+  } | null>(null);
 
   const handleAddCurrency = () => {
     if (!newCode || !newName || !newSymbol || !newRate) {
@@ -54,41 +60,50 @@ export function CurrencySettings() {
       return;
     }
 
-    createCurrency.mutate({
-      code: newCode.toUpperCase(),
-      name: newName,
-      symbol: newSymbol,
-      rate: parseFloat(newRate),
-    }, {
-      onSuccess: () => {
-        toast.success('Currency added');
-        setIsDialogOpen(false);
-        setNewCode('');
-        setNewName('');
-        setNewSymbol('');
-        setNewRate('');
+    createCurrency.mutate(
+      {
+        code: newCode.toUpperCase(),
+        name: newName,
+        symbol: newSymbol,
+        rate: parseFloat(newRate),
       },
-    });
+      {
+        onSuccess: () => {
+          toast.success('Currency added');
+          setIsDialogOpen(false);
+          setNewCode('');
+          setNewName('');
+          setNewSymbol('');
+          setNewRate('');
+        },
+      }
+    );
   };
 
   const handleUpdateRate = (code: string) => {
     if (!editingRate || !editingRate.rate) return;
 
-    updateCurrency.mutate({
-      code,
-      data: { rate: parseFloat(editingRate.rate) },
-    }, {
-      onSuccess: () => {
-        toast.success(`${code} rate updated`);
-        setEditingRate(null);
+    updateCurrency.mutate(
+      {
+        code,
+        data: { rate: parseFloat(editingRate.rate) },
       },
-    });
+      {
+        onSuccess: () => {
+          toast.success(`${code} rate updated`);
+          setEditingRate(null);
+        },
+      }
+    );
   };
 
   const handleSetDefault = (code: string) => {
-    patchSettings.mutate({ defaultCurrency: code }, {
-      onSuccess: () => toast.success(`${code} set as default currency`),
-    });
+    patchSettings.mutate(
+      { defaultCurrency: code },
+      {
+        onSuccess: () => toast.success(`${code} set as default currency`),
+      }
+    );
   };
 
   if (isLoading) {
@@ -109,73 +124,10 @@ export function CurrencySettings() {
               Manage your currencies and exchange rates
             </CardDescription>
           </div>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Currency
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Currency</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="code">Currency Code</Label>
-                    <Input
-                      id="code"
-                      value={newCode}
-                      onChange={(e) => setNewCode(e.target.value.toUpperCase())}
-                      placeholder="e.g., EUR"
-                      maxLength={3}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="symbol">Symbol</Label>
-                    <Input
-                      id="symbol"
-                      value={newSymbol}
-                      onChange={(e) => setNewSymbol(e.target.value)}
-                      placeholder="e.g., €"
-                      maxLength={3}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="name">Currency Name</Label>
-                  <Input
-                    id="name"
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    placeholder="e.g., Euro"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="rate">Exchange Rate (to USD)</Label>
-                  <Input
-                    id="rate"
-                    type="number"
-                    step="0.0001"
-                    min="0"
-                    value={newRate}
-                    onChange={(e) => setNewRate(e.target.value)}
-                    placeholder="e.g., 0.92"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    How much 1 USD equals in this currency
-                  </p>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleAddCurrency}>Add Currency</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <Button onClick={() => setIsDialogOpen(true)}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Currency
+          </Button>
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
@@ -205,7 +157,9 @@ export function CurrencySettings() {
                         {currency.name}
                       </span>
                     </TableCell>
-                    <TableCell className="font-mono">{currency.symbol}</TableCell>
+                    <TableCell className="font-mono">
+                      {currency.symbol}
+                    </TableCell>
                     <TableCell>
                       {editingRate?.code === currency.code ? (
                         <div className="flex items-center gap-2">
@@ -215,7 +169,10 @@ export function CurrencySettings() {
                             className="w-24 h-8"
                             value={editingRate.rate}
                             onChange={(e) =>
-                              setEditingRate({ ...editingRate, rate: e.target.value })
+                              setEditingRate({
+                                ...editingRate,
+                                rate: e.target.value,
+                              })
                             }
                             autoFocus
                           />
@@ -266,14 +223,76 @@ export function CurrencySettings() {
       <Card>
         <CardHeader>
           <CardTitle>Currency Conversion</CardTitle>
-          <CardDescription>
-            Convert amounts between currencies
-          </CardDescription>
+          <CardDescription>Convert amounts between currencies</CardDescription>
         </CardHeader>
         <CardContent>
           <CurrencyConverter currencies={currencies} />
         </CardContent>
       </Card>
+
+      {/* Add Currency Dialog */}
+      <EditDialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) {
+            setNewCode('');
+            setNewName('');
+            setNewSymbol('');
+            setNewRate('');
+          }
+        }}
+        title="Add New Currency"
+        onSubmit={handleAddCurrency}
+        submitText="Add Currency"
+      >
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="code">Currency Code</Label>
+            <Input
+              id="code"
+              value={newCode}
+              onChange={(e) => setNewCode(e.target.value.toUpperCase())}
+              placeholder="e.g., EUR"
+              maxLength={3}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="symbol">Symbol</Label>
+            <Input
+              id="symbol"
+              value={newSymbol}
+              onChange={(e) => setNewSymbol(e.target.value)}
+              placeholder="e.g., €"
+              maxLength={3}
+            />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="name">Currency Name</Label>
+          <Input
+            id="name"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            placeholder="e.g., Euro"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="rate">Exchange Rate (to USD)</Label>
+          <Input
+            id="rate"
+            type="number"
+            step="0.0001"
+            min="0"
+            value={newRate}
+            onChange={(e) => setNewRate(e.target.value)}
+            placeholder="e.g., 0.92"
+          />
+          <p className="text-xs text-muted-foreground">
+            How much 1 USD equals in this currency
+          </p>
+        </div>
+      </EditDialog>
     </div>
   );
 }

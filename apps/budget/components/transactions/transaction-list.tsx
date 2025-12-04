@@ -9,14 +9,6 @@ import {
 } from '@/lib/hooks';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   Badge,
   Button,
   DropdownMenu,
@@ -36,6 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from '@repo/ui/components/ui';
+import { AlertDialog } from '@repo/ui/dialogs';
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -418,26 +411,15 @@ export function TransactionList({
         </div>
       </div>
 
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Transaction</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this transaction? This action
-              cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <AlertDialog
+        open={!!deleteId}
+        onOpenChange={() => setDeleteId(null)}
+        title="Delete Transaction"
+        description="Are you sure you want to delete this transaction? This action cannot be undone."
+        variant="delete"
+        onConfirm={handleDelete}
+        confirmText="Delete"
+      />
     </>
   );
 }

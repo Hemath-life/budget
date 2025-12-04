@@ -17,23 +17,10 @@ import {
   getNextRecurringDate,
 } from '@/lib/utils';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   Badge,
   Button,
   Card,
   CardContent,
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   Select,
   SelectContent,
   SelectItem,
@@ -44,6 +31,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@repo/ui/components/ui';
+import { AlertDialog, EditDialog } from '@repo/ui/dialogs';
 import { DateField, FormField } from '@repo/ui/forms';
 import {
   ArrowDownRight,
@@ -363,144 +351,119 @@ export function RecurringManager({
       </Tabs>
 
       {/* Recurring Dialog */}
-      <Dialog
+      <EditDialog
         open={isDialogOpen}
         onOpenChange={(open) => {
           setIsDialogOpen(open);
           if (!open) resetForm();
         }}
+        title={
+          editItem
+            ? 'Edit Recurring Transaction'
+            : 'Create Recurring Transaction'
+        }
+        onSubmit={handleSubmit}
+        submitText={editItem ? 'Update' : 'Create'}
       >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {editItem
-                ? 'Edit Recurring Transaction'
-                : 'Create Recurring Transaction'}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <Button
-                type="button"
-                variant={type === 'income' ? 'default' : 'outline'}
-                className={cn(
-                  type === 'income' && 'bg-green-600 hover:bg-green-700'
-                )}
-                onClick={() => {
-                  setType('income');
-                  setCategory('');
-                }}
-              >
-                Income
-              </Button>
-              <Button
-                type="button"
-                variant={type === 'expense' ? 'default' : 'outline'}
-                className={cn(
-                  type === 'expense' && 'bg-red-600 hover:bg-red-700'
-                )}
-                onClick={() => {
-                  setType('expense');
-                  setCategory('');
-                }}
-              >
-                Expense
-              </Button>
-            </div>
-            <FormField
-              id="description"
-              label="Description"
-              value={description}
-              onChange={setDescription}
-              placeholder="e.g., Monthly Salary"
-              required
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                id="amount"
-                label="Amount"
-                type="number"
-                value={amount}
-                onChange={setAmount}
-                placeholder="0.00"
-                min={0}
-                step={0.01}
-                required
-              />
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Category</label>
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {filteredCategories.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>
-                        {c.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Frequency</label>
-              <Select
-                value={frequency}
-                onValueChange={(v) => setFrequency(v as typeof frequency)}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="weekly">Weekly</SelectItem>
-                  <SelectItem value="biweekly">Bi-weekly</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="quarterly">Quarterly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <DateField
-              id="startDate"
-              label="Start Date"
-              value={startDate}
-              onChange={(d) => d && setStartDate(d)}
-              required
-            />
+        <div className="grid grid-cols-2 gap-4">
+          <Button
+            type="button"
+            variant={type === 'income' ? 'default' : 'outline'}
+            className={cn(
+              type === 'income' && 'bg-green-600 hover:bg-green-700'
+            )}
+            onClick={() => {
+              setType('income');
+              setCategory('');
+            }}
+          >
+            Income
+          </Button>
+          <Button
+            type="button"
+            variant={type === 'expense' ? 'default' : 'outline'}
+            className={cn(type === 'expense' && 'bg-red-600 hover:bg-red-700')}
+            onClick={() => {
+              setType('expense');
+              setCategory('');
+            }}
+          >
+            Expense
+          </Button>
+        </div>
+        <FormField
+          id="description"
+          label="Description"
+          value={description}
+          onChange={setDescription}
+          placeholder="e.g., Monthly Salary"
+          required
+        />
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            id="amount"
+            label="Amount"
+            type="number"
+            value={amount}
+            onChange={setAmount}
+            placeholder="0.00"
+            min={0}
+            step={0.01}
+            required
+          />
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Category</label>
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select" />
+              </SelectTrigger>
+              <SelectContent>
+                {filteredCategories.map((c) => (
+                  <SelectItem key={c.id} value={c.id}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmit}>
-              {editItem ? 'Update' : 'Create'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Frequency</label>
+          <Select
+            value={frequency}
+            onValueChange={(v) => setFrequency(v as typeof frequency)}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="daily">Daily</SelectItem>
+              <SelectItem value="weekly">Weekly</SelectItem>
+              <SelectItem value="biweekly">Bi-weekly</SelectItem>
+              <SelectItem value="monthly">Monthly</SelectItem>
+              <SelectItem value="quarterly">Quarterly</SelectItem>
+              <SelectItem value="yearly">Yearly</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <DateField
+          id="startDate"
+          label="Start Date"
+          value={startDate}
+          onChange={(d) => d && setStartDate(d)}
+          required
+        />
+      </EditDialog>
 
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Recurring Transaction</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this recurring transaction? This
-              will not affect past transactions.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <AlertDialog
+        open={!!deleteId}
+        onOpenChange={() => setDeleteId(null)}
+        title="Delete Recurring Transaction"
+        description="Are you sure you want to delete this recurring transaction? This will not affect past transactions."
+        variant="delete"
+        onConfirm={handleDelete}
+        confirmText="Delete"
+      />
     </>
   );
 }
