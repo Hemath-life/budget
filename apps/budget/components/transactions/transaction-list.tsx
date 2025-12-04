@@ -346,7 +346,7 @@ export function TransactionList({
           ) : (
             <>
               {/* DataTable with scrollable body */}
-              <div className="overflow-auto">
+              <div className="overflow-auto h-[465px]">
                 <DataTable
                   columns={columns}
                   data={transactions}
