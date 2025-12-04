@@ -1,27 +1,20 @@
 'use client';
 
-import { useState } from 'react';
-import { useGoals, useSettings, useCreateGoal, useUpdateGoal, useDeleteGoal, useContributeToGoal } from '@/lib/hooks';
-import { Goal } from '@/lib/types';
-import { formatCurrency, calculatePercentage, getDaysUntil } from '@/lib/utils';
-import { Card, CardContent } from '@repo/ui/components/ui';
-import { Button } from '@repo/ui/components/ui';
-import { Input } from '@repo/ui/components/ui';
-import { Label } from '@repo/ui/components/ui';
-import { Progress } from '@repo/ui/components/ui';
-import { Badge } from '@repo/ui/components/ui';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@repo/ui/components/ui';
-import { Calendar } from '@repo/ui/components/ui';
-import { Popover, PopoverContent, PopoverTrigger } from '@repo/ui/components/ui';
-import { cn, formatDate } from '@/lib/utils';
-import { Pencil, Trash2, CalendarIcon, Target, Trophy, PlusCircle, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+  useContributeToGoal,
+  useCreateGoal,
+  useDeleteGoal,
+  useGoals,
+  useSettings,
+  useUpdateGoal,
+} from '@/lib/hooks';
+import { Goal } from '@/lib/types';
+import {
+  calculatePercentage,
+  formatCurrency,
+  formatDate,
+  getDaysUntil,
+} from '@/lib/utils';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,11 +24,40 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Progress,
 } from '@repo/ui/components/ui';
+import { DateField, FormField } from '@repo/ui/forms';
+import {
+  Loader2,
+  Pencil,
+  PlusCircle,
+  Target,
+  Trash2,
+  Trophy,
+} from 'lucide-react';
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 const COLORS = [
-  '#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444',
-  '#EC4899', '#06B6D4', '#84CC16', '#F97316', '#6366F1',
+  '#10B981',
+  '#3B82F6',
+  '#8B5CF6',
+  '#F59E0B',
+  '#EF4444',
+  '#EC4899',
+  '#06B6D4',
+  '#84CC16',
+  '#F97316',
+  '#6366F1',
 ];
 
 interface GoalManagerProps {
@@ -43,7 +65,10 @@ interface GoalManagerProps {
   setIsDialogOpen: (open: boolean) => void;
 }
 
-export function GoalManager({ isDialogOpen, setIsDialogOpen }: GoalManagerProps) {
+export function GoalManager({
+  isDialogOpen,
+  setIsDialogOpen,
+}: GoalManagerProps) {
   const { data: goals = [], isLoading: goalsLoading } = useGoals();
   const { data: settings } = useSettings();
   const createGoal = useCreateGoal();
@@ -107,18 +132,18 @@ export function GoalManager({ isDialogOpen, setIsDialogOpen }: GoalManagerProps)
 
     try {
       if (editGoal) {
-        await updateGoalMutation.mutateAsync({ 
-          id: editGoal.id, 
+        await updateGoalMutation.mutateAsync({
+          id: editGoal.id,
           data: {
             ...goalData,
-            isCompleted: goalData.currentAmount >= goalData.targetAmount
-          }
+            isCompleted: goalData.currentAmount >= goalData.targetAmount,
+          },
         });
         toast.success('Goal updated');
       } else {
         await createGoal.mutateAsync({
           ...goalData,
-          isCompleted: goalData.currentAmount >= goalData.targetAmount
+          isCompleted: goalData.currentAmount >= goalData.targetAmount,
         } as Omit<Goal, 'id' | 'createdAt'>);
         toast.success('Goal created');
       }
@@ -148,7 +173,10 @@ export function GoalManager({ isDialogOpen, setIsDialogOpen }: GoalManagerProps)
     }
     if (contributeId) {
       try {
-        await contributeToGoal.mutateAsync({ id: contributeId, amount: parseFloat(contributeAmount) });
+        await contributeToGoal.mutateAsync({
+          id: contributeId,
+          amount: parseFloat(contributeAmount),
+        });
         toast.success('Contribution added');
         setIsContributeOpen(false);
         setContributeId(null);
@@ -170,7 +198,10 @@ export function GoalManager({ isDialogOpen, setIsDialogOpen }: GoalManagerProps)
   }
 
   const GoalCard = ({ goal }: { goal: Goal }) => {
-    const percentage = calculatePercentage(goal.currentAmount, goal.targetAmount);
+    const percentage = calculatePercentage(
+      goal.currentAmount,
+      goal.targetAmount
+    );
     const daysLeft = getDaysUntil(goal.deadline);
 
     return (
@@ -290,86 +321,67 @@ export function GoalManager({ isDialogOpen, setIsDialogOpen }: GoalManagerProps)
       )}
 
       {/* Goal Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={(open) => {
-        setIsDialogOpen(open);
-        if (!open) resetForm();
-      }}>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) resetForm();
+        }}
+      >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              {editGoal ? 'Edit Goal' : 'Create Goal'}
-            </DialogTitle>
+            <DialogTitle>{editGoal ? 'Edit Goal' : 'Create Goal'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Goal Name</Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="e.g., Emergency Fund"
+            <FormField
+              id="name"
+              label="Goal Name"
+              value={name}
+              onChange={setName}
+              placeholder="e.g., Emergency Fund"
+              required
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                id="target"
+                label="Target Amount"
+                type="number"
+                value={targetAmount}
+                onChange={setTargetAmount}
+                placeholder="0.00"
+                min={0}
+                step={0.01}
+                required
+              />
+              <FormField
+                id="current"
+                label="Current Amount"
+                type="number"
+                value={currentAmount}
+                onChange={setCurrentAmount}
+                placeholder="0.00"
+                min={0}
+                step={0.01}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="target">Target Amount</Label>
-                <Input
-                  id="target"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={targetAmount}
-                  onChange={(e) => setTargetAmount(e.target.value)}
-                  placeholder="0.00"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="current">Current Amount</Label>
-                <Input
-                  id="current"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={currentAmount}
-                  onChange={(e) => setCurrentAmount(e.target.value)}
-                  placeholder="0.00"
-                />
-              </div>
-            </div>
+            <DateField
+              id="deadline"
+              label="Deadline"
+              value={deadline}
+              onChange={(d) => d && setDeadline(d)}
+              required
+            />
             <div className="space-y-2">
-              <Label>Deadline</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      'w-full justify-start text-left font-normal',
-                      !deadline && 'text-muted-foreground'
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {deadline ? formatDate(deadline) : 'Pick a date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={deadline}
-                    onSelect={(d) => d && setDeadline(d)}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div className="space-y-2">
-              <Label>Color</Label>
+              <label className="text-sm font-medium">Color</label>
               <div className="flex flex-wrap gap-2">
                 {COLORS.map((c) => (
                   <button
                     key={c}
                     type="button"
                     className={`h-8 w-8 rounded-full transition-transform ${
-                      color === c ? 'ring-2 ring-offset-2 ring-primary scale-110' : ''
+                      color === c
+                        ? 'ring-2 ring-offset-2 ring-primary scale-110'
+                        : ''
                     }`}
                     style={{ backgroundColor: c }}
                     onClick={() => setColor(c)}
@@ -396,21 +408,23 @@ export function GoalManager({ isDialogOpen, setIsDialogOpen }: GoalManagerProps)
             <DialogTitle>Add Contribution</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="contribute">Amount</Label>
-              <Input
-                id="contribute"
-                type="number"
-                step="0.01"
-                min="0"
-                value={contributeAmount}
-                onChange={(e) => setContributeAmount(e.target.value)}
-                placeholder="0.00"
-              />
-            </div>
+            <FormField
+              id="contribute"
+              label="Amount"
+              type="number"
+              value={contributeAmount}
+              onChange={setContributeAmount}
+              placeholder="0.00"
+              min={0}
+              step={0.01}
+              required
+            />
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsContributeOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsContributeOpen(false)}
+            >
               Cancel
             </Button>
             <Button onClick={handleContribute}>Add</Button>
@@ -423,12 +437,16 @@ export function GoalManager({ isDialogOpen, setIsDialogOpen }: GoalManagerProps)
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Goal</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this goal? This action cannot be undone.
+              Are you sure you want to delete this goal? This action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
