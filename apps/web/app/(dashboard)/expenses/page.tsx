@@ -95,23 +95,22 @@ export default function ExpensesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Expenses</h1>
           <p className="text-muted-foreground">
             Track and analyze your spending
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-          <DateFilter onFilterChange={setDateRange} />
-          <Link href="/transactions/add">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Expense
-            </Button>
-          </Link>
-        </div>
+        <Link href="/transactions/add">
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Expense
+          </Button>
+        </Link>
       </div>
+
+      <DateFilter onFilterChange={setDateRange} />
 
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         <StatCard
