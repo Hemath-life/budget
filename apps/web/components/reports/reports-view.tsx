@@ -14,10 +14,9 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Progress,
 } from '@repo/ui/components/ui';
 import { SelectField } from '@repo/ui/forms';
-import { Loader2, Target, Wallet } from 'lucide-react';
+import { Calendar, Loader2, Target, Wallet } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import {
   Area,
@@ -36,6 +35,66 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+
+// Modern color palette
+const CHART_COLORS = {
+  income: '#10b981',
+  expense: '#f43f5e',
+  primary: '#6366f1',
+  secondary: '#8b5cf6',
+  accent: '#f59e0b',
+  categories: [
+    '#6366f1',
+    '#f43f5e',
+    '#10b981',
+    '#f59e0b',
+    '#8b5cf6',
+    '#06b6d4',
+    '#ec4899',
+    '#84cc16',
+  ],
+};
+
+// Custom Tooltip Component
+function CustomTooltip({
+  active,
+  payload,
+  label,
+  currency,
+  showLabel = true,
+}: {
+  active?: boolean;
+  payload?: Array<{ value: number; name: string; color: string }>;
+  label?: string;
+  currency: string;
+  showLabel?: boolean;
+}) {
+  if (!active || !payload?.length) return null;
+
+  return (
+    <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl">
+      {showLabel && label && (
+        <p className="text-xs text-muted-foreground mb-2 font-medium">
+          {label}
+        </p>
+      )}
+      <div className="space-y-1.5">
+        {payload.map((entry, index) => (
+          <div key={index} className="flex items-center gap-2">
+            <div
+              className="w-2.5 h-2.5 rounded-full"
+              style={{ backgroundColor: entry.color }}
+            />
+            <span className="text-xs text-muted-foreground">{entry.name}:</span>
+            <span className="text-xs font-semibold">
+              {formatCurrency(entry.value, currency)}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 type TimeRange = 'week' | 'month' | 'quarter' | 'year' | 'all';
 
@@ -199,7 +258,7 @@ export function ReportsView() {
   if (transLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -209,23 +268,28 @@ export function ReportsView() {
       {/* Header with Time Range Selector */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Reports</h1>
-          <p className="text-muted-foreground">Analyze your financial data</p>
+          <h1 className="text-2xl font-bold tracking-tight">Reports</h1>
+          <p className="text-muted-foreground text-sm">
+            Analyze your financial performance
+          </p>
         </div>
-        <SelectField
-          id="timeRange"
-          value={timeRange}
-          onChange={(v) => setTimeRange(v as TimeRange)}
-          hideLabel
-          triggerClassName="w-[180px]"
-          options={[
-            { label: 'Last 7 Days', value: 'week' },
-            { label: 'Last Month', value: 'month' },
-            { label: 'Last Quarter', value: 'quarter' },
-            { label: 'Last Year', value: 'year' },
-            { label: 'All Time', value: 'all' },
-          ]}
-        />
+        <div className="flex items-center gap-2 bg-muted/50 rounded-lg p-1">
+          <Calendar className="h-4 w-4 text-muted-foreground ml-2" />
+          <SelectField
+            id="timeRange"
+            value={timeRange}
+            onChange={(v) => setTimeRange(v as TimeRange)}
+            hideLabel
+            triggerClassName="w-[160px] border-0 bg-transparent shadow-none focus:ring-0"
+            options={[
+              { label: 'Last 7 Days', value: 'week' },
+              { label: 'Last Month', value: 'month' },
+              { label: 'Last Quarter', value: 'quarter' },
+              { label: 'Last Year', value: 'year' },
+              { label: 'All Time', value: 'all' },
+            ]}
+          />
+        </div>
       </div>
 
       {/* Stats Row */}
@@ -233,107 +297,142 @@ export function ReportsView() {
         <StatCard
           title="Total Income"
           value={totalIncome}
+          icon="income"
           currency={currency}
         />
         <StatCard
           title="Total Expenses"
           value={totalExpenses}
+          icon="expense"
           currency={currency}
         />
         <StatCard
           title="Net Savings"
           value={Math.abs(netSavings)}
           change={savingsRate}
+          icon="savings"
           currency={currency}
         />
-        <StatCard title="Savings Rate" value={savingsRate} />
+        <StatCard
+          title="Savings Rate"
+          value={`${savingsRate}%`}
+          icon="balance"
+        />
       </div>
 
       {/* Goals & Budget Summary */}
       <div className="grid gap-4 md:grid-cols-2">
         {/* Goals Summary */}
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-purple-500/10">
-                <Target className="h-4 w-4 text-purple-500" />
+        <Card className="border bg-gradient-to-br from-purple-500/5 to-transparent">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-purple-500/15">
+                  <Target className="h-5 w-5 text-purple-500" />
+                </div>
+                <div>
+                  <CardTitle className="text-base font-semibold">
+                    Savings Goals
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {activeGoals.length} active · {completedGoals.length}{' '}
+                    completed
+                  </p>
+                </div>
               </div>
-              <CardTitle className="text-base">Savings Goals</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-baseline justify-between">
-              <span className="text-2xl font-bold">
-                {formatCurrency(totalSaved, currency)}
-              </span>
-              <span className="text-sm text-muted-foreground">
-                of {formatCurrency(totalTarget, currency)}
-              </span>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Progress</span>
-                <span className="font-medium text-purple-500">
+              <div className="text-right">
+                <span className="text-2xl font-bold text-purple-500">
                   {goalsProgress}%
                 </span>
               </div>
-              <Progress value={goalsProgress} className="h-2" />
             </div>
-            <div className="flex justify-between text-xs text-muted-foreground pt-1">
-              <span>{activeGoals.length} active goals</span>
-              <span>{completedGoals.length} completed</span>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="relative pt-1">
+              <div className="h-2 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-purple-500 to-purple-400 transition-all duration-500"
+                  style={{ width: `${Math.min(goalsProgress, 100)}%` }}
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <div>
+                <span className="text-muted-foreground">Saved: </span>
+                <span className="font-semibold">
+                  {formatCurrency(totalSaved, currency)}
+                </span>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Target: </span>
+                <span className="font-semibold">
+                  {formatCurrency(totalTarget, currency)}
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Budget Summary */}
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center gap-2">
-              <div className="p-2 rounded-lg bg-blue-500/10">
-                <Wallet className="h-4 w-4 text-blue-500" />
+        <Card className="border bg-gradient-to-br from-blue-500/5 to-transparent">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-blue-500/15">
+                  <Wallet className="h-5 w-5 text-blue-500" />
+                </div>
+                <div>
+                  <CardTitle className="text-base font-semibold">
+                    Budget Status
+                  </CardTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {onTrackCount} on track · {overBudgetCount} over budget
+                  </p>
+                </div>
               </div>
-              <CardTitle className="text-base">Budget Status</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-baseline justify-between">
-              <span className="text-2xl font-bold">
-                {formatCurrency(totalSpent, currency)}
-              </span>
-              <span className="text-sm text-muted-foreground">
-                of {formatCurrency(totalBudget, currency)}
-              </span>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Spending</span>
+              <div className="text-right">
                 <span
-                  className={`font-medium ${
+                  className={`text-2xl font-bold ${
                     spendingProgress >= 100
                       ? 'text-red-500'
                       : spendingProgress >= 80
-                      ? 'text-yellow-500'
+                      ? 'text-amber-500'
                       : 'text-blue-500'
                   }`}
                 >
                   {spendingProgress}%
                 </span>
               </div>
-              <Progress
-                value={Math.min(spendingProgress, 100)}
-                className={`h-2 ${
-                  spendingProgress >= 100
-                    ? '[&>div]:bg-red-500'
-                    : spendingProgress >= 80
-                    ? '[&>div]:bg-yellow-500'
-                    : ''
-                }`}
-              />
             </div>
-            <div className="flex justify-between text-xs text-muted-foreground pt-1">
-              <span>{onTrackCount} on track</span>
-              <span>{overBudgetCount} over budget</span>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="relative pt-1">
+              <div className="h-2 rounded-full bg-muted overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    spendingProgress >= 100
+                      ? 'bg-gradient-to-r from-red-500 to-red-400'
+                      : spendingProgress >= 80
+                      ? 'bg-gradient-to-r from-amber-500 to-amber-400'
+                      : 'bg-gradient-to-r from-blue-500 to-blue-400'
+                  }`}
+                  style={{ width: `${Math.min(spendingProgress, 100)}%` }}
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <div>
+                <span className="text-muted-foreground">Spent: </span>
+                <span className="font-semibold">
+                  {formatCurrency(totalSpent, currency)}
+                </span>
+              </div>
+              <div>
+                <span className="text-muted-foreground">Budget: </span>
+                <span className="font-semibold">
+                  {formatCurrency(totalBudget, currency)}
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>

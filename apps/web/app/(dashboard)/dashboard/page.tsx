@@ -274,6 +274,7 @@ export default function DashboardPage() {
             currency
           )} last month`}
           change={incomeChange}
+          icon="income"
           currency={currency}
         />
         <StatCard
@@ -284,10 +285,21 @@ export default function DashboardPage() {
             currency
           )} last month`}
           change={expenseChange}
+          icon="expense"
           currency={currency}
         />
-        <StatCard title="Balance" value={balance} currency={currency} />
-        <StatCard title="Monthly Savings" value={savings} currency={currency} />
+        <StatCard
+          title="Balance"
+          value={balance}
+          icon="balance"
+          currency={currency}
+        />
+        <StatCard
+          title="Monthly Savings"
+          value={savings}
+          icon="savings"
+          currency={currency}
+        />
       </div>
 
       {/* Row 2: Revenue Chart + Budget Status */}

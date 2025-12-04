@@ -112,17 +112,25 @@ export default function IncomePage() {
           title="Period Income"
           value={totalIncome}
           change={incomeChange}
+          icon="income"
           currency={currency}
         />
         <StatCard
           title="Previous Period"
           value={prevPeriodIncome}
+          icon="income"
           currency={currency}
         />
-        <StatCard title="All Time" value={allTimeIncome} currency={currency} />
+        <StatCard
+          title="All Time"
+          value={allTimeIncome}
+          icon="balance"
+          currency={currency}
+        />
         <StatCard
           title="Sources"
           value={Object.keys(incomeByCategory).length}
+          icon="savings"
         />
       </div>
 

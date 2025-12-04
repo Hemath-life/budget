@@ -114,21 +114,25 @@ export default function ExpensesPage() {
           title="Period Expenses"
           value={totalExpenses}
           change={expenseChange}
+          icon="expense"
           currency={currency}
         />
         <StatCard
           title="Previous Period"
           value={prevPeriodExpenses}
+          icon="expense"
           currency={currency}
         />
         <StatCard
           title="All Time"
           value={allTimeExpenses}
+          icon="balance"
           currency={currency}
         />
         <StatCard
           title="Categories"
           value={Object.keys(expensesByCategory).length}
+          icon="savings"
         />
       </div>
 

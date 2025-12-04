@@ -1,16 +1,17 @@
 'use client';
 
-import { cn, formatCurrency } from '@/lib/utils';
+import { formatCurrency } from '@/lib/utils';
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui';
-import { BarChart3, TrendingDown, TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 import {
   Area,
   AreaChart,
+  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -36,91 +37,153 @@ export function RevenueChart({
 }: RevenueChartProps) {
   const isPositive = change >= 0;
 
-  return (
-    <Card className="h-full bg-gradient-to-br from-background to-blue-50/30 dark:to-blue-950/10">
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            <CardTitle className="text-base font-semibold">
-              Revenue Overview
-            </CardTitle>
-          </div>
-          <div
-            className={cn(
-              'flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full',
-              isPositive
-                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
-                : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-            )}
-          >
-            {isPositive ? (
-              <TrendingUp className="h-3 w-3" />
-            ) : (
-              <TrendingDown className="h-3 w-3" />
-            )}
-            <span>{Math.abs(change)}%</span>
-          </div>
+  // Custom tooltip component
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-background border border-border rounded-lg shadow-lg p-3 min-w-[140px]">
+          <p className="text-xs text-muted-foreground mb-2">{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <div key={index} className="flex items-center gap-2 mb-1">
+              <div
+                className="w-2 h-2 rounded-full"
+                style={{ backgroundColor: entry.color }}
+              />
+              <span className="text-xs text-muted-foreground">
+                {entry.name}
+              </span>
+              <span className="text-sm font-semibold ml-auto">
+                {formatCurrency(entry.value, currency)}
+              </span>
+            </div>
+          ))}
         </div>
-        <div className="text-2xl font-bold mt-2">
-          {formatCurrency(totalRevenue, currency)}
+      );
+    }
+    return null;
+  };
+
+  // Custom legend component
+  const CustomLegend = ({ payload }: any) => {
+    return (
+      <div className="flex items-center justify-center gap-6 mt-4">
+        {payload?.map((entry: any, index: number) => (
+          <div key={index} className="flex items-center gap-2">
+            <div
+              className="w-2.5 h-2.5 rounded-full"
+              style={{ backgroundColor: entry.color }}
+            />
+            <span className="text-sm text-muted-foreground">{entry.value}</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <Card className="h-full border border-border">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg font-semibold">
+          Income vs Expenses
+        </CardTitle>
+        <div className="flex items-center gap-4 mt-2">
+          <span className="text-3xl font-bold">
+            {formatCurrency(totalRevenue, currency)}
+          </span>
+          {change !== 0 && (
+            <div className="flex items-center gap-1.5">
+              <div
+                className={`flex items-center justify-center w-5 h-5 rounded ${
+                  isPositive
+                    ? 'bg-emerald-100 dark:bg-emerald-950/50'
+                    : 'bg-rose-100 dark:bg-rose-950/50'
+                }`}
+              >
+                <TrendingUp
+                  className={`h-3 w-3 ${
+                    isPositive
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : 'text-rose-600 dark:text-rose-400 rotate-180'
+                  }`}
+                />
+              </div>
+              <span
+                className={`text-sm font-medium ${
+                  isPositive
+                    ? 'text-emerald-600 dark:text-emerald-400'
+                    : 'text-rose-600 dark:text-rose-400'
+                }`}
+              >
+                {isPositive ? '+' : ''}
+                {change}% more than last month
+              </span>
+            </div>
+          )}
         </div>
       </CardHeader>
-      <CardContent className="pt-2 h-[220px]">
+      <CardContent className="pt-4 h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}
-            margin={{ top: 10, right: 0, left: -20, bottom: 0 }}
+            margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
           >
             <defs>
               <linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.3} />
-                <stop offset="100%" stopColor="#3B82F6" stopOpacity={0} />
+                <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                <stop offset="100%" stopColor="#10b981" stopOpacity={0.05} />
               </linearGradient>
               <linearGradient id="expenseGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#F43F5E" stopOpacity={0.3} />
-                <stop offset="100%" stopColor="#F43F5E" stopOpacity={0} />
+                <stop offset="0%" stopColor="#f43f5e" stopOpacity={0.4} />
+                <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.05} />
               </linearGradient>
             </defs>
             <XAxis
               dataKey="month"
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 11, fill: '#94A3B8' }}
+              tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+              dy={10}
             />
             <YAxis
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 11, fill: '#94A3B8' }}
-              tickFormatter={(value) => `${value / 1000}k`}
+              tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+              tickFormatter={(value) =>
+                value >= 1000 ? `${value / 1000}k` : value
+              }
+              dx={-5}
             />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'hsl(var(--background))',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: '8px',
-                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-              }}
-              formatter={(value: number) => [
-                formatCurrency(value, currency),
-                '',
-              ]}
-            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend content={<CustomLegend />} />
             <Area
               type="monotone"
               dataKey="income"
-              stroke="#3B82F6"
-              strokeWidth={2}
+              stroke="#10b981"
+              strokeWidth={2.5}
               fill="url(#incomeGradient)"
               name="Income"
+              dot={false}
+              activeDot={{
+                r: 6,
+                fill: '#10b981',
+                stroke: '#fff',
+                strokeWidth: 2,
+              }}
             />
             <Area
               type="monotone"
               dataKey="expense"
-              stroke="#F43F5E"
-              strokeWidth={2}
+              stroke="#f43f5e"
+              strokeWidth={2.5}
               fill="url(#expenseGradient)"
-              name="Expense"
+              name="Expenses"
+              dot={false}
+              activeDot={{
+                r: 6,
+                fill: '#f43f5e',
+                stroke: '#fff',
+                strokeWidth: 2,
+              }}
             />
           </AreaChart>
         </ResponsiveContainer>
