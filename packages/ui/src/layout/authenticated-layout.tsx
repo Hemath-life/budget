@@ -1,4 +1,5 @@
-import { SearchProvider } from '#/common';
+import { Suspense } from 'react';
+import type { SidebarData } from './types';
 import {
   AppSidebar,
   SideBarMainLayout,
@@ -6,7 +7,7 @@ import {
   SkipToMain,
 } from '../nbars/sidebar';
 import { sidebarData } from '../nbars/sidebar/data/sidebar-data';
-import type { SidebarData } from './types';
+import { SearchProvider } from '#/common';
 
 interface Props {
   children?: React.ReactNode;
@@ -29,7 +30,9 @@ export function AuthenticatedLayout({
       placeholder={searchPlaceholder}
     >
       <SidebarProvider defaultOpen={sidebarDefaultOpen}>
-        <AppSidebar sidebarData={finalSidebarData} />
+        <Suspense fallback={null}>
+          <AppSidebar sidebarData={finalSidebarData} />
+        </Suspense>
         <SkipToMain />
         <SideBarMainLayout>{children ?? null}</SideBarMainLayout>
       </SidebarProvider>

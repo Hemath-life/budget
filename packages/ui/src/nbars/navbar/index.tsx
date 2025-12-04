@@ -1,46 +1,36 @@
 import { Search } from '#/common';
-import { ThemeSwitch } from '#/common/theme';
+import { Button } from '#/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '#/components/ui/dropdown-menu';
 import { ProfileDropdown } from '#/forms/profile-dropdown';
+import { Moon, Sun } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { usePathname } from 'next/navigation';
+import { type ReactNode, useMemo } from 'react';
+import type { SidebarData } from '../../layout/types';
 import { cn } from '../../lib/utils';
 import { Header } from './header';
 import { TopNav } from './top-nav';
 
-const topNav = [
-  {
-    title: 'Overview',
-    href: 'dashboard/overview',
-    isActive: true,
-    disabled: false,
-  },
-  {
-    title: 'Customers',
-    href: 'dashboard/customers',
-    isActive: false,
-    disabled: true,
-  },
-  {
-    title: 'Products',
-    href: 'dashboard/products',
-    isActive: false,
-    disabled: true,
-  },
-  {
-    title: 'Settings',
-    href: 'dashboard/settings',
-    isActive: false,
-    disabled: true,
-  },
-];
+interface NavLinkConfig {
+  title: string;
+  href: string;
+  disabled?: boolean;
+}
 
 interface HeaderNavProps {
-  // showSearch?: boolean
-  // showThemeSwitch?: boolean
-  // showProfileDropdown?: boolean
-  // showTopNav?: boolean
   fixed?: boolean;
   className?: string;
   variant?: 'search-first' | 'title-first' | 'minimal';
   logout?: () => void;
+  extraActions?: ReactNode;
+  navLinks?: NavLinkConfig[];
+  sidebarData?: SidebarData;
+  searchPlaceholder?: string;
 }
 
 export const HeaderNav = (
@@ -55,49 +45,72 @@ export const HeaderNav = (
   },
 ) => {
   const {
-    // showSearch,
-    // showThemeSwitch,
-    // showProfileDropdown,
-    // showTopNav,
     className,
     variant,
     fixed,
     logout,
+    extraActions,
+    navLinks,
+    sidebarData,
+    searchPlaceholder,
   } = { ...props };
+
+  const pathname = usePathname();
+
+  const computedNavLinks = useMemo(() => {
+    const explicitLinks = navLinks?.length
+      ? navLinks
+      : deriveLinksFromSidebar(sidebarData);
+
+    if (!explicitLinks?.length) return [];
+
+    return explicitLinks.map((link) => ({
+      ...link,
+      href: normalizeHref(link.href),
+      isActive: isLinkActive(pathname, link.href),
+    }));
+  }, [navLinks, sidebarData, pathname]);
+
+  const navItems = computedNavLinks.filter(Boolean);
+
+  const themeToggle = <ThemeToggle />;
 
   const renderHeaderContent = () => {
     switch (variant) {
       case 'search-first':
         return (
           <>
-            <Search />
+            <Search placeholder={searchPlaceholder} />
             <div className={cn(`ml-auto flex items-center gap-4`, className)}>
-              <ThemeSwitch />
+              {themeToggle}
               <ProfileDropdown logout={logout} />
+              {extraActions}
             </div>
           </>
         );
       case 'title-first':
         return (
           <>
-            <TopNav links={topNav} />
+            {navItems.length > 0 ? <TopNav links={navItems} /> : null}
             <div
               className={cn(`ml-auto flex items-center space-x-4`, className)}
             >
-              <Search />
-              <ThemeSwitch />
+              <Search placeholder={searchPlaceholder} />
+              {themeToggle}
               <ProfileDropdown logout={logout} />
+              {extraActions}
             </div>
           </>
         );
       default:
         return (
           <>
-            <TopNav links={topNav} />
+            {navItems.length > 0 ? <TopNav links={navItems} /> : null}
             <div className="ml-auto flex items-center space-x-4">
-              <Search />
-              <ThemeSwitch />
+              <Search placeholder={searchPlaceholder} />
+              {themeToggle}
               <ProfileDropdown logout={logout} />
+              {extraActions}
             </div>
           </>
         );
@@ -109,4 +122,65 @@ export const HeaderNav = (
       <Header fixed={fixed}>{renderHeaderContent()}</Header>
     </>
   );
+};
+
+const ThemeToggle = () => {
+  const { setTheme } = useTheme();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setTheme('light')}>
+          <Sun className="mr-2 h-4 w-4" />
+          Light
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('dark')}>
+          <Moon className="mr-2 h-4 w-4" />
+          Dark
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('system')}>
+          System
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+const deriveLinksFromSidebar = (sidebarData?: SidebarData): NavLinkConfig[] => {
+  if (!sidebarData) return [];
+  const links: NavLinkConfig[] = [];
+
+  sidebarData.navGroups.forEach((group) => {
+    group.items.forEach((item) => {
+      if ('url' in item && item.url) {
+        links.push({ title: item.title, href: item.url });
+      }
+
+      if ('items' in item && item.items) {
+        item.items.forEach((subItem) => {
+          if ('url' in subItem && subItem.url) {
+            links.push({ title: subItem.title, href: subItem.url });
+          }
+        });
+      }
+    });
+  });
+
+  return links;
+};
+
+const normalizeHref = (href: string) =>
+  href?.startsWith('/') ? href : `/${href ?? ''}`;
+
+const isLinkActive = (pathname: string | null, href: string) => {
+  if (!pathname) return false;
+  const normalized = normalizeHref(href);
+  if (normalized === '/') return pathname === '/';
+  return pathname === normalized || pathname.startsWith(`${normalized}/`);
 };

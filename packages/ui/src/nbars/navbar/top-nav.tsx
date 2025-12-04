@@ -6,7 +6,7 @@ import {
   DropdownMenuTrigger,
 } from '#/components/ui/dropdown-menu';
 import { IconMenu } from '@tabler/icons-react';
-import { Link } from '@tanstack/react-router';
+import Link from 'next/link';
 import { cn } from '../../lib/utils';
 
 interface TopNavProps extends React.HTMLAttributes<HTMLElement> {
@@ -17,6 +17,13 @@ interface TopNavProps extends React.HTMLAttributes<HTMLElement> {
     disabled?: boolean;
   }[];
 }
+
+const linkClasses = (isActive: boolean, disabled?: boolean) =>
+  cn(
+    'text-sm font-medium transition-colors hover:text-primary',
+    !isActive && 'text-muted-foreground',
+    disabled && 'pointer-events-none opacity-50',
+  );
 
 export function TopNav({ className, links, ...props }: TopNavProps) {
   return (
@@ -30,11 +37,16 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent side="bottom" align="start">
             {links.map(({ title, href, isActive, disabled }) => (
-              <DropdownMenuItem key={`${title}-${href}`} asChild>
+              <DropdownMenuItem
+                key={`${title}-${href}`}
+                asChild
+                disabled={disabled}
+              >
                 <Link
-                  to={href}
-                  className={!isActive ? 'text-muted-foreground' : ''}
-                  disabled={disabled}
+                  href={href}
+                  aria-disabled={disabled}
+                  tabIndex={disabled ? -1 : undefined}
+                  className={linkClasses(isActive, disabled)}
                 >
                   {title}
                 </Link>
@@ -54,9 +66,10 @@ export function TopNav({ className, links, ...props }: TopNavProps) {
         {links.map(({ title, href, isActive, disabled }) => (
           <Link
             key={`${title}-${href}`}
-            to={href}
-            disabled={disabled}
-            className={`hover:text-primary text-sm font-medium transition-colors ${isActive ? '' : 'text-muted-foreground'}`}
+            href={href}
+            aria-disabled={disabled}
+            tabIndex={disabled ? -1 : undefined}
+            className={linkClasses(isActive, disabled)}
           >
             {title}
           </Link>

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '#/components/ui/avatar';
 import { Button } from '#/components/ui/button';
 import {
@@ -10,7 +11,6 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '#/components/ui/dropdown-menu';
-import Link from 'next/link';
 
 interface ProfileDropdownProps {
   logout?: () => void;

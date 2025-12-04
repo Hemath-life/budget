@@ -1,40 +1,25 @@
 'use client';
-
-import { Sidebar, SidebarContext } from "@/components/layout/sidebar";
-import { Header } from "@/components/layout/header";
-import { useState, useEffect } from "react";
+import { budgetSidebarData } from '@/lib/layout';
+import { AuthenticatedLayout, Main, Section } from '@repo/ui/layout';
+import { HeaderNav } from '@repo/ui/nbars';
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
-
-  useEffect(() => {
-    const checkScreenSize = () => {
-      setIsLargeScreen(window.innerWidth >= 1024); // lg breakpoint
-    };
-    
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
-
   return (
-    <SidebarContext.Provider value={{ isCollapsed, setIsCollapsed }}>
-      <div className="h-screen overflow-hidden bg-background">
-        <Sidebar />
-        <div 
-          className={`h-full flex flex-col transition-[padding-left] duration-300 ease-out ${isLargeScreen ? (isCollapsed ? 'lg:pl-sidebar-collapsed' : 'lg:pl-sidebar') : ''}`}
-        >
-          <Header />
-          <main className="flex-1 overflow-auto p-2 lg:p-4">
-            {children}
-          </main>
-        </div>
-      </div>
-    </SidebarContext.Provider>
+    <AuthenticatedLayout
+      sidebarData={budgetSidebarData}
+      sidebarDefaultOpen
+      searchPlaceholder="Search pages & quick actions"
+    >
+      <Main className="flex flex-col bg-background p-0">
+        <HeaderNav />
+        <Section className="flex-1 overflow-auto rounded-xl border bg-card/30 p-2 lg:p-4">
+          <div className="space-y-6">{children}</div>
+        </Section>
+      </Main>
+    </AuthenticatedLayout>
   );
 }
