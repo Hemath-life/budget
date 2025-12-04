@@ -1,3 +1,4 @@
+import { ChevronDown, Edit3 } from 'lucide-react';
 import React, { useState } from 'react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -9,7 +10,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '../components/ui/select';
-import { ChevronDown, Edit3 } from 'lucide-react';
 
 export interface SelectFieldProps {
     id: string;
