@@ -35,7 +35,7 @@ export const budgetSidebarData: SidebarData = {
   ],
   navGroups: [
     {
-      title: '',
+      title: 'overview',
       items: [
         { title: 'Dashboard', url: '/dashboard', icon: LayoutDashboard },
         { title: 'Transactions', url: '/transactions', icon: ArrowLeftRight },
