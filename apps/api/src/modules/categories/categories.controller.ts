@@ -26,6 +26,11 @@ export class CategoriesController {
     return this.categoriesService.create(createCategoryDto);
   }
 
+  @Post('load-defaults')
+  loadDefaults() {
+    return this.categoriesService.loadDefaults();
+  }
+
   @Get()
   findAll() {
     return this.categoriesService.findAll();

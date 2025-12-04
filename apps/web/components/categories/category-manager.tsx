@@ -14,7 +14,7 @@ import {
 } from '@repo/ui/components/ui';
 import { AlertDialog, EditDialog } from '@repo/ui/dialogs';
 import { FormField, SelectField } from '@repo/ui/forms';
-import { Loader2, Pencil, Trash2 } from 'lucide-react';
+import { FolderOpen, Loader2, Pencil, Sparkles, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -51,6 +51,7 @@ export function CategoryManager({
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [loadingDefaults, setLoadingDefaults] = useState(false);
 
   const [editCategory, setEditCategory] = useState<Category | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -157,6 +158,24 @@ export function CategoryManager({
     }
   };
 
+  const handleLoadDefaults = async () => {
+    setLoadingDefaults(true);
+    try {
+      const result = await categoriesApi.loadDefaults();
+      if (result.success) {
+        toast.success(`Loaded ${result.count} default categories`);
+        await fetchCategories();
+      } else {
+        toast.error(result.message);
+      }
+    } catch (error) {
+      console.error('Error loading defaults:', error);
+      toast.error('Failed to load default categories');
+    } finally {
+      setLoadingDefaults(false);
+    }
+  };
+
   if (loading) {
     return (
       <Card>
@@ -164,6 +183,93 @@ export function CategoryManager({
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
         </CardContent>
       </Card>
+    );
+  }
+
+  // Empty state when no categories exist
+  if (categories.length === 0) {
+    return (
+      <>
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="rounded-full bg-muted p-4 mb-4">
+              <FolderOpen className="h-10 w-10 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">No categories yet</h3>
+            <p className="text-muted-foreground mb-6 max-w-sm">
+              Categories help you organize your transactions. Get started by
+              loading default categories or create your own.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                variant="outline"
+                onClick={handleLoadDefaults}
+                disabled={loadingDefaults}
+              >
+                {loadingDefaults ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Sparkles className="h-4 w-4 mr-2" />
+                )}
+                Load Default Categories
+              </Button>
+              <Button onClick={() => setIsDialogOpen(true)}>
+                Create Custom Category
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Category Dialog */}
+        <EditDialog
+          open={isDialogOpen}
+          onOpenChange={(open) => {
+            setIsDialogOpen(open);
+            if (!open) resetForm();
+          }}
+          title="Add Category"
+          onSubmit={handleSubmit}
+          submitText="Add"
+          isLoading={submitting}
+        >
+          <FormField
+            id="name"
+            label="Name"
+            value={name}
+            onChange={setName}
+            placeholder="Category name"
+            required
+          />
+          <SelectField
+            id="type"
+            label="Type"
+            value={type}
+            onChange={(v) => setType(v as TransactionType)}
+            options={[
+              { label: 'Income', value: 'income' },
+              { label: 'Expense', value: 'expense' },
+            ]}
+          />
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Color</label>
+            <div className="flex flex-wrap gap-2">
+              {COLORS.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  className={`h-8 w-8 rounded-full transition-transform ${
+                    color === c
+                      ? 'ring-2 ring-offset-2 ring-primary scale-110'
+                      : ''
+                  }`}
+                  style={{ backgroundColor: c }}
+                  onClick={() => setColor(c)}
+                />
+              ))}
+            </div>
+          </div>
+        </EditDialog>
+      </>
     );
   }
 

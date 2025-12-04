@@ -224,6 +224,12 @@ export const categoriesApi = {
 
   delete: (id: string) =>
     fetchApi<{ success: boolean }>(`/categories/${id}`, { method: 'DELETE' }),
+
+  loadDefaults: () =>
+    fetchApi<{ success: boolean; message: string; count: number }>(
+      '/categories/load-defaults',
+      { method: 'POST' }
+    ),
 };
 
 // ============ BUDGETS ============

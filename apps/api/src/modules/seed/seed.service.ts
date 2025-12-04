@@ -153,7 +153,7 @@ export class SeedService {
     // Seed Settings
     await this.prisma.settings.create({
       data: {
-        id: 1,
+        userId: demoUser.id,
         defaultCurrency: 'INR',
         theme: 'system',
         dateFormat: 'MMM dd, yyyy',
@@ -383,6 +383,7 @@ export class SeedService {
     await Promise.all([
       this.prisma.budget.create({
         data: {
+          userId: demoUser.id,
           categoryId: food.id,
           amount: 15000,
           currency: 'INR',
@@ -393,6 +394,7 @@ export class SeedService {
       }),
       this.prisma.budget.create({
         data: {
+          userId: demoUser.id,
           categoryId: transport.id,
           amount: 8000,
           currency: 'INR',
@@ -403,6 +405,7 @@ export class SeedService {
       }),
       this.prisma.budget.create({
         data: {
+          userId: demoUser.id,
           categoryId: shopping.id,
           amount: 10000,
           currency: 'INR',
@@ -413,6 +416,7 @@ export class SeedService {
       }),
       this.prisma.budget.create({
         data: {
+          userId: demoUser.id,
           categoryId: entertainment.id,
           amount: 5000,
           currency: 'INR',
@@ -423,6 +427,7 @@ export class SeedService {
       }),
       this.prisma.budget.create({
         data: {
+          userId: demoUser.id,
           categoryId: bills.id,
           amount: 6000,
           currency: 'INR',
@@ -437,6 +442,7 @@ export class SeedService {
     await Promise.all([
       this.prisma.goal.create({
         data: {
+          userId: demoUser.id,
           name: 'Emergency Fund',
           targetAmount: 300000,
           currentAmount: 150000,
@@ -449,6 +455,7 @@ export class SeedService {
       }),
       this.prisma.goal.create({
         data: {
+          userId: demoUser.id,
           name: 'New Laptop',
           targetAmount: 100000,
           currentAmount: 45000,
@@ -461,6 +468,7 @@ export class SeedService {
       }),
       this.prisma.goal.create({
         data: {
+          userId: demoUser.id,
           name: 'Vacation Trip',
           targetAmount: 80000,
           currentAmount: 80000,
@@ -473,6 +481,7 @@ export class SeedService {
       }),
       this.prisma.goal.create({
         data: {
+          userId: demoUser.id,
           name: 'Home Down Payment',
           targetAmount: 1000000,
           currentAmount: 250000,
@@ -489,6 +498,7 @@ export class SeedService {
     await Promise.all([
       this.prisma.reminder.create({
         data: {
+          userId: demoUser.id,
           title: 'Rent Payment',
           amount: 25000,
           currency: 'INR',
@@ -502,6 +512,7 @@ export class SeedService {
       }),
       this.prisma.reminder.create({
         data: {
+          userId: demoUser.id,
           title: 'Electricity Bill',
           amount: 3000,
           currency: 'INR',
@@ -515,6 +526,7 @@ export class SeedService {
       }),
       this.prisma.reminder.create({
         data: {
+          userId: demoUser.id,
           title: 'Insurance Premium',
           amount: 15000,
           currency: 'INR',
@@ -528,6 +540,7 @@ export class SeedService {
       }),
       this.prisma.reminder.create({
         data: {
+          userId: demoUser.id,
           title: 'Credit Card Bill',
           amount: 12000,
           currency: 'INR',
@@ -545,6 +558,7 @@ export class SeedService {
     await Promise.all([
       this.prisma.recurringTransaction.create({
         data: {
+          userId: demoUser.id,
           type: 'income',
           amount: 75000,
           currency: 'INR',
@@ -558,6 +572,7 @@ export class SeedService {
       }),
       this.prisma.recurringTransaction.create({
         data: {
+          userId: demoUser.id,
           type: 'expense',
           amount: 25000,
           currency: 'INR',
@@ -571,6 +586,7 @@ export class SeedService {
       }),
       this.prisma.recurringTransaction.create({
         data: {
+          userId: demoUser.id,
           type: 'expense',
           amount: 500,
           currency: 'INR',
@@ -584,6 +600,7 @@ export class SeedService {
       }),
       this.prisma.recurringTransaction.create({
         data: {
+          userId: demoUser.id,
           type: 'expense',
           amount: 1500,
           currency: 'INR',
