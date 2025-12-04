@@ -1,3 +1,4 @@
+import { DocsSearch } from '@/components/docs/docs-search';
 import { DocsSidebar } from '@/components/docs/docs-sidebar';
 import Link from 'next/link';
 
@@ -10,10 +11,16 @@ export default function DocsLayout({
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 items-center">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
+        <div className="container flex h-14 items-center justify-between gap-4">
+          <Link href="/" className="flex items-center space-x-2">
             <span className="font-bold text-xl">💰 Budget App</span>
           </Link>
+
+          {/* Search */}
+          <div className="flex-1 flex justify-center max-w-md">
+            <DocsSearch />
+          </div>
+
           <nav className="flex items-center space-x-6 text-sm font-medium">
             <Link
               href="/docs"
