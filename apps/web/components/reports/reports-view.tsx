@@ -1,5 +1,6 @@
 'use client';
 
+import { StatCard } from '@/components/dashboard/bento/stat-card';
 import {
   useBudgets,
   useCategories,
@@ -13,17 +14,10 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  Progress,
 } from '@repo/ui/components/ui';
 import { SelectField } from '@repo/ui/forms';
-import {
-  DollarSign,
-  Loader2,
-  Percent,
-  Target,
-  TrendingDown,
-  TrendingUp,
-  Wallet,
-} from 'lucide-react';
+import { Loader2, Target, Wallet } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import {
   Area,
@@ -211,10 +205,13 @@ export function ReportsView() {
   }
 
   return (
-    <div className="space-y-4">
-      {/* Time Range Selector */}
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Financial Reports</h2>
+    <div className="space-y-6">
+      {/* Header with Time Range Selector */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">Reports</h1>
+          <p className="text-muted-foreground">Analyze your financial data</p>
+        </div>
         <SelectField
           id="timeRange"
           value={timeRange}
@@ -231,208 +228,176 @@ export function ReportsView() {
         />
       </div>
 
-      {/* Goals & Budget Summary Cards */}
-      <div className="grid gap-3 md:grid-cols-2">
-        {/* Goals Summary Card */}
-        <Card className="overflow-hidden">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center">
-                  <Target className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Savings Goal</p>
-                  <p className="text-lg font-bold">
-                    {formatCurrency(totalSaved, currency)}
-                  </p>
-                </div>
+      {/* Stats Row */}
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="Total Income"
+          value={totalIncome}
+          change={0}
+          type="income"
+          currency={currency}
+        />
+        <StatCard
+          title="Total Expenses"
+          value={totalExpenses}
+          change={0}
+          type="expense"
+          currency={currency}
+        />
+        <StatCard
+          title="Net Savings"
+          value={Math.abs(netSavings)}
+          change={savingsRate}
+          type="savings"
+          currency={currency}
+        />
+        <StatCard
+          title="Savings Rate"
+          value={savingsRate}
+          change={0}
+          type="balance"
+          currency=""
+        />
+      </div>
+
+      {/* Goals & Budget Summary */}
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Goals Summary */}
+        <Card>
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2">
+              <div className="p-2 rounded-lg bg-purple-500/10">
+                <Target className="h-4 w-4 text-purple-500" />
               </div>
-              <div className="text-right">
-                <p className="text-lg font-semibold text-primary">
-                  {goalsProgress}%
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  of {formatCurrency(totalTarget, currency)}
-                </p>
-              </div>
+              <CardTitle className="text-base">Savings Goals</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-baseline justify-between">
+              <span className="text-2xl font-bold">
+                {formatCurrency(totalSaved, currency)}
+              </span>
+              <span className="text-sm text-muted-foreground">
+                of {formatCurrency(totalTarget, currency)}
+              </span>
             </div>
             <div className="space-y-2">
-              <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted">
-                <div
-                  className="h-full rounded-full bg-[#c4e456] transition-all"
-                  style={{ width: `${Math.min(goalsProgress, 100)}%` }}
-                />
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Progress</span>
+                <span className="font-medium text-purple-500">
+                  {goalsProgress}%
+                </span>
               </div>
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>{activeGoals.length} active</span>
-                <span>{completedGoals.length} completed</span>
-              </div>
+              <Progress value={goalsProgress} className="h-2" />
+            </div>
+            <div className="flex justify-between text-xs text-muted-foreground pt-1">
+              <span>{activeGoals.length} active goals</span>
+              <span>{completedGoals.length} completed</span>
             </div>
           </CardContent>
         </Card>
 
-        {/* Budget Summary Card */}
-        <Card className="overflow-hidden">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-3">
-                <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center">
-                  <Wallet className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Monthly Spend</p>
-                  <p className="text-lg font-bold">
-                    {formatCurrency(totalSpent, currency)}
-                  </p>
-                </div>
+        {/* Budget Summary */}
+        <Card>
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2">
+              <div className="p-2 rounded-lg bg-blue-500/10">
+                <Wallet className="h-4 w-4 text-blue-500" />
               </div>
-              <div className="text-right">
-                <p
-                  className={`text-lg font-semibold ${
+              <CardTitle className="text-base">Budget Status</CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-baseline justify-between">
+              <span className="text-2xl font-bold">
+                {formatCurrency(totalSpent, currency)}
+              </span>
+              <span className="text-sm text-muted-foreground">
+                of {formatCurrency(totalBudget, currency)}
+              </span>
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Spending</span>
+                <span
+                  className={`font-medium ${
                     spendingProgress >= 100
                       ? 'text-red-500'
                       : spendingProgress >= 80
                       ? 'text-yellow-500'
-                      : 'text-primary'
+                      : 'text-blue-500'
                   }`}
                 >
                   {spendingProgress}%
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  of {formatCurrency(totalBudget, currency)}
-                </p>
+                </span>
               </div>
+              <Progress
+                value={Math.min(spendingProgress, 100)}
+                className={`h-2 ${
+                  spendingProgress >= 100
+                    ? '[&>div]:bg-red-500'
+                    : spendingProgress >= 80
+                    ? '[&>div]:bg-yellow-500'
+                    : ''
+                }`}
+              />
             </div>
-            <div className="space-y-2">
-              <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted">
-                <div
-                  className={`h-full rounded-full transition-all ${
-                    spendingProgress >= 100
-                      ? 'bg-red-500'
-                      : spendingProgress >= 80
-                      ? 'bg-yellow-500'
-                      : 'bg-[#c4e456]'
-                  }`}
-                  style={{ width: `${Math.min(spendingProgress, 100)}%` }}
-                />
-              </div>
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>{onTrackCount} on track</span>
-                <span>{overBudgetCount} over budget</span>
-              </div>
+            <div className="flex justify-between text-xs text-muted-foreground pt-1">
+              <span>{onTrackCount} on track</span>
+              <span>{overBudgetCount} over budget</span>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Income</p>
-                <p className="text-2xl font-bold text-green-600">
-                  {formatCurrency(totalIncome, currency)}
-                </p>
-              </div>
-              <TrendingUp className="h-8 w-8 text-green-500 opacity-50" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Expenses</p>
-                <p className="text-2xl font-bold text-red-600">
-                  {formatCurrency(totalExpenses, currency)}
-                </p>
-              </div>
-              <TrendingDown className="h-8 w-8 text-red-500 opacity-50" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Net Savings</p>
-                <p
-                  className={`text-2xl font-bold ${
-                    netSavings >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}
-                >
-                  {formatCurrency(Math.abs(netSavings), currency)}
-                </p>
-              </div>
-              <DollarSign className="h-8 w-8 text-primary opacity-50" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Savings Rate</p>
-                <p
-                  className={`text-2xl font-bold ${
-                    savingsRate >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}
-                >
-                  {savingsRate}%
-                </p>
-              </div>
-              <Percent className="h-8 w-8 text-primary opacity-50" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Charts */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      {/* Charts Row 1 */}
+      <div className="grid gap-4 lg:grid-cols-3">
         {/* Income vs Expenses Trend */}
         <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Income vs Expenses Trend</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Income vs Expenses</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px]">
+            <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={monthlyTrend}>
                   <CartesianGrid
                     strokeDasharray="3 3"
                     className="stroke-muted"
                   />
-                  <XAxis dataKey="month" className="text-muted-foreground" />
-                  <YAxis className="text-muted-foreground" />
+                  <XAxis
+                    dataKey="month"
+                    className="text-xs"
+                    tick={{ fontSize: 11 }}
+                  />
+                  <YAxis className="text-xs" tick={{ fontSize: 11 }} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: 'hsl(var(--popover))',
                       border: '1px solid hsl(var(--border))',
                       borderRadius: '8px',
+                      fontSize: '12px',
                     }}
                   />
                   <Area
                     type="monotone"
                     dataKey="income"
-                    stackId="1"
                     stroke="#10B981"
                     fill="#10B981"
-                    fillOpacity={0.3}
+                    fillOpacity={0.2}
+                    strokeWidth={2}
                     name="Income"
                   />
                   <Area
                     type="monotone"
                     dataKey="expenses"
-                    stackId="2"
                     stroke="#EF4444"
                     fill="#EF4444"
-                    fillOpacity={0.3}
+                    fillOpacity={0.2}
+                    strokeWidth={2}
                     name="Expenses"
                   />
-                  <Legend />
+                  <Legend wrapperStyle={{ fontSize: '12px' }} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -441,13 +406,13 @@ export function ReportsView() {
 
         {/* Expense Breakdown */}
         <Card>
-          <CardHeader>
-            <CardTitle>Expense Breakdown</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Expense Breakdown</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px]">
+            <div className="h-[280px]">
               {expensesByCategory.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-muted-foreground">
+                <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
                   No expense data
                 </div>
               ) : (
@@ -456,9 +421,9 @@ export function ReportsView() {
                     <Pie
                       data={expensesByCategory}
                       cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={90}
+                      cy="45%"
+                      innerRadius={50}
+                      outerRadius={75}
                       paddingAngle={2}
                       dataKey="value"
                     >
@@ -471,29 +436,33 @@ export function ReportsView() {
                         backgroundColor: 'hsl(var(--popover))',
                         border: '1px solid hsl(var(--border))',
                         borderRadius: '8px',
+                        fontSize: '12px',
                       }}
                       formatter={(value: number) => [
                         formatCurrency(value, currency),
                         'Amount',
                       ]}
                     />
-                    <Legend />
+                    <Legend wrapperStyle={{ fontSize: '11px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               )}
             </div>
           </CardContent>
         </Card>
+      </div>
 
+      {/* Charts Row 2 */}
+      <div className="grid gap-4 md:grid-cols-2">
         {/* Income Sources */}
         <Card>
-          <CardHeader>
-            <CardTitle>Income Sources</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Income Sources</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px]">
+            <div className="h-[250px]">
               {incomeByCategory.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-muted-foreground">
+                <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
                   No income data
                 </div>
               ) : (
@@ -503,18 +472,19 @@ export function ReportsView() {
                       strokeDasharray="3 3"
                       className="stroke-muted"
                     />
-                    <XAxis type="number" className="text-muted-foreground" />
+                    <XAxis type="number" tick={{ fontSize: 11 }} />
                     <YAxis
                       type="category"
                       dataKey="name"
-                      width={100}
-                      className="text-muted-foreground"
+                      width={80}
+                      tick={{ fontSize: 11 }}
                     />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: 'hsl(var(--popover))',
                         border: '1px solid hsl(var(--border))',
                         borderRadius: '8px',
+                        fontSize: '12px',
                       }}
                       formatter={(value: number) => [
                         formatCurrency(value, currency),
@@ -534,14 +504,16 @@ export function ReportsView() {
         </Card>
 
         {/* Daily Spending */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Daily Spending (Last 30 Days)</CardTitle>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">
+              Daily Spending (30 Days)
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[250px]">
               {dailySpending.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-muted-foreground">
+                <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
                   No spending data
                 </div>
               ) : (
@@ -551,13 +523,18 @@ export function ReportsView() {
                       strokeDasharray="3 3"
                       className="stroke-muted"
                     />
-                    <XAxis dataKey="date" className="text-muted-foreground" />
-                    <YAxis className="text-muted-foreground" />
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 10 }}
+                      interval="preserveStartEnd"
+                    />
+                    <YAxis tick={{ fontSize: 11 }} />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: 'hsl(var(--popover))',
                         border: '1px solid hsl(var(--border))',
                         borderRadius: '8px',
+                        fontSize: '12px',
                       }}
                       formatter={(value: number) => [
                         formatCurrency(value, currency),
@@ -569,7 +546,7 @@ export function ReportsView() {
                       dataKey="amount"
                       stroke="#EF4444"
                       strokeWidth={2}
-                      dot={{ fill: '#EF4444', r: 3 }}
+                      dot={{ fill: '#EF4444', r: 2 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -579,30 +556,32 @@ export function ReportsView() {
         </Card>
       </div>
 
-      {/* Top Categories Table */}
+      {/* Top Categories */}
       <Card>
-        <CardHeader>
-          <CardTitle>Top Expense Categories</CardTitle>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Top Expense Categories</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {expensesByCategory.slice(0, 5).map((category) => (
-              <div key={category.name} className="flex items-center gap-4">
+              <div key={category.name} className="flex items-center gap-3">
                 <div
-                  className="h-4 w-4 rounded-full"
+                  className="h-3 w-3 rounded-full flex-shrink-0"
                   style={{ backgroundColor: category.color }}
                 />
-                <div className="flex-1">
-                  <div className="flex justify-between mb-1">
-                    <span className="font-medium">{category.name}</span>
-                    <span className="text-muted-foreground">
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm font-medium truncate">
+                      {category.name}
+                    </span>
+                    <span className="text-xs text-muted-foreground ml-2">
                       {formatCurrency(category.value, currency)} (
                       {category.percentage}%)
                     </span>
                   </div>
-                  <div className="h-2 rounded-full bg-muted overflow-hidden">
+                  <div className="h-1.5 rounded-full bg-muted overflow-hidden">
                     <div
-                      className="h-full rounded-full"
+                      className="h-full rounded-full transition-all"
                       style={{
                         width: `${category.percentage}%`,
                         backgroundColor: category.color,
@@ -612,6 +591,11 @@ export function ReportsView() {
                 </div>
               </div>
             ))}
+            {expensesByCategory.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                No expense data available
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>
