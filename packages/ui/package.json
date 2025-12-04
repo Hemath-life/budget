@@ -111,6 +111,10 @@
     "./hooks": {
       "types": "./dist/src/hooks/index.ts",
       "default": "./src/hooks/index.ts"
+    },
+    "./tables": {
+      "types": "./dist/src/tables/index.d.ts",
+      "default": "./src/tables/index.ts"
     }
   },
   "scripts": {

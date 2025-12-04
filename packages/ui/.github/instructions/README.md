@@ -6,15 +6,16 @@
 
 ## 📚 Module Instructions
 
-| Module                   | File                                                                       | Description                             |
-| ------------------------ | -------------------------------------------------------------------------- | --------------------------------------- |
-| **Forms**                | [forms.instructions.md](./forms.instructions.md)                           | Form fields, validation, patterns       |
-| **Dialogs**              | [dialogs.instructions.md](./dialogs.instructions.md)                       | Modals, confirmations, alerts           |
-| **Components**           | [components.instructions.md](./components.instructions.md)                 | Base UI components (Button, Card, etc.) |
-| **Layout**               | [layout.instructions.md](./layout.instructions.md)                         | Page layouts (AppLayout, Section)       |
-| **Hooks**                | [hooks.instructions.md](./hooks.instructions.md)                           | Custom React hooks                      |
-| **Errors & Empty**       | [errors-empty.instructions.md](./errors-empty.instructions.md)             | Error pages, empty states               |
-| **Navigation & Loaders** | [navigation-loaders.instructions.md](./navigation-loaders.instructions.md) | Sidebar, breadcrumbs, progress          |
+| Module                   | File                                                                       | Description                                 |
+| ------------------------ | -------------------------------------------------------------------------- | ------------------------------------------- |
+| **Forms**                | [forms.instructions.md](./forms.instructions.md)                           | Form fields, validation, patterns           |
+| **Dialogs**              | [dialogs.instructions.md](./dialogs.instructions.md)                       | Modals, confirmations, alerts               |
+| **Tables**               | [tables.instructions.md](./tables.instructions.md)                         | Data tables, sorting, filtering, pagination |
+| **Components**           | [components.instructions.md](./components.instructions.md)                 | Base UI components (Button, Card, etc.)     |
+| **Layout**               | [layout.instructions.md](./layout.instructions.md)                         | Page layouts (AppLayout, Section)           |
+| **Hooks**                | [hooks.instructions.md](./hooks.instructions.md)                           | Custom React hooks                          |
+| **Errors & Empty**       | [errors-empty.instructions.md](./errors-empty.instructions.md)             | Error pages, empty states                   |
+| **Navigation & Loaders** | [navigation-loaders.instructions.md](./navigation-loaders.instructions.md) | Sidebar, breadcrumbs, progress              |
 
 ---
 
@@ -28,6 +29,16 @@ import { FormField, SelectField, DateField, SwitchField } from '@repo/ui/forms';
 
 // Dialogs
 import { AlertDialog, EditDialog, ContributeDialog } from '@repo/ui/dialogs';
+
+// Tables
+import {
+  DataTable,
+  DataTableColumnHeader,
+  DataTablePagination,
+  DataTableToolbar,
+  DataTableRowActions,
+  type ColumnDef,
+} from '@repo/ui/tables';
 
 // Components
 import { Button, Card, Input, Select, Badge } from '@repo/ui/components';
@@ -111,6 +122,94 @@ function ItemManager() {
         />
       </Main>
     </AppLayout>
+  );
+}
+```
+
+### Data Table Pattern
+
+```typescript
+import {
+  DataTable,
+  DataTableColumnHeader,
+  DataTablePagination,
+  DataTableToolbar,
+  DataTableRowActions,
+  type ColumnDef,
+} from '@repo/ui/tables';
+import { AlertDialog } from '@repo/ui/dialogs';
+import { useDialogState } from '@repo/ui/hooks';
+
+function ItemList({ items }: { items: Item[] }) {
+  const deleteDialog = useDialogState<Item>();
+
+  const columns: ColumnDef<Item>[] = [
+    {
+      accessorKey: 'name',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Name" />
+      ),
+    },
+    {
+      accessorKey: 'category',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Category" />
+      ),
+      filterFn: (row, id, value) => value.includes(row.getValue(id)),
+    },
+    {
+      id: 'actions',
+      cell: ({ row }) => (
+        <DataTableRowActions
+          row={row}
+          actions={[
+            { key: 'edit', label: 'Edit', onClick: handleEdit },
+            {
+              key: 'delete',
+              label: 'Delete',
+              onClick: deleteDialog.openForEdit,
+              className: 'text-red-500!',
+              separator: true,
+            },
+          ]}
+        />
+      ),
+    },
+  ];
+
+  function ItemToolbar(props: { table: Table<Item> }) {
+    return (
+      <DataTableToolbar
+        {...props}
+        searchColumn="name"
+        searchPlaceholder="Search items..."
+        filters={[
+          {
+            columnId: 'category',
+            title: 'Category',
+            options: categories.map((c) => ({ label: c.name, value: c.id })),
+          },
+        ]}
+      />
+    );
+  }
+
+  return (
+    <>
+      <DataTable
+        columns={columns}
+        data={items}
+        toolbar={ItemToolbar}
+        pagination={DataTablePagination}
+      />
+      <AlertDialog
+        open={deleteDialog.isOpen}
+        onOpenChange={(open) => !open && deleteDialog.close()}
+        title="Delete Item"
+        variant="delete"
+        onConfirm={() => handleDelete(deleteDialog.editItem!.id)}
+      />
+    </>
   );
 }
 ```

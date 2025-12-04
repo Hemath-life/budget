@@ -10,6 +10,7 @@
  * import { Button, Card } from '@repo/ui/components/ui';
  * import { FormField, DateField } from '@repo/ui/forms';
  * import { AlertDialog, EditDialog } from '@repo/ui/dialogs';
+ * import { DataTable, DataTableColumnHeader } from '@repo/ui/tables';
  * import { useDialogState } from '@repo/ui/hooks';
  * import { cn } from '@repo/ui/lib';
  *
@@ -29,6 +30,14 @@ export * from './forms';
 
 // Dialog/Modal components
 export * from './dialogs';
+
+// Table components (re-export key utilities)
+// Note: For full table functionality, import from '@repo/ui/tables'
+export {
+  DataTable,
+  DataTableColumnHeader,
+  DataTablePagination,
+} from './tables';
 
 // Common utilities and components
 export * from './common';
