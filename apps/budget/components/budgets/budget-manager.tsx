@@ -10,19 +10,9 @@ import {
 } from '@/lib/hooks';
 import { Budget } from '@/lib/types';
 import { calculatePercentage, formatCurrency } from '@/lib/utils';
-import {
-  Button,
-  Card,
-  CardContent,
-  Progress,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@repo/ui/components/ui';
+import { Button, Card, CardContent, Progress } from '@repo/ui/components/ui';
 import { AlertDialog, EditDialog } from '@repo/ui/dialogs';
-import { FormField } from '@repo/ui/forms';
+import { FormField, SelectField } from '@repo/ui/forms';
 import { AlertTriangle, Loader2, Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -307,27 +297,19 @@ export function BudgetManager({
         onSubmit={handleSubmit}
         submitText={editBudget ? 'Update' : 'Create'}
       >
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Category</label>
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a category" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableCategories.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="h-3 w-3 rounded-full"
-                      style={{ backgroundColor: c.color }}
-                    />
-                    {c.name}
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <SelectField
+          id="category"
+          label="Category"
+          value={category}
+          onChange={setCategory}
+          placeholder="Select a category"
+          required
+          options={availableCategories.map((c) => ({
+            label: c.name,
+            value: c.id,
+            color: c.color,
+          }))}
+        />
         <FormField
           id="amount"
           label="Budget Amount"
@@ -339,23 +321,18 @@ export function BudgetManager({
           step={0.01}
           required
         />
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Period</label>
-          <Select
-            value={period}
-            onValueChange={(v) => setPeriod(v as typeof period)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="weekly">Weekly</SelectItem>
-              <SelectItem value="monthly">Monthly</SelectItem>
-              <SelectItem value="quarterly">Quarterly</SelectItem>
-              <SelectItem value="yearly">Yearly</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <SelectField
+          id="period"
+          label="Period"
+          value={period}
+          onChange={(v) => setPeriod(v as typeof period)}
+          options={[
+            { label: 'Weekly', value: 'weekly' },
+            { label: 'Monthly', value: 'monthly' },
+            { label: 'Quarterly', value: 'quarterly' },
+            { label: 'Yearly', value: 'yearly' },
+          ]}
+        />
       </EditDialog>
 
       <AlertDialog

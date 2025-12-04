@@ -9,7 +9,11 @@ export {
   type RadioGroupFieldProps,
 } from './radio-group-field';
 export { SelectDropdown } from './select-dropdown';
-export { SelectField, type SelectFieldProps } from './select-field';
+export {
+  SelectField,
+  type SelectFieldProps,
+  type SelectOption,
+} from './select-field';
 
 // Toggle Fields
 export { CheckboxField, type CheckboxFieldProps } from './checkbox-field';
