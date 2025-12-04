@@ -1,44 +1,57 @@
-export { FormSection, type FormSectionProps } from './form-section';
-export { SelectField, type SelectFieldProps } from './select-field';
-export { FormField, type FormFieldProps } from './form-field';
+// Core Form Fields
 export { AreaField, type AreaFieldProps } from './area-field';
+export { FormField, type FormFieldProps } from './form-field';
+export { FormSection, type FormSectionProps } from './form-section';
+
+// Selection Fields
+export {
+  RadioGroupField,
+  type RadioGroupFieldProps,
+} from './radio-group-field';
+export { SelectDropdown } from './select-dropdown';
+export { SelectField, type SelectFieldProps } from './select-field';
+
+// Toggle Fields
 export { CheckboxField, type CheckboxFieldProps } from './checkbox-field';
 export { SwitchField, type SwitchFieldProps } from './switch-field';
-export {
-    RadioGroupField,
-    type RadioGroupFieldProps,
-} from './radio-group-field';
+
+// Date & Time Fields
+export { DateField, type DateFieldProps } from './date-field';
+
+// Input Variants
 export { PasswordInput } from './password-input';
+
+// Profile & User
 export { ProfileDropdown } from './profile-dropdown';
-export { SelectDropdown } from './select-dropdown';
-export * from "./date-field"
+
+// Form Sections - Reusable grouped form fields
 export {
-    AddressSection,
-    type AddressSectionProps,
-    type AddressData,
-} from './sections/address-section';
-export {
-    PersonalInfoSection,
-    type PersonalInfoSectionProps,
-    type PersonalInfoData,
-} from './sections/personal-info-section';
-export {
-    MedicalInfoSection,
-    type MedicalInfoSectionProps,
-    type MedicalInfoData,
-} from './sections/medical-info-section';
-export {
-    AcademicInfoSection,
-    type AcademicInfoSectionProps,
-    type AcademicInfoData,
+  AcademicInfoSection,
+  type AcademicInfoData,
+  type AcademicInfoSectionProps,
 } from './sections/academic-info-section';
 export {
-    GuardianInfoSection,
-    type GuardianInfoSectionProps,
-    type GuardianInfoData,
+  AddressSection,
+  type AddressData,
+  type AddressSectionProps,
+} from './sections/address-section';
+export {
+  GuardianInfoSection,
+  type GuardianInfoData,
+  type GuardianInfoSectionProps,
 } from './sections/guardian-info-section';
 export {
-    GuardiansListSection,
-    type GuardiansListSectionProps,
-    type GuardianInfo,
+  GuardiansListSection,
+  type GuardianInfo,
+  type GuardiansListSectionProps,
 } from './sections/guardians-list-section';
+export {
+  MedicalInfoSection,
+  type MedicalInfoData,
+  type MedicalInfoSectionProps,
+} from './sections/medical-info-section';
+export {
+  PersonalInfoSection,
+  type PersonalInfoData,
+  type PersonalInfoSectionProps,
+} from './sections/personal-info-section';
