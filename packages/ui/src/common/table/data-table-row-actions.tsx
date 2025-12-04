@@ -1,4 +1,10 @@
-import { MoreHorizontal, Edit, Trash2, RotateCcw, type LucideIcon } from 'lucide-react';
+import {
+  MoreHorizontal,
+  Edit,
+  Trash2,
+  RotateCcw,
+  type LucideIcon,
+} from 'lucide-react';
 import { Button } from '#/components/ui/button';
 import {
   DropdownMenu,
@@ -80,18 +86,19 @@ export function DataTableRowActions<TData>({
 
   // Filter actions based on show condition
   const visibleActions = allActions.filter((action) =>
-    action.show ? action.show(row) : true
+    action.show ? action.show(row) : true,
   );
 
   // Process groups
   const visibleGroups = groups.map((group) => ({
     actions: group.actions.filter((action) =>
-      action.show ? action.show(row) : true
+      action.show ? action.show(row) : true,
     ),
   }));
 
   const hasVisibleActions =
-    visibleActions.length > 0 || visibleGroups.some((g) => g.actions.length > 0);
+    visibleActions.length > 0 ||
+    visibleGroups.some((g) => g.actions.length > 0);
 
   if (!hasVisibleActions) {
     return null;
@@ -111,7 +118,10 @@ export function DataTableRowActions<TData>({
 
         {visibleActions.map((action, index) => {
           const Icon = action.icon;
-          const className = getActionClassName(action.variant, action.className);
+          const className = getActionClassName(
+            action.variant,
+            action.className,
+          );
 
           return (
             <DropdownMenuItem
@@ -137,7 +147,7 @@ export function DataTableRowActions<TData>({
                 const Icon = action.icon;
                 const className = getActionClassName(
                   action.variant,
-                  action.className
+                  action.className,
                 );
 
                 return (
@@ -161,7 +171,7 @@ export function DataTableRowActions<TData>({
 
 function getActionClassName(
   variant?: 'default' | 'destructive' | 'success',
-  customClassName?: string
+  customClassName?: string,
 ): string {
   const baseClassName = customClassName || '';
 

@@ -21,7 +21,8 @@ type AnyLocale = (typeof locales)[keyof typeof locales];
 type AnyMessages = AnyLocale['messages'];
 
 export type TranslationNamespace = keyof AnyMessages;
-export type TranslationKey<N extends TranslationNamespace> = keyof AnyMessages[N];
+export type TranslationKey<N extends TranslationNamespace> =
+  keyof AnyMessages[N];
 
 export type TranslateOptions = BaseTranslateOptions<LocaleCode>;
 export type TranslatorOptions = BaseTranslatorOptions<LocaleCode>;
@@ -37,7 +38,8 @@ export type {
 
 const DEFAULT_LOCALE: LocaleCode = 'en';
 const DEFAULT_DIRECTION: LocaleDirection = 'ltr';
-const MISSING_TEMPLATE = (namespace: string, key: string) => `[missing:${namespace}.${key}]`;
+const MISSING_TEMPLATE = (namespace: string, key: string) =>
+  `[missing:${namespace}.${key}]`;
 
 const numberFormattersCache = new Map<string, Intl.NumberFormat>();
 const dateFormattersCache = new Map<string, Intl.DateTimeFormat>();
@@ -53,7 +55,7 @@ function resolveLocale(locale: LocaleCode | undefined): LocaleCode {
 function getMessage<N extends TranslationNamespace>(
   locale: LocaleCode,
   namespace: N,
-  key: TranslationKey<N>
+  key: TranslationKey<N>,
 ): string | undefined {
   const entry = locales[locale];
   if (!entry) {
@@ -77,7 +79,7 @@ function formatNumber(
   value: number,
   locale: LocaleCode,
   overrides?: TranslatorFormats,
-  options?: Intl.NumberFormatOptions
+  options?: Intl.NumberFormatOptions,
 ): string {
   if (overrides?.number) {
     return overrides.number(value, locale);
@@ -98,14 +100,18 @@ function formatDate(
   value: Date | number | string,
   locale: LocaleCode,
   overrides?: TranslatorFormats,
-  options?: Intl.DateTimeFormatOptions
+  options?: Intl.DateTimeFormatOptions,
 ): string {
   if (overrides?.date) {
     return overrides.date(value, locale, options);
   }
 
   const dateValue =
-    value instanceof Date ? value : typeof value === 'number' ? new Date(value) : new Date(Date.parse(value));
+    value instanceof Date
+      ? value
+      : typeof value === 'number'
+        ? new Date(value)
+        : new Date(Date.parse(value));
 
   if (Number.isNaN(dateValue.getTime())) {
     return '';
@@ -122,7 +128,11 @@ function formatDate(
   return formatter.format(dateValue);
 }
 
-function formatBoolean(value: boolean, locale: LocaleCode, overrides?: TranslatorFormats): string {
+function formatBoolean(
+  value: boolean,
+  locale: LocaleCode,
+  overrides?: TranslatorFormats,
+): string {
   if (overrides?.boolean) {
     return overrides.boolean(value, locale);
   }
@@ -130,7 +140,9 @@ function formatBoolean(value: boolean, locale: LocaleCode, overrides?: Translato
   return value ? 'true' : 'false';
 }
 
-function isReplacementDescriptor(value: ReplacementPrimitive | ReplacementDescriptor): value is ReplacementDescriptor {
+function isReplacementDescriptor(
+  value: ReplacementPrimitive | ReplacementDescriptor,
+): value is ReplacementDescriptor {
   return typeof value === 'object' && value !== null && 'value' in value;
 }
 
@@ -138,14 +150,24 @@ function formatPrimitive(
   value: ReplacementPrimitive,
   locale: LocaleCode,
   formats?: TranslatorFormats,
-  options?: Intl.DateTimeFormatOptions | Intl.NumberFormatOptions
+  options?: Intl.DateTimeFormatOptions | Intl.NumberFormatOptions,
 ): string {
   if (value instanceof Date) {
-    return formatDate(value, locale, formats, options as Intl.DateTimeFormatOptions | undefined);
+    return formatDate(
+      value,
+      locale,
+      formats,
+      options as Intl.DateTimeFormatOptions | undefined,
+    );
   }
 
   if (typeof value === 'number') {
-    return formatNumber(value, locale, formats, options as Intl.NumberFormatOptions | undefined);
+    return formatNumber(
+      value,
+      locale,
+      formats,
+      options as Intl.NumberFormatOptions | undefined,
+    );
   }
 
   if (typeof value === 'boolean') {
@@ -159,7 +181,7 @@ function applyReplacements(
   template: string,
   replacements: Replacements | undefined,
   locale: LocaleCode,
-  formats?: TranslatorFormats
+  formats?: TranslatorFormats,
 ): string {
   if (!replacements) {
     return template;
@@ -174,14 +196,26 @@ function applyReplacements(
     const replacement = replacements[key] as ReplacementValue;
 
     if (isReplacementDescriptor(replacement)) {
-      return formatPrimitive(replacement.value, locale, formats, replacement.options);
+      return formatPrimitive(
+        replacement.value,
+        locale,
+        formats,
+        replacement.options,
+      );
     }
 
-    return formatPrimitive(replacement as ReplacementPrimitive, locale, formats);
+    return formatPrimitive(
+      replacement as ReplacementPrimitive,
+      locale,
+      formats,
+    );
   });
 }
 
-function computeFallback(locale: LocaleCode, fallback?: LocaleCode): LocaleCode {
+function computeFallback(
+  locale: LocaleCode,
+  fallback?: LocaleCode,
+): LocaleCode {
   if (fallback && locales[fallback]) {
     return fallback;
   }
@@ -196,34 +230,48 @@ export interface Translator {
   translate<N extends TranslationNamespace>(
     namespace: N,
     key: TranslationKey<N>,
-    options?: Omit<TranslateOptions, 'locale' | 'fallbackLocale'>
+    options?: Omit<TranslateOptions, 'locale' | 'fallbackLocale'>,
   ): string;
-  has<N extends TranslationNamespace>(namespace: N, key: TranslationKey<N>, targetLocale?: LocaleCode): boolean;
+  has<N extends TranslationNamespace>(
+    namespace: N,
+    key: TranslationKey<N>,
+    targetLocale?: LocaleCode,
+  ): boolean;
 }
 
 function translateInternal<N extends TranslationNamespace>(
   namespace: N,
   key: TranslationKey<N>,
-  options: TranslateOptions = {}
+  options: TranslateOptions = {},
 ): string {
   const requestedLocale = resolveLocale(options.locale);
-  const fallbackLocale = computeFallback(requestedLocale, options.fallbackLocale);
+  const fallbackLocale = computeFallback(
+    requestedLocale,
+    options.fallbackLocale,
+  );
 
   const template =
     getMessage(requestedLocale, namespace, key) ??
-    (fallbackLocale !== requestedLocale ? getMessage(fallbackLocale, namespace, key) : undefined);
+    (fallbackLocale !== requestedLocale
+      ? getMessage(fallbackLocale, namespace, key)
+      : undefined);
 
   if (!template) {
     return MISSING_TEMPLATE(String(namespace), String(key));
   }
 
-  return applyReplacements(template, options.replacements, requestedLocale, options.formats);
+  return applyReplacements(
+    template,
+    options.replacements,
+    requestedLocale,
+    options.formats,
+  );
 }
 
 export function translate<N extends TranslationNamespace>(
   namespace: N,
   key: TranslationKey<N>,
-  options?: TranslateOptions
+  options?: TranslateOptions,
 ): string {
   return translateInternal(namespace, key, options);
 }
@@ -231,10 +279,16 @@ export function translate<N extends TranslationNamespace>(
 export interface CreateTranslatorConfig
   extends Partial<Omit<TranslatorOptions, 'locale'>> {
   locale?: LocaleCode;
-  onMissingKey?: (details: { locale: LocaleCode; namespace: string; key: string }) => void;
+  onMissingKey?: (details: {
+    locale: LocaleCode;
+    namespace: string;
+    key: string;
+  }) => void;
 }
 
-export function createTranslator(config: CreateTranslatorConfig = {}): Translator {
+export function createTranslator(
+  config: CreateTranslatorConfig = {},
+): Translator {
   const locale = resolveLocale(config.locale);
   const fallbackLocale = computeFallback(locale, config.fallbackLocale);
   const formats = config.formats;
@@ -247,7 +301,7 @@ export function createTranslator(config: CreateTranslatorConfig = {}): Translato
     translate<N extends TranslationNamespace>(
       namespace: N,
       key: TranslationKey<N>,
-      options?: Omit<TranslateOptions, 'locale' | 'fallbackLocale'>
+      options?: Omit<TranslateOptions, 'locale' | 'fallbackLocale'>,
     ) {
       const output = translateInternal(namespace, key, {
         ...options,
@@ -257,12 +311,20 @@ export function createTranslator(config: CreateTranslatorConfig = {}): Translato
       });
 
       if (onMissingKey && output.startsWith('[missing:')) {
-        onMissingKey({ locale, namespace: String(namespace), key: String(key) });
+        onMissingKey({
+          locale,
+          namespace: String(namespace),
+          key: String(key),
+        });
       }
 
       return output;
     },
-    has<N extends TranslationNamespace>(namespace: N, key: TranslationKey<N>, targetLocale: LocaleCode = locale) {
+    has<N extends TranslationNamespace>(
+      namespace: N,
+      key: TranslationKey<N>,
+      targetLocale: LocaleCode = locale,
+    ) {
       const candidateLocale = resolveLocale(targetLocale);
       return Boolean(getMessage(candidateLocale, namespace, key));
     },
@@ -276,12 +338,14 @@ export interface LocaleSummary {
   direction: LocaleDirection;
 }
 
-export const availableLocales: LocaleSummary[] = Object.values(locales).map((entry) => ({
-  code: entry.code,
-  label: entry.label,
-  nativeLabel: entry.nativeLabel,
-  direction: entry.direction ?? DEFAULT_DIRECTION,
-}));
+export const availableLocales: LocaleSummary[] = Object.values(locales).map(
+  (entry) => ({
+    code: entry.code,
+    label: entry.label,
+    nativeLabel: entry.nativeLabel,
+    direction: entry.direction ?? DEFAULT_DIRECTION,
+  }),
+);
 
 export function getLocale(locale: LocaleCode) {
   return locales[locale];

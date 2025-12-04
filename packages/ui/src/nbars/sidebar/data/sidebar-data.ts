@@ -18,10 +18,10 @@ import {
   IconUserCog,
   IconUserOff,
   IconUsers,
-} from '@tabler/icons-react'
-import { AudioWaveform, Command, GalleryVerticalEnd } from 'lucide-react'
-import { ClerkLogo } from '#/assets/clerk-logo'
-import { type SidebarData } from '../../../layout/types'
+} from '@tabler/icons-react';
+import { AudioWaveform, Command, GalleryVerticalEnd } from 'lucide-react';
+import { ClerkLogo } from '#/assets/clerk-logo';
+import { type SidebarData } from '../../../layout/types';
 
 export const sidebarData: SidebarData = {
   user: {
@@ -200,4 +200,4 @@ export const sidebarData: SidebarData = {
       ],
     },
   ],
-}
+};

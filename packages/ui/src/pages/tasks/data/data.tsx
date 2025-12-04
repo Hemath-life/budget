@@ -7,7 +7,7 @@ import {
   IconCircleX,
   IconExclamationCircle,
   IconStopwatch,
-} from '@tabler/icons-react'
+} from '@tabler/icons-react';
 
 export const labels = [
   {
@@ -22,9 +22,9 @@ export const labels = [
     value: 'documentation',
     label: 'Documentation',
   },
-]
+];
 
-export const statuses:any = [
+export const statuses: any = [
   {
     value: 'backlog',
     label: 'Backlog',
@@ -50,9 +50,9 @@ export const statuses:any = [
     label: 'Canceled',
     icon: IconCircleX,
   },
-]
+];
 
-export const priorities:any = [
+export const priorities: any = [
   {
     label: 'Low',
     value: 'low',
@@ -68,4 +68,4 @@ export const priorities:any = [
     value: 'high',
     icon: IconArrowUp,
   },
-]
+];

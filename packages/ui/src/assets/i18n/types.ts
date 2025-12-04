@@ -22,7 +22,7 @@ export type FormatterOverrides<TCode extends string = string> = {
   date?: (
     value: Date | number | string,
     locale: TCode,
-    options?: Intl.DateTimeFormatOptions
+    options?: Intl.DateTimeFormatOptions,
   ) => string;
   boolean?: (value: boolean, locale: TCode) => string;
 };
@@ -35,7 +35,10 @@ export interface LocaleDescriptor<TCode extends string = string> {
   messages: LocaleMessages;
 }
 
-export type LocaleRegistry<TCode extends string = string> = Record<TCode, LocaleDescriptor<TCode>>;
+export type LocaleRegistry<TCode extends string = string> = Record<
+  TCode,
+  LocaleDescriptor<TCode>
+>;
 
 export interface TranslateOptions<TCode extends string = string> {
   locale?: TCode;
@@ -47,5 +50,9 @@ export interface TranslateOptions<TCode extends string = string> {
 export interface TranslatorOptions<TCode extends string = string>
   extends Omit<TranslateOptions<TCode>, 'locale'> {
   locale: TCode;
-  onMissingKey?: (details: { locale: TCode; namespace: string; key: string }) => void;
+  onMissingKey?: (details: {
+    locale: TCode;
+    namespace: string;
+    key: string;
+  }) => void;
 }

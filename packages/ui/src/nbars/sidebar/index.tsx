@@ -67,10 +67,10 @@
  * @component
  * @since 1.0.0
  */
-import { AppSidebar } from './app-sidebar'
-import { SideBarMainLayout } from './main-layout'
-import { SidebarProvider, SidebarTrigger } from './sidebar'
-import { SkipToMain } from './skip-to-main'
+import { AppSidebar } from './app-sidebar';
+import { SideBarMainLayout } from './main-layout';
+import { SidebarProvider, SidebarTrigger } from './sidebar';
+import { SkipToMain } from './skip-to-main';
 
 /*
 import { Outlet } from '@tanstack/react-router'
@@ -105,5 +105,4 @@ export {
   SidebarProvider,
   SkipToMain,
   SidebarTrigger,
-}
-
+};

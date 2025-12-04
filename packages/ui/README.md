@@ -5,6 +5,7 @@ Shared UI component library for the Budget App monorepo.
 ## 📚 Overview
 
 This package provides reusable React components built with:
+
 - [Radix UI](https://www.radix-ui.com/) - Accessible primitives
 - [shadcn/ui](https://ui.shadcn.com/) - Beautiful components
 - [Tailwind CSS](https://tailwindcss.com/) - Utility-first styling
@@ -37,23 +38,23 @@ import { cn } from '@repo/ui/lib';
 
 ### Available Exports
 
-| Export Path | Description |
-|-------------|-------------|
-| `@repo/ui` | Main entry point |
-| `@repo/ui/components` | All components |
-| `@repo/ui/components/ui` | UI primitives |
-| `@repo/ui/lib` | Utility functions |
-| `@repo/ui/hooks` | Custom hooks |
-| `@repo/ui/dialogs` | Dialog components |
-| `@repo/ui/forms` | Form components |
-| `@repo/ui/loaders` | Loading components |
-| `@repo/ui/errors` | Error components |
-| `@repo/ui/empty` | Empty state components |
-| `@repo/ui/header` | Header components |
-| `@repo/ui/layout` | Layout components |
-| `@repo/ui/nbars` | Navigation bars |
-| `@repo/ui/pages` | Page components |
-| `@repo/ui/common` | Common utilities |
+| Export Path              | Description            |
+| ------------------------ | ---------------------- |
+| `@repo/ui`               | Main entry point       |
+| `@repo/ui/components`    | All components         |
+| `@repo/ui/components/ui` | UI primitives          |
+| `@repo/ui/lib`           | Utility functions      |
+| `@repo/ui/hooks`         | Custom hooks           |
+| `@repo/ui/dialogs`       | Dialog components      |
+| `@repo/ui/forms`         | Form components        |
+| `@repo/ui/loaders`       | Loading components     |
+| `@repo/ui/errors`        | Error components       |
+| `@repo/ui/empty`         | Empty state components |
+| `@repo/ui/header`        | Header components      |
+| `@repo/ui/layout`        | Layout components      |
+| `@repo/ui/nbars`         | Navigation bars        |
+| `@repo/ui/pages`         | Page components        |
+| `@repo/ui/common`        | Common utilities       |
 
 ## 🛠️ Development
 

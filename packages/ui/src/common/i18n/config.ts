@@ -11,7 +11,9 @@ export type LocaleDetector = () => LocaleCode | undefined;
 
 const SUPPORTED_LOCALES = Object.keys(locales) as LocaleCode[];
 
-export const isSupportedLocale = (candidate?: string | null): candidate is LocaleCode => {
+export const isSupportedLocale = (
+  candidate?: string | null,
+): candidate is LocaleCode => {
   if (!candidate) {
     return false;
   }
@@ -19,7 +21,9 @@ export const isSupportedLocale = (candidate?: string | null): candidate is Local
   return (SUPPORTED_LOCALES as string[]).includes(candidate);
 };
 
-export const normalizeLocale = (candidate?: string | null): LocaleCode | undefined => {
+export const normalizeLocale = (
+  candidate?: string | null,
+): LocaleCode | undefined => {
   if (!candidate) {
     return undefined;
   }
@@ -69,24 +73,36 @@ export interface I18nConfig {
   storageKey?: string | null;
   detectLocale?: LocaleDetector | false;
   formats?: TranslatorFormats;
-  onMissingKey?: (details: { locale: LocaleCode; namespace: string; key: string }) => void;
+  onMissingKey?: (details: {
+    locale: LocaleCode;
+    namespace: string;
+    key: string;
+  }) => void;
   applyDirectionToDocument?: boolean;
 }
 
 export function resolveConfig(config?: I18nConfig) {
-  const fallbackLocale = config?.fallbackLocale && isSupportedLocale(config.fallbackLocale)
-    ? config.fallbackLocale
-    : undefined;
+  const fallbackLocale =
+    config?.fallbackLocale && isSupportedLocale(config.fallbackLocale)
+      ? config.fallbackLocale
+      : undefined;
 
-  const normalizedDefault = config?.defaultLocale && isSupportedLocale(config.defaultLocale)
-    ? config.defaultLocale
-    : undefined;
+  const normalizedDefault =
+    config?.defaultLocale && isSupportedLocale(config.defaultLocale)
+      ? config.defaultLocale
+      : undefined;
 
   return {
     defaultLocale: normalizedDefault ?? fallbackLocale ?? defaultLocale,
     fallbackLocale: fallbackLocale ?? normalizedDefault ?? defaultLocale,
-    storageKey: config?.storageKey === null ? null : config?.storageKey ?? DEFAULT_LOCALE_STORAGE_KEY,
-    detectLocale: config?.detectLocale === false ? undefined : config?.detectLocale ?? detectBrowserLocale,
+    storageKey:
+      config?.storageKey === null
+        ? null
+        : (config?.storageKey ?? DEFAULT_LOCALE_STORAGE_KEY),
+    detectLocale:
+      config?.detectLocale === false
+        ? undefined
+        : (config?.detectLocale ?? detectBrowserLocale),
     formats: config?.formats,
     onMissingKey: config?.onMissingKey,
     applyDirectionToDocument: config?.applyDirectionToDocument ?? true,

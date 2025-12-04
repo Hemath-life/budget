@@ -12,7 +12,11 @@ This module bundles reusable locale assets and lightweight helpers so consuming 
 ## Quick start
 
 ```ts
-import { createTranslator, translate, defaultLocale } from '@repo/ui/assets/i18n';
+import {
+  createTranslator,
+  translate,
+  defaultLocale,
+} from '@repo/ui/assets/i18n';
 
 // Eager, locale-scoped translator
 const t = createTranslator({ locale: 'es' });

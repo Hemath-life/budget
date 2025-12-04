@@ -12,13 +12,9 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Switch,
 } from '@repo/ui/components/ui';
+import { SelectField } from '@repo/ui/forms';
 import {
   ArrowLeft,
   CalendarIcon,
@@ -236,54 +232,35 @@ export function TransactionForm({ transaction, mode }: TransactionFormProps) {
             </div>
           </div>
           <div className="w-24">
-            <Label className="text-xs text-muted-foreground mb-1.5 block">
-              Currency
-            </Label>
-            <Select value={currency} onValueChange={setCurrency}>
-              <SelectTrigger className="h-10 rounded-lg">
-                <SelectValue placeholder="INR" />
-              </SelectTrigger>
-              <SelectContent>
-                {currencies.map((c) => (
-                  <SelectItem key={c.code} value={c.code}>
-                    {c.code}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <SelectField
+              id="currency"
+              label="Currency"
+              value={currency}
+              onChange={setCurrency}
+              placeholder="INR"
+              triggerClassName="h-10 rounded-lg"
+              options={currencies.map((c) => ({
+                label: c.code,
+                value: c.code,
+              }))}
+            />
           </div>
         </div>
 
         {/* Category */}
-        <div>
-          <Label className="text-xs text-muted-foreground mb-1.5 block">
-            Category
-          </Label>
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger className="h-10 rounded-lg">
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent>
-              {filteredCategories.length === 0 ? (
-                <div className="p-2 text-center text-xs text-muted-foreground">
-                  No categories for {type}
-                </div>
-              ) : (
-                filteredCategories.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="h-2.5 w-2.5 rounded-full"
-                        style={{ backgroundColor: c.color }}
-                      />
-                      {c.name}
-                    </div>
-                  </SelectItem>
-                ))
-              )}
-            </SelectContent>
-          </Select>
-        </div>
+        <SelectField
+          id="category"
+          label="Category"
+          value={category}
+          onChange={setCategory}
+          placeholder="Select category"
+          triggerClassName="h-10 rounded-lg"
+          options={filteredCategories.map((c) => ({
+            label: c.name,
+            value: c.id,
+            color: c.color,
+          }))}
+        />
 
         {/* Description */}
         <div>

@@ -9,7 +9,7 @@ import { DataTableRowActions } from './data-table-row-actions';
 export const columns: ColumnDef<Task>[] = [
   {
     id: 'select',
-    header: ({ table }:any) => (
+    header: ({ table }: any) => (
       <Checkbox
         checked={
           table.getIsAllPageRowsSelected() ||
@@ -20,7 +20,7 @@ export const columns: ColumnDef<Task>[] = [
         className="translate-y-[2px]"
       />
     ),
-    cell: ({ row }:any) => (
+    cell: ({ row }: any) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -33,19 +33,21 @@ export const columns: ColumnDef<Task>[] = [
   },
   {
     accessorKey: 'id',
-    header: ({ column }:any) => (
+    header: ({ column }: any) => (
       <DataTableColumnHeader column={column} title="Task" />
     ),
-    cell: ({ row }:any) => <div className="w-[80px]">{row.getValue('id')}</div>,
+    cell: ({ row }: any) => (
+      <div className="w-[80px]">{row.getValue('id')}</div>
+    ),
     enableSorting: false,
     enableHiding: false,
   },
   {
     accessorKey: 'title',
-    header: ({ column }:any) => (
+    header: ({ column }: any) => (
       <DataTableColumnHeader column={column} title="Title" />
     ),
-    cell: ({ row }:any) => {
+    cell: ({ row }: any) => {
       const label = labels.find((label) => label.value === row.original.label);
 
       return (
@@ -60,12 +62,12 @@ export const columns: ColumnDef<Task>[] = [
   },
   {
     accessorKey: 'status',
-    header: ({ column }:any) => (
+    header: ({ column }: any) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
-    cell: ({ row }:any) => {
+    cell: ({ row }: any) => {
       const status = statuses.find(
-        (status:any) => status.value === row.getValue('status'),
+        (status: any) => status.value === row.getValue('status'),
       );
 
       if (!status) {
@@ -81,18 +83,18 @@ export const columns: ColumnDef<Task>[] = [
         </div>
       );
     },
-    filterFn: (row:any, id:any, value:any[]) => {
+    filterFn: (row: any, id: any, value: any[]) => {
       return value.includes(row.getValue(id));
     },
   },
   {
     accessorKey: 'priority',
-    header: ({ column }:any) => (
+    header: ({ column }: any) => (
       <DataTableColumnHeader column={column} title="Priority" />
     ),
-    cell: ({ row }:any) => {
+    cell: ({ row }: any) => {
       const priority = priorities.find(
-        (priority:any) => priority.value === row.getValue('priority'),
+        (priority: any) => priority.value === row.getValue('priority'),
       );
 
       if (!priority) {

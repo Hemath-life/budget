@@ -32,42 +32,40 @@ export const ReusableNavMenu: React.FC<ReusableNavMenuProps> = ({
 }) => {
   return (
     <NavigationMenu orientation={orientation} className={className}>
-      <NavigationMenuList 
+      <NavigationMenuList
         className={cn(
-          "gap-6 space-x-0",
-          orientation === 'vertical' 
-            ? "flex-col items-start space-y-2 w-full" 
-            : "flex-row items-center"
+          'gap-6 space-x-0',
+          orientation === 'vertical'
+            ? 'flex-col items-start space-y-2 w-full'
+            : 'flex-row items-center',
         )}
       >
         {navLinks.map((link) => (
           <NavigationMenuItem key={link.href}>
-            <NavigationMenuLink 
-              asChild 
+            <NavigationMenuLink
+              asChild
               className={cn(
-                "transition-colors hover:text-foreground/80 text-foreground/60",
-                "px-3 py-2 text-sm font-medium rounded-md",
-                orientation === 'vertical' ? "w-full text-left" : "",
-                link.className
+                'transition-colors hover:text-foreground/80 text-foreground/60',
+                'px-3 py-2 text-sm font-medium rounded-md',
+                orientation === 'vertical' ? 'w-full text-left' : '',
+                link.className,
               )}
             >
               {link.href.startsWith('http') ? (
-                <a 
-                  href={link.href} 
+                <a
+                  href={link.href}
                   target={link.target || '_blank'}
                   rel="noopener noreferrer"
                 >
                   {link.label}
                 </a>
               ) : (
-                <Link to={link.href}>
-                  {link.label}
-                </Link>
+                <Link to={link.href}>{link.label}</Link>
               )}
             </NavigationMenuLink>
           </NavigationMenuItem>
         ))}
-        
+
         {showThemeToggle && orientation === 'horizontal' && (
           <NavigationMenuItem>
             <NavigationMenuLink asChild tabIndex={-1} className="p-0">

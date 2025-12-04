@@ -33,16 +33,14 @@ export default {
       // Your customizations
     },
   },
-  plugins: [
-    require('tailwindcss-animate'),
-  ],
+  plugins: [require('tailwindcss-animate')],
 } satisfies Config;
 ```
 
 ## 📦 Exports
 
-| Export | Description |
-|--------|-------------|
+| Export                            | Description                |
+| --------------------------------- | -------------------------- |
 | `@repo/tailwind-config/style.css` | Base styles and animations |
 
 ## 📁 Structure

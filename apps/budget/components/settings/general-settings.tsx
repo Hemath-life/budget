@@ -1,18 +1,18 @@
 'use client';
 
-import { useSettings, useCurrencies, usePatchSettings } from '@/lib/hooks';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@repo/ui/components/ui';
-import { Label } from '@repo/ui/components/ui';
-import { Switch } from '@repo/ui/components/ui';
+import { useCurrencies, usePatchSettings, useSettings } from '@/lib/hooks';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Label,
+  Switch,
 } from '@repo/ui/components/ui';
-import { toast } from 'sonner';
+import { SelectField } from '@repo/ui/forms';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export function GeneralSettings() {
   const { data: settings, isLoading } = useSettings();
@@ -53,25 +53,24 @@ export function GeneralSettings() {
                 Used for new transactions and display
               </p>
             </div>
-            <Select
+            <SelectField
+              id="defaultCurrency"
               value={settings?.defaultCurrency || 'INR'}
-              onValueChange={(value) => {
-                patchSettings.mutate({ defaultCurrency: value }, {
-                  onSuccess: () => toast.success('Default currency updated'),
-                });
+              onChange={(value) => {
+                patchSettings.mutate(
+                  { defaultCurrency: value },
+                  {
+                    onSuccess: () => toast.success('Default currency updated'),
+                  }
+                );
               }}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {currencies.map((currency) => (
-                  <SelectItem key={currency.code} value={currency.code}>
-                    {currency.code} ({currency.symbol})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              hideLabel
+              triggerClassName="w-[180px]"
+              options={currencies.map((currency) => ({
+                label: `${currency.code} (${currency.symbol})`,
+                value: currency.code,
+              }))}
+            />
           </div>
 
           {/* Date Format */}
@@ -82,25 +81,24 @@ export function GeneralSettings() {
                 How dates are displayed throughout the app
               </p>
             </div>
-            <Select
+            <SelectField
+              id="dateFormat"
               value={settings?.dateFormat || 'MMM dd, yyyy'}
-              onValueChange={(value) => {
-                patchSettings.mutate({ dateFormat: value }, {
-                  onSuccess: () => toast.success('Date format updated'),
-                });
+              onChange={(value) => {
+                patchSettings.mutate(
+                  { dateFormat: value },
+                  {
+                    onSuccess: () => toast.success('Date format updated'),
+                  }
+                );
               }}
-            >
-              <SelectTrigger className="w-[180px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {dateFormats.map((format) => (
-                  <SelectItem key={format.value} value={format.value}>
-                    {format.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              hideLabel
+              triggerClassName="w-[180px]"
+              options={dateFormats.map((format) => ({
+                label: format.label,
+                value: format.value,
+              }))}
+            />
           </div>
 
           {/* Notifications */}
@@ -114,11 +112,17 @@ export function GeneralSettings() {
             <Switch
               checked={settings?.notificationsEnabled ?? true}
               onCheckedChange={(checked) => {
-                patchSettings.mutate({ notificationsEnabled: checked }, {
-                  onSuccess: () => toast.success(
-                    checked ? 'Notifications enabled' : 'Notifications disabled'
-                  ),
-                });
+                patchSettings.mutate(
+                  { notificationsEnabled: checked },
+                  {
+                    onSuccess: () =>
+                      toast.success(
+                        checked
+                          ? 'Notifications enabled'
+                          : 'Notifications disabled'
+                      ),
+                  }
+                );
               }}
             />
           </div>
@@ -134,10 +138,12 @@ export function GeneralSettings() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Your data is stored locally in your browser. No data is sent to external servers.
+            Your data is stored locally in your browser. No data is sent to
+            external servers.
           </p>
           <p className="text-sm text-muted-foreground">
-            To backup your data, use the Export feature to download your transactions and settings.
+            To backup your data, use the Export feature to download your
+            transactions and settings.
           </p>
         </CardContent>
       </Card>

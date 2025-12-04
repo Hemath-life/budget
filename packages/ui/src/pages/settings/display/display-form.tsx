@@ -1,9 +1,9 @@
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '#/utils/show-submitted-data'
-import { Button } from '#/components/ui/button'
-import { Checkbox } from '#/components/ui/checkbox'
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { showSubmittedData } from '#/utils/show-submitted-data';
+import { Button } from '#/components/ui/button';
+import { Checkbox } from '#/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -12,7 +12,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '#/components/ui/form'
+} from '#/components/ui/form';
 
 const items = [
   {
@@ -39,40 +39,40 @@ const items = [
     id: 'documents',
     label: 'Documents',
   },
-] as const
+] as const;
 
 const displayFormSchema = z.object({
   items: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: 'You have to select at least one item.',
   }),
-})
+});
 
-type DisplayFormValues = z.infer<typeof displayFormSchema>
+type DisplayFormValues = z.infer<typeof displayFormSchema>;
 
 // This can come from your database or API.
 const defaultValues: Partial<DisplayFormValues> = {
   items: ['recents', 'home'],
-}
+};
 
 export function DisplayForm() {
   const form = useForm<DisplayFormValues>({
     resolver: zodResolver(displayFormSchema),
     defaultValues,
-  })
+  });
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit((data) => showSubmittedData(data))}
-        className='space-y-8'
+        className="space-y-8"
       >
         <FormField
           control={form.control}
-          name='items'
+          name="items"
           render={() => (
             <FormItem>
-              <div className='mb-4'>
-                <FormLabel className='text-base'>Sidebar</FormLabel>
+              <div className="mb-4">
+                <FormLabel className="text-base">Sidebar</FormLabel>
                 <FormDescription>
                   Select the items you want to display in the sidebar.
                 </FormDescription>
@@ -81,12 +81,12 @@ export function DisplayForm() {
                 <FormField
                   key={item.id}
                   control={form.control}
-                  name='items'
+                  name="items"
                   render={({ field }) => {
                     return (
                       <FormItem
                         key={item.id}
-                        className='flex flex-row items-start space-y-0 space-x-3'
+                        className="flex flex-row items-start space-y-0 space-x-3"
                       >
                         <FormControl>
                           <Checkbox
@@ -96,17 +96,17 @@ export function DisplayForm() {
                                 ? field.onChange([...field.value, item.id])
                                 : field.onChange(
                                     field.value?.filter(
-                                      (value) => value !== item.id
-                                    )
-                                  )
+                                      (value) => value !== item.id,
+                                    ),
+                                  );
                             }}
                           />
                         </FormControl>
-                        <FormLabel className='font-normal'>
+                        <FormLabel className="font-normal">
                           {item.label}
                         </FormLabel>
                       </FormItem>
-                    )
+                    );
                   }}
                 />
               ))}
@@ -114,8 +114,8 @@ export function DisplayForm() {
             </FormItem>
           )}
         />
-        <Button type='submit'>Update display</Button>
+        <Button type="submit">Update display</Button>
       </form>
     </Form>
-  )
+  );
 }

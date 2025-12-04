@@ -8,9 +8,9 @@ This package provides consistent ESLint rules across all packages in the monorep
 
 ## 📦 Available Configurations
 
-| Config | Description | Use For |
-|--------|-------------|---------|
-| `@repo/eslint-config/base` | Base TypeScript rules | Node.js packages |
+| Config                      | Description              | Use For            |
+| --------------------------- | ------------------------ | ------------------ |
+| `@repo/eslint-config/base`  | Base TypeScript rules    | Node.js packages   |
 | `@repo/eslint-config/react` | React + TypeScript rules | React applications |
 
 ## 🚀 Usage
@@ -25,7 +25,7 @@ export default [
   ...reactConfig,
   {
     // Your custom overrides
-  }
+  },
 ];
 ```
 
@@ -39,19 +39,21 @@ export default [
   ...baseConfig,
   {
     // Your custom overrides
-  }
+  },
 ];
 ```
 
 ## 🔧 Included Rules
 
 ### Base Configuration
+
 - TypeScript recommended rules
 - Import ordering
 - Turbo lint rules
 - Prettier integration
 
 ### React Configuration
+
 - All base rules
 - React recommended rules
 - React Hooks rules
@@ -80,7 +82,7 @@ export default [
     rules: {
       // Your overrides
       '@typescript-eslint/no-unused-vars': 'warn',
-    }
-  }
+    },
+  },
 ];
 ```

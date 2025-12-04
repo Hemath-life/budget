@@ -1,11 +1,11 @@
-import React from 'react'
+import React from 'react';
 import {
   IconCash,
   IconShield,
   IconUsersGroup,
   IconUserShield,
-} from '@tabler/icons-react'
-import { type UserStatus } from './schema'
+} from '@tabler/icons-react';
+import { type UserStatus } from './schema';
 
 export const callTypes = new Map<UserStatus, string>([
   ['active', 'bg-teal-100/30 text-teal-900 dark:text-teal-200 border-teal-200'],
@@ -15,12 +15,12 @@ export const callTypes = new Map<UserStatus, string>([
     'suspended',
     'bg-destructive/10 dark:bg-destructive/50 text-destructive dark:text-primary border-destructive/10',
   ],
-])
+]);
 
 export const userTypes: Array<{
-  label: string
-  value: string
-  icon: React.ComponentType<{ size?: number; className?: string }>
+  label: string;
+  value: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
 }> = [
   {
     label: 'Superadmin',
@@ -42,4 +42,4 @@ export const userTypes: Array<{
     value: 'cashier',
     icon: IconCash,
   },
-] as const
+] as const;

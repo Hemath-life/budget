@@ -1,18 +1,18 @@
 /**
  * Table Components & Utilities
- * 
+ *
  * A comprehensive set of table components and utilities built on top of TanStack Table.
  * Provides type-safe column helpers, data table components, and pre-built status badges.
- * 
+ *
  * @example
  * ```tsx
  * import { DataTable, createDateColumn, createTextColumn } from '@repo/ui/common';
- * 
+ *
  * const columns = [
  *   createDateColumn({ accessorKey: 'createdAt', headerTitle: 'Created' }),
  *   createTextColumn({ accessorKey: 'name', headerTitle: 'Name' }),
  * ];
- * 
+ *
  * <DataTable columns={columns} data={data} />
  * ```
  */
@@ -57,10 +57,10 @@ export { DataTableRowActions } from './data-table-row-actions';
 // Types
 // ============================================================================
 
-export type { 
-  DataTableRowActionsProps, 
-  RowAction, 
-  RowActionGroup 
+export type {
+  DataTableRowActionsProps,
+  RowAction,
+  RowActionGroup,
 } from './data-table-row-actions';
 
 export type {
@@ -145,7 +145,6 @@ export { createDateColumn } from './column-helpers';
  * })
  */
 export { createTextColumn } from './column-helpers';
-
 
 export { createNumberColumn } from './column-helpers';
 /**

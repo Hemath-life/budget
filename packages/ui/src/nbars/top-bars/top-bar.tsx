@@ -3,7 +3,11 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '#/components/ui/button';
 import { cn } from '#/lib';
 import { type TopBarProps } from '../components/types';
-import { ReusableLogo, ReusableMobileMenu, ReusableNavMenu } from '../components';
+import {
+  ReusableLogo,
+  ReusableMobileMenu,
+  ReusableNavMenu,
+} from '../components';
 
 export const TopBar: React.FC<TopBarProps> = ({
   logo,
@@ -21,7 +25,12 @@ export const TopBar: React.FC<TopBarProps> = ({
   blur = false,
 }) => {
   const positionClasses = {
-    fixed: variant === 'fixed' ? 'fixed' : variant === 'sticky' ? 'sticky' : 'relative',
+    fixed:
+      variant === 'fixed'
+        ? 'fixed'
+        : variant === 'sticky'
+          ? 'sticky'
+          : 'relative',
     top: position === 'top' ? 'top-6' : 'bottom-6',
     inset: 'inset-x-4',
   };
@@ -37,23 +46,23 @@ export const TopBar: React.FC<TopBarProps> = ({
       'bg-background/80': blur,
       'bg-background': !blur,
       'backdrop-blur-sm': blur,
-      'border': bordered,
+      border: bordered,
       'border-border': bordered,
       'shadow-lg': shadow,
     },
-    className
+    className,
   );
 
   return (
     <nav className={styleClasses}>
-      <div className={cn(
-        'h-full flex items-center justify-between mx-auto px-4',
-        containerClassName
-      )}>
+      <div
+        className={cn(
+          'h-full flex items-center justify-between mx-auto px-4',
+          containerClassName,
+        )}
+      >
         {/* Logo */}
-        <div className="flex-shrink-0">
-          {logo || <ReusableLogo />}
-        </div>
+        <div className="flex-shrink-0">{logo || <ReusableLogo />}</div>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center">
@@ -79,8 +88,14 @@ export const TopBar: React.FC<TopBarProps> = ({
                         className={cn('rounded-full', action.className)}
                         asChild
                       >
-                        <a href={action.href} target="_blank" rel="noopener noreferrer">
-                          {action.icon && <span className="mr-2">{action.icon}</span>}
+                        <a
+                          href={action.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {action.icon && (
+                            <span className="mr-2">{action.icon}</span>
+                          )}
                           {action.label}
                         </a>
                       </Button>
@@ -92,7 +107,9 @@ export const TopBar: React.FC<TopBarProps> = ({
                         asChild
                       >
                         <Link to={action.href}>
-                          {action.icon && <span className="mr-2">{action.icon}</span>}
+                          {action.icon && (
+                            <span className="mr-2">{action.icon}</span>
+                          )}
                           {action.label}
                         </Link>
                       </Button>
@@ -104,7 +121,9 @@ export const TopBar: React.FC<TopBarProps> = ({
                       className={cn('rounded-full', action.className)}
                       onClick={action.onClick}
                     >
-                      {action.icon && <span className="mr-2">{action.icon}</span>}
+                      {action.icon && (
+                        <span className="mr-2">{action.icon}</span>
+                      )}
                       {action.label}
                     </Button>
                   )}

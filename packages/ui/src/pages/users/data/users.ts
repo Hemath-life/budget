@@ -60,6 +60,6 @@ const sampleUsers = [
     createdAt: new Date('2023-05-12'),
     updatedAt: new Date('2024-06-20'),
   },
-]
+];
 
-export const users = sampleUsers
+export const users = sampleUsers;

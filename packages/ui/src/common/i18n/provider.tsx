@@ -12,11 +12,7 @@ import {
   type Translator,
   type TranslatorFormats,
 } from '#/assets/i18n';
-import {
-  normalizeLocale,
-  resolveConfig,
-  type I18nConfig,
-} from './config';
+import { normalizeLocale, resolveConfig, type I18nConfig } from './config';
 import {
   createContext,
   useCallback,
@@ -71,12 +67,12 @@ export interface I18nContextValue {
   translate<N extends TranslationNamespace>(
     namespace: N,
     key: TranslationKey<N>,
-    options?: Omit<TranslateOptions, 'locale' | 'fallbackLocale'>
+    options?: Omit<TranslateOptions, 'locale' | 'fallbackLocale'>,
   ): string;
   has<N extends TranslationNamespace>(
     namespace: N,
     key: TranslationKey<N>,
-    targetLocale?: LocaleCode
+    targetLocale?: LocaleCode,
   ): boolean;
 }
 
@@ -89,7 +85,7 @@ export interface I18nProviderProps {
 
 function resolveInitialLocale(
   storage: StoredLocale,
-  config: ReturnType<typeof resolveConfig>
+  config: ReturnType<typeof resolveConfig>,
 ): LocaleCode {
   const stored = storage.read();
   if (stored && locales[stored]) {
@@ -113,11 +109,14 @@ export function I18nProvider({ children, config }: I18nProviderProps) {
   const storageRef = useRef(createStore(resolvedConfig.storageKey));
 
   const [locale, setLocaleState] = useState<LocaleCode>(() =>
-    resolveInitialLocale(storageRef.current, resolvedConfig)
+    resolveInitialLocale(storageRef.current, resolvedConfig),
   );
 
   const effectiveFallback = useMemo(() => {
-    if (resolvedConfig.fallbackLocale && locales[resolvedConfig.fallbackLocale]) {
+    if (
+      resolvedConfig.fallbackLocale &&
+      locales[resolvedConfig.fallbackLocale]
+    ) {
       return resolvedConfig.fallbackLocale;
     }
 
@@ -140,7 +139,12 @@ export function I18nProvider({ children, config }: I18nProviderProps) {
         formats: resolvedConfig.formats,
         onMissingKey: resolvedConfig.onMissingKey,
       }),
-    [effectiveFallback, locale, resolvedConfig.formats, resolvedConfig.onMissingKey]
+    [
+      effectiveFallback,
+      locale,
+      resolvedConfig.formats,
+      resolvedConfig.onMissingKey,
+    ],
   );
 
   useEffect(() => {
@@ -155,16 +159,13 @@ export function I18nProvider({ children, config }: I18nProviderProps) {
     document.documentElement.setAttribute('dir', translator.direction ?? 'ltr');
   }, [translator.direction, resolvedConfig.applyDirectionToDocument]);
 
-  const setLocale = useCallback(
-    (nextLocale: LocaleCode) => {
-      if (!locales[nextLocale]) {
-        return;
-      }
+  const setLocale = useCallback((nextLocale: LocaleCode) => {
+    if (!locales[nextLocale]) {
+      return;
+    }
 
-      setLocaleState(nextLocale);
-    },
-    []
-  );
+    setLocaleState(nextLocale);
+  }, []);
 
   const resetLocale = useCallback(() => {
     const fallback = resolvedConfig.defaultLocale ?? defaultLocale;
@@ -175,7 +176,7 @@ export function I18nProvider({ children, config }: I18nProviderProps) {
     const translateWithContext = <N extends TranslationNamespace>(
       namespace: N,
       key: TranslationKey<N>,
-      options?: Omit<TranslateOptions, 'locale' | 'fallbackLocale'>
+      options?: Omit<TranslateOptions, 'locale' | 'fallbackLocale'>,
     ) =>
       translator.translate(namespace, key, {
         ...options,
@@ -185,7 +186,7 @@ export function I18nProvider({ children, config }: I18nProviderProps) {
     const has = <N extends TranslationNamespace>(
       namespace: N,
       key: TranslationKey<N>,
-      targetLocale?: LocaleCode
+      targetLocale?: LocaleCode,
     ) => translator.has(namespace, key, targetLocale);
 
     return {
@@ -209,7 +210,9 @@ export function I18nProvider({ children, config }: I18nProviderProps) {
     translator,
   ]);
 
-  return <I18nContext.Provider value={contextValue}>{children}</I18nContext.Provider>;
+  return (
+    <I18nContext.Provider value={contextValue}>{children}</I18nContext.Provider>
+  );
 }
 
 export function useI18nContext() {
@@ -239,7 +242,7 @@ type ExtractKey<N extends ExtractNamespace> = TranslationKey<N>;
 type TranslateArgs<N extends ExtractNamespace> = [
   namespace: N,
   key: ExtractKey<N>,
-  options?: Omit<TranslateOptions, 'locale' | 'fallbackLocale'>
+  options?: Omit<TranslateOptions, 'locale' | 'fallbackLocale'>,
 ];
 
 export function useScopedTranslator<N extends ExtractNamespace>(namespace: N) {
@@ -248,7 +251,6 @@ export function useScopedTranslator<N extends ExtractNamespace>(namespace: N) {
   return useCallback(
     (key: ExtractKey<N>, options?: TranslateArgs<N>[2]) =>
       translateWithContext(namespace, key, options),
-    [namespace, translateWithContext]
+    [namespace, translateWithContext],
   );
 }
-

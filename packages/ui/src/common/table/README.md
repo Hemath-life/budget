@@ -5,15 +5,19 @@ This directory contains a comprehensive, reusable table component built with Tan
 ## Components
 
 ### 1. `DataTable` - Main Table Component
+
 The core table component with built-in features for sorting, filtering, pagination, row selection, and more.
 
 ### 2. `DataTableColumnHeader` - Column Header with Sorting
+
 A pre-built column header component with sorting capabilities.
 
 ### 3. `DataTableToolbar` - Table Toolbar
+
 Default toolbar with search and filter controls.
 
 ### 4. `DataTablePagination` - Pagination Controls
+
 Pagination component with page size selector and navigation buttons.
 
 ## Basic Usage
@@ -83,9 +87,7 @@ function UsersWithCustomActions() {
           searchKey="name"
           searchPlaceholder="Search users..."
           actions={
-            <Button onClick={() => console.log('Add user')}>
-              Add User
-            </Button>
+            <Button onClick={() => console.log('Add user')}>Add User</Button>
           }
         />
       )}
@@ -97,7 +99,10 @@ function UsersWithCustomActions() {
 ### With Row Actions
 
 ```tsx
-import { DropdownMenu, DropdownMenuItem } from '@repo/ui/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+} from '@repo/ui/components/ui/dropdown-menu';
 import { MoreHorizontal, Edit, Trash } from 'lucide-react';
 
 const columns: ColumnDef<User>[] = [
@@ -208,39 +213,40 @@ const columns: ColumnDef<User>[] = [
 
 ### DataTable Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `columns` | `ColumnDef<TData>[]` | Required | Column definitions |
-| `data` | `TData[]` | Required | Table data |
-| `searchKey` | `string` | - | Column key for search |
-| `searchPlaceholder` | `string` | "Search..." | Search input placeholder |
-| `enableSearch` | `boolean` | `true` | Enable search functionality |
-| `enablePagination` | `boolean` | `true` | Enable pagination |
-| `enableRowSelection` | `boolean` | `false` | Enable row selection |
-| `enableSorting` | `boolean` | `true` | Enable column sorting |
-| `enableFiltering` | `boolean` | `true` | Enable filtering |
-| `enableColumnHiding` | `boolean` | `false` | Enable column visibility toggle |
-| `pageSize` | `number` | `10` | Initial page size |
-| `pageSizeOptions` | `number[]` | `[10, 20, 30, 40, 50]` | Page size options |
-| `emptyMessage` | `string` | "No results found." | Empty state message |
-| `loading` | `boolean` | `false` | Loading state |
-| `error` | `Error \| null` | `null` | Error state |
-| `onRowClick` | `(row: Row<TData>) => void` | - | Row click handler |
-| `onRowSelectionChange` | `(selection: Record<string, boolean>) => void` | - | Selection change handler |
-| `toolbar` | `ComponentType` | - | Custom toolbar component |
-| `pagination` | `ComponentType` | - | Custom pagination component |
+| Prop                   | Type                                           | Default                | Description                     |
+| ---------------------- | ---------------------------------------------- | ---------------------- | ------------------------------- |
+| `columns`              | `ColumnDef<TData>[]`                           | Required               | Column definitions              |
+| `data`                 | `TData[]`                                      | Required               | Table data                      |
+| `searchKey`            | `string`                                       | -                      | Column key for search           |
+| `searchPlaceholder`    | `string`                                       | "Search..."            | Search input placeholder        |
+| `enableSearch`         | `boolean`                                      | `true`                 | Enable search functionality     |
+| `enablePagination`     | `boolean`                                      | `true`                 | Enable pagination               |
+| `enableRowSelection`   | `boolean`                                      | `false`                | Enable row selection            |
+| `enableSorting`        | `boolean`                                      | `true`                 | Enable column sorting           |
+| `enableFiltering`      | `boolean`                                      | `true`                 | Enable filtering                |
+| `enableColumnHiding`   | `boolean`                                      | `false`                | Enable column visibility toggle |
+| `pageSize`             | `number`                                       | `10`                   | Initial page size               |
+| `pageSizeOptions`      | `number[]`                                     | `[10, 20, 30, 40, 50]` | Page size options               |
+| `emptyMessage`         | `string`                                       | "No results found."    | Empty state message             |
+| `loading`              | `boolean`                                      | `false`                | Loading state                   |
+| `error`                | `Error \| null`                                | `null`                 | Error state                     |
+| `onRowClick`           | `(row: Row<TData>) => void`                    | -                      | Row click handler               |
+| `onRowSelectionChange` | `(selection: Record<string, boolean>) => void` | -                      | Selection change handler        |
+| `toolbar`              | `ComponentType`                                | -                      | Custom toolbar component        |
+| `pagination`           | `ComponentType`                                | -                      | Custom pagination component     |
 
 ### DataTableColumnHeader Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `column` | `Column<TData, TValue>` | Column instance from table |
-| `title` | `string` | Column header title |
-| `className` | `string` | Optional CSS classes |
+| Prop        | Type                    | Description                |
+| ----------- | ----------------------- | -------------------------- |
+| `column`    | `Column<TData, TValue>` | Column instance from table |
+| `title`     | `string`                | Column header title        |
+| `className` | `string`                | Optional CSS classes       |
 
 ## Examples in the Codebase
 
 ### Academic Years Table
+
 See: `apps/school-fe/src/routes/_auth/_admin/academic.tsx`
 
 ```tsx
@@ -258,6 +264,7 @@ See: `apps/school-fe/src/routes/_auth/_admin/academic.tsx`
 ```
 
 ### Transactions Table (can be updated)
+
 See: `apps/school-fe/src/features/transactions/TransactionsTable.tsx`
 
 Current implementation uses manual table setup. Can be simplified to:
@@ -284,6 +291,7 @@ Current implementation uses manual table setup. Can be simplified to:
 ## Extending the Components
 
 You can extend these components by:
+
 1. Creating wrapper components with preset configurations
 2. Adding custom toolbar components with domain-specific actions
 3. Creating custom cell renderers for specific data types
@@ -300,6 +308,7 @@ To migrate from manual table implementations:
 5. Remove manual state management (sorting, filtering, pagination)
 
 Before:
+
 ```tsx
 const table = useReactTable({
   data,
@@ -310,15 +319,14 @@ const table = useReactTable({
 return (
   <div>
     <CustomToolbar table={table} />
-    <Table>
-      {/* Manual table rendering */}
-    </Table>
+    <Table>{/* Manual table rendering */}</Table>
     <CustomPagination table={table} />
   </div>
 );
 ```
 
 After:
+
 ```tsx
 return (
   <DataTable

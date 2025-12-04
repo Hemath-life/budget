@@ -1,4 +1,9 @@
-import { type ColumnDef, type Table, type Row, type Column } from '@tanstack/react-table';
+import {
+  type ColumnDef,
+  type Table,
+  type Row,
+  type Column,
+} from '@tanstack/react-table';
 import { type ReactNode, type ComponentType } from 'react';
 
 // Base table configuration
@@ -11,20 +16,20 @@ export interface DataTableConfig<TData> {
   enableFiltering?: boolean;
   enableColumnHiding?: boolean;
   enableColumnResizing?: boolean;
-  
+
   // Pagination settings
   pageSize?: number;
   pageSizeOptions?: number[];
-  
+
   // Search settings
   searchKey?: string;
   searchPlaceholder?: string;
-  
+
   // Display settings
   emptyMessage?: string;
   loadingMessage?: string;
   errorMessage?: string;
-  
+
   // State settings
   defaultSorting?: Array<{ id: string; desc: boolean }>;
   defaultColumnVisibility?: Record<string, boolean>;
@@ -32,27 +37,28 @@ export interface DataTableConfig<TData> {
 }
 
 // Enhanced data table props
-export interface DataTableProps<TData, TValue = unknown> extends DataTableConfig<TData> {
+export interface DataTableProps<TData, TValue = unknown>
+  extends DataTableConfig<TData> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   className?: string;
   loading?: boolean;
   error?: Error | null;
-  
+
   // Custom components
   toolbar?: ComponentType<DataTableToolbarProps<TData>>;
   pagination?: ComponentType<DataTablePaginationProps<TData>>;
   emptyState?: ComponentType<{ message: string }>;
   loadingState?: ComponentType<{ message: string }>;
   errorState?: ComponentType<{ error: Error; onRetry?: () => void }>;
-  
+
   // Event handlers
   onRowSelectionChange?: (selection: Record<string, boolean>) => void;
   onRowClick?: (row: Row<TData>) => void;
   onRowDoubleClick?: (row: Row<TData>) => void;
   onColumnSort?: (columnId: string, direction: 'asc' | 'desc') => void;
   onColumnFilter?: (columnId: string, value: any) => void;
-  
+
   // Actions
   actions?: ReactNode;
   bulkActions?: ComponentType<DataTableBulkActionsProps<TData>>;
@@ -119,7 +125,13 @@ export interface TableAction<TData = any> {
   id: string;
   label: string;
   icon?: ReactNode;
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
   onClick: (rows: Row<TData>[]) => void;
   disabled?: (rows: Row<TData>[]) => boolean;
   confirmationMessage?: string;
@@ -135,9 +147,4 @@ export interface FilterConfig {
 }
 
 // Export types for re-use
-export type {
-  Table,
-  Row,
-  Column,
-  ColumnDef,
-} from '@tanstack/react-table';
+export type { Table, Row, Column, ColumnDef } from '@tanstack/react-table';

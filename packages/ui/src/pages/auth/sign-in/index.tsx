@@ -1,4 +1,4 @@
-import type { ComponentType, ReactNode } from 'react'
+import type { ComponentType, ReactNode } from 'react';
 import {
   Card,
   CardContent,
@@ -6,47 +6,47 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '#/components/ui/card'
-import AuthLayout from '../auth-layout'
+} from '#/components/ui/card';
+import AuthLayout from '../auth-layout';
 import {
   UserAuthForm,
   type UserAuthFormProps,
-} from './components/user-auth-form'
+} from './components/user-auth-form';
 
 const defaultDescription = (
   <>
     Enter your email and password below to <br />
     log into your account
   </>
-)
+);
 
 const defaultFooter = (
-  <p className='text-muted-foreground px-8 text-center text-sm'>
+  <p className="text-muted-foreground px-8 text-center text-sm">
     By clicking login, you agree to our{' '}
     <a
-      href='/terms'
-      className='hover:text-primary underline underline-offset-4'
+      href="/terms"
+      className="hover:text-primary underline underline-offset-4"
     >
       Terms of Service
     </a>{' '}
     and{' '}
     <a
-      href='/privacy'
-      className='hover:text-primary underline underline-offset-4'
+      href="/privacy"
+      className="hover:text-primary underline underline-offset-4"
     >
       Privacy Policy
     </a>
     .
   </p>
-)
+);
 
 export interface SignInProps {
-  brand?: ReactNode
-  title?: ReactNode
-  description?: ReactNode
-  footer?: ReactNode
-  formComponent?: ComponentType<UserAuthFormProps>
-  formProps?: UserAuthFormProps
+  brand?: ReactNode;
+  title?: ReactNode;
+  description?: ReactNode;
+  footer?: ReactNode;
+  formComponent?: ComponentType<UserAuthFormProps>;
+  formProps?: UserAuthFormProps;
 }
 
 export default function SignIn({
@@ -59,10 +59,12 @@ export default function SignIn({
 }: SignInProps = {}) {
   return (
     <AuthLayout brand={brand}>
-      <Card className='gap-4'>
+      <Card className="gap-4">
         <CardHeader>
-          <CardTitle className='text-lg tracking-tight'>{title}</CardTitle>
-          {description ? <CardDescription>{description}</CardDescription> : null}
+          <CardTitle className="text-lg tracking-tight">{title}</CardTitle>
+          {description ? (
+            <CardDescription>{description}</CardDescription>
+          ) : null}
         </CardHeader>
         <CardContent>
           <FormComponent {...(formProps ?? {})} />
@@ -70,5 +72,5 @@ export default function SignIn({
         {footer ? <CardFooter>{footer}</CardFooter> : null}
       </Card>
     </AuthLayout>
-  )
+  );
 }

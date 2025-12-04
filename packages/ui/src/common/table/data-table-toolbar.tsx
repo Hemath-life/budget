@@ -13,7 +13,7 @@ interface DataTableToolbarProps {
 export function DataTableToolbar({
   table,
   searchKey,
-  searchPlaceholder = "Search...",
+  searchPlaceholder = 'Search...',
   enableSearch = true,
   actions,
 }: DataTableToolbarProps) {
@@ -27,7 +27,9 @@ export function DataTableToolbar({
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder={searchPlaceholder}
-              value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ""}
+              value={
+                (table.getColumn(searchKey)?.getFilterValue() as string) ?? ''
+              }
               onChange={(event) =>
                 table.getColumn(searchKey)?.setFilterValue(event.target.value)
               }

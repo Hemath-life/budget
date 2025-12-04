@@ -18,12 +18,8 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
 } from '@repo/ui/components/ui';
+import { SelectField } from '@repo/ui/forms';
 import { CalendarIcon, Check, Download } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -221,31 +217,19 @@ export function ExportData() {
       <Card>
         <CardContent className="pt-6 space-y-6">
           {/* Export Type Selection */}
-          <div className="space-y-2">
-            <Label>What would you like to export?</Label>
-            <Select
-              value={exportType}
-              onValueChange={(v) => setExportType(v as ExportType)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {exportOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    <div className="flex items-center justify-between w-full">
-                      <span>{option.label}</span>
-                      {option.count !== null && (
-                        <span className="text-muted-foreground ml-2">
-                          ({option.count} items)
-                        </span>
-                      )}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <SelectField
+            id="exportType"
+            label="What would you like to export?"
+            value={exportType}
+            onChange={(v) => setExportType(v as ExportType)}
+            options={exportOptions.map((option) => ({
+              label:
+                option.count !== null
+                  ? `${option.label} (${option.count} items)`
+                  : option.label,
+              value: option.value,
+            }))}
+          />
 
           {/* Date Range (only for transactions) */}
           {exportType === 'transactions' && (

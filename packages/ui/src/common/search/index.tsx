@@ -6,7 +6,7 @@
  *
  * @module Search
  */
-import { Search } from './search'
-import { SearchProvider, useSearch } from './search-context'
+import { Search } from './search';
+import { SearchProvider, useSearch } from './search-context';
 
-export { SearchProvider, useSearch, Search }
+export { SearchProvider, useSearch, Search };

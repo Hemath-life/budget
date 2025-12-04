@@ -1,3 +1,3 @@
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
 
-export const defaultOpen = Cookies.get('sidebar_state') !== 'false'
+export const defaultOpen = Cookies.get('sidebar_state') !== 'false';

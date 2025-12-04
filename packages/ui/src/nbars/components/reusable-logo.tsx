@@ -25,27 +25,23 @@ export const ReusableLogo: React.FC<ReusableLogoProps> = ({
     if (children) {
       return <>{children}</>;
     }
-    
+
     if (src) {
       return (
-        <img 
-          src={src} 
-          alt={alt} 
-          width={width} 
+        <img
+          src={src}
+          alt={alt}
+          width={width}
           height={height}
           className={`object-contain ${className}`}
         />
       );
     }
-    
+
     if (text) {
-      return (
-        <span className={`text-xl font-bold ${className}`}>
-          {text}
-        </span>
-      );
+      return <span className={`text-xl font-bold ${className}`}>{text}</span>;
     }
-    
+
     // Default SVG logo
     return (
       <svg
