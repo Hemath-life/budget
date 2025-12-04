@@ -81,11 +81,16 @@ export function RevenueChart({
   };
 
   return (
-    <Card className="h-full border border-border">
+    <Card className="h-full border overflow-hidden bg-gradient-to-br from-violet-500/5 via-transparent to-transparent dark:from-violet-500/10">
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg font-semibold">
-          Income vs Expenses
-        </CardTitle>
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-violet-500/10">
+            <TrendingUp className="h-4 w-4 text-violet-500" />
+          </div>
+          <CardTitle className="text-base font-semibold">
+            Income vs Expenses
+          </CardTitle>
+        </div>
         <div className="flex items-center gap-4 mt-2">
           <span className="text-3xl font-bold">
             {formatCurrency(totalRevenue, currency)}

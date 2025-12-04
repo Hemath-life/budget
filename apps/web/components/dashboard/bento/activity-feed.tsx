@@ -27,10 +27,12 @@ export function ActivityFeed({ transactions, currency }: ActivityFeedProps) {
   const displayTransactions = transactions.slice(0, 6);
 
   return (
-    <Card className="h-full bg-gradient-to-br from-background to-slate-50/50 dark:to-slate-900/20">
+    <Card className="h-full border overflow-hidden bg-gradient-to-br from-slate-500/5 via-transparent to-transparent dark:from-slate-500/10">
       <CardHeader className="pb-3">
-        <div className="flex items-center gap-2">
-          <Activity className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-slate-500/10">
+            <Activity className="h-4 w-4 text-slate-500" />
+          </div>
           <CardTitle className="text-base font-semibold">
             Recent Activity
           </CardTitle>

@@ -57,18 +57,20 @@ export function BudgetStatus({ budgets, currency }: BudgetStatusProps) {
     totalLimit > 0 ? Math.round((totalSpent / totalLimit) * 100) : 0;
 
   return (
-    <Card className="h-full bg-gradient-to-br from-indigo-50 to-purple-50/50 dark:from-indigo-950/20 dark:to-purple-950/10 border-indigo-200/50 dark:border-indigo-800/30">
+    <Card className="h-full border overflow-hidden bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent dark:from-indigo-500/10">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Wallet className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
-            <CardTitle className="text-base font-semibold text-indigo-900 dark:text-indigo-100">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-indigo-500/10">
+              <Wallet className="h-4 w-4 text-indigo-500" />
+            </div>
+            <CardTitle className="text-base font-semibold">
               Budget Status
             </CardTitle>
           </div>
-          <div className="flex items-center gap-1 text-xs font-medium text-indigo-600 dark:text-indigo-400">
+          <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-muted/50 text-xs font-medium">
             <span>{overallPercentage}% used</span>
-            <Sparkles className="h-3 w-3" />
+            <Sparkles className="h-3 w-3 text-indigo-500" />
           </div>
         </div>
       </CardHeader>

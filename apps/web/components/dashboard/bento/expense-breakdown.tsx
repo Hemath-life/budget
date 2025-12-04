@@ -76,18 +76,20 @@ export function ExpenseBreakdown({
   const displayExpenses = expenses.slice(0, 5);
 
   return (
-    <Card className="h-full bg-gradient-to-br from-background to-rose-50/30 dark:to-rose-950/10">
+    <Card className="h-full border overflow-hidden bg-gradient-to-br from-rose-500/5 via-transparent to-transparent dark:from-rose-500/10">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <CreditCard className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-rose-500/10">
+              <CreditCard className="h-4 w-4 text-rose-500" />
+            </div>
             <CardTitle className="text-base font-semibold">
               Expense Breakdown
             </CardTitle>
           </div>
-        </div>
-        <div className="text-2xl font-bold text-rose-600 dark:text-rose-400">
-          {formatCurrency(totalExpenses, currency)}
+          <span className="text-lg font-bold text-rose-500">
+            {formatCurrency(totalExpenses, currency)}
+          </span>
         </div>
       </CardHeader>
       <CardContent className="space-y-3 pt-2">

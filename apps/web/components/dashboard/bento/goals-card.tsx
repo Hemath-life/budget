@@ -55,11 +55,13 @@ export function GoalsCard({ goals, currency }: GoalsCardProps) {
   const displayGoals = goals.slice(0, 3);
 
   return (
-    <Card className="h-full bg-gradient-to-br from-background to-amber-50/30 dark:to-amber-950/10">
+    <Card className="h-full border overflow-hidden bg-gradient-to-br from-amber-500/5 via-transparent to-transparent dark:from-amber-500/10">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Target className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-amber-500/10">
+              <Target className="h-4 w-4 text-amber-500" />
+            </div>
             <CardTitle className="text-base font-semibold">
               Financial Goals
             </CardTitle>
