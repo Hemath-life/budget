@@ -1,6 +1,5 @@
 'use client';
 
-import { Card, CardContent } from '#/components/ui';
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -9,6 +8,7 @@ import {
   TrendingUp,
   Wallet,
 } from 'lucide-react';
+import { Card, CardContent } from '#/components/ui';
 
 export type StatType = 'income' | 'expense' | 'balance' | 'savings';
 
