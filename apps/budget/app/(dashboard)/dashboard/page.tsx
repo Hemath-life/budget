@@ -1,15 +1,15 @@
 'use client';
 
-import { useTransactions, useSettings } from '@/lib/hooks';
-import { SummaryCard } from '@/components/dashboard/summary-card';
-import { RecentTransactions } from '@/components/dashboard/recent-transactions';
 import { BudgetOverview } from '@/components/dashboard/budget-overview';
-import { GoalsProgress } from '@/components/dashboard/goals-progress';
 import { ExpenseChart } from '@/components/dashboard/expense-chart';
+import { GoalsProgress } from '@/components/dashboard/goals-progress';
+import { RecentTransactions } from '@/components/dashboard/recent-transactions';
+import { SummaryCard } from '@/components/dashboard/summary-card';
 import { UpcomingBills } from '@/components/dashboard/upcoming-bills';
 import { EmptyState } from '@/components/shared/empty-state';
+import { useSettings, useTransactions } from '@/lib/hooks';
 import { Button } from '@repo/ui/components/ui';
-import { Plus, Loader2, LayoutDashboard } from 'lucide-react';
+import { LayoutDashboard, Loader2, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 export default function DashboardPage() {
@@ -146,13 +146,13 @@ export default function DashboardPage() {
       {/* Charts */}
       <ExpenseChart />
 
-      {/* Content Grid */}
+      {/* Recent Transactions - Full Width */}
+      <RecentTransactions />
+
+      {/* Budget & Goals Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <RecentTransactions />
-        <div className="space-y-4">
-          <BudgetOverview />
-          <GoalsProgress />
-        </div>
+        <BudgetOverview />
+        <GoalsProgress />
       </div>
 
       {/* Upcoming Bills */}
