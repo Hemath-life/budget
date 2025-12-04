@@ -1,4 +1,14 @@
+import { Bell, Moon, Sun } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useTheme } from 'next-themes';
+import { type ComponentProps, type ReactNode, useMemo } from 'react';
+import type { SidebarData } from '../../layout/types';
+import { cn } from '../../lib/utils';
+import { Header } from './header';
+import { TopNav } from './top-nav';
 import { Search } from '#/common';
+import { Badge } from '#/components/ui/badge';
 import { Button } from '#/components/ui/button';
 import {
   DropdownMenu,
@@ -7,19 +17,29 @@ import {
   DropdownMenuTrigger,
 } from '#/components/ui/dropdown-menu';
 import { ProfileDropdown } from '#/forms/profile-dropdown';
-import { Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { usePathname } from 'next/navigation';
-import { type ReactNode, useMemo } from 'react';
-import type { SidebarData } from '../../layout/types';
-import { cn } from '../../lib/utils';
-import { Header } from './header';
-import { TopNav } from './top-nav';
 
 interface NavLinkConfig {
   title: string;
   href: string;
   disabled?: boolean;
+}
+
+interface ReminderItem {
+  id: string | number;
+  title: string;
+  description?: string;
+  href?: string;
+}
+
+interface ReminderDropdownProps {
+  count?: number;
+  items?: ReminderItem[];
+  emptyLabel?: string;
+  viewAll?: {
+    href: string;
+    label?: string;
+  };
+  triggerLabel?: string;
 }
 
 interface HeaderNavProps {
@@ -32,6 +52,12 @@ interface HeaderNavProps {
   sidebarData?: SidebarData;
   searchPlaceholder?: string;
   showNav?: boolean;
+  badge?: {
+    label: string;
+    variant?: ComponentProps<typeof Badge>['variant'];
+    className?: string;
+  };
+  reminderDropdown?: ReminderDropdownProps;
 }
 
 export const HeaderNav = (
@@ -51,6 +77,8 @@ export const HeaderNav = (
     sidebarData,
     searchPlaceholder,
     showNav = true,
+    badge,
+    reminderDropdown,
   } = { ...props };
 
   const pathname = usePathname();
@@ -92,6 +120,17 @@ export const HeaderNav = (
               )}
             >
               <ThemeToggle />
+              {badge ? (
+                <Badge
+                  variant={badge.variant ?? 'outline'}
+                  className={cn('hidden sm:flex', badge.className)}
+                >
+                  {badge.label}
+                </Badge>
+              ) : null}
+              {reminderDropdown ? (
+                <ReminderDropdown {...reminderDropdown} />
+              ) : null}
               <ProfileDropdown logout={logout} />
               {extraActions}
             </div>
@@ -99,6 +138,17 @@ export const HeaderNav = (
         ) : (
           <div className={cn('ml-auto flex items-center gap-4', className)}>
             <ThemeToggle />
+            {badge ? (
+              <Badge
+                variant={badge.variant ?? 'outline'}
+                className={cn('hidden sm:flex', badge.className)}
+              >
+                {badge.label}
+              </Badge>
+            ) : null}
+            {reminderDropdown ? (
+              <ReminderDropdown {...reminderDropdown} />
+            ) : null}
             <ProfileDropdown logout={logout} />
             {extraActions}
           </div>
@@ -179,3 +229,73 @@ const isLinkActive = (pathname: string | null, href: string) => {
   if (normalized === '/') return pathname === '/';
   return pathname === normalized || pathname.startsWith(`${normalized}/`);
 };
+
+const ReminderDropdown = ({
+  count = 0,
+  items = [],
+  emptyLabel = 'No reminders',
+  viewAll,
+  triggerLabel = 'Reminders',
+}: ReminderDropdownProps) => (
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="relative"
+        aria-label={triggerLabel}
+      >
+        <Bell className="h-5 w-5" />
+        {count > 0 ? (
+          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-medium text-destructive-foreground">
+            {count > 9 ? '9+' : count}
+          </span>
+        ) : null}
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end" className="w-80">
+      {items.length === 0 ? (
+        <div className="p-4 text-center text-sm text-muted-foreground">
+          {emptyLabel}
+        </div>
+      ) : (
+        items.map((item) => (
+          <DropdownMenuItem key={item.id} asChild={!!item.href}>
+            {item.href ? (
+              <Link
+                href={item.href}
+                className="flex flex-col items-start gap-1 p-3"
+              >
+                <span className="font-medium">{item.title}</span>
+                {item.description ? (
+                  <span className="text-xs text-muted-foreground">
+                    {item.description}
+                  </span>
+                ) : null}
+              </Link>
+            ) : (
+              <div className="flex flex-col items-start gap-1">
+                <span className="font-medium">{item.title}</span>
+                {item.description ? (
+                  <span className="text-xs text-muted-foreground">
+                    {item.description}
+                  </span>
+                ) : null}
+              </div>
+            )}
+          </DropdownMenuItem>
+        ))
+      )}
+      {viewAll ? (
+        <DropdownMenuItem asChild>
+          <Link
+            href={viewAll.href}
+            className="text-center text-sm text-primary"
+          >
+            {viewAll.label ?? 'View all'}
+          </Link>
+        </DropdownMenuItem>
+      ) : null}
+    </DropdownMenuContent>
+  </DropdownMenu>
+);
