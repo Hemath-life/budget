@@ -7,18 +7,13 @@ import {
   Button,
   Card,
   CardContent,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@repo/ui/components/ui';
 import { AlertDialog, EditDialog } from '@repo/ui/dialogs';
-import { FormField } from '@repo/ui/forms';
+import { FormField, SelectField } from '@repo/ui/forms';
 import { Loader2, Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -255,21 +250,16 @@ export function CategoryManager({
           placeholder="Category name"
           required
         />
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Type</label>
-          <Select
-            value={type}
-            onValueChange={(v) => setType(v as TransactionType)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="income">Income</SelectItem>
-              <SelectItem value="expense">Expense</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <SelectField
+          id="type"
+          label="Type"
+          value={type}
+          onChange={(v) => setType(v as TransactionType)}
+          options={[
+            { label: 'Income', value: 'income' },
+            { label: 'Expense', value: 'expense' },
+          ]}
+        />
         <div className="space-y-2">
           <label className="text-sm font-medium">Color</label>
           <div className="flex flex-wrap gap-2">

@@ -21,18 +21,13 @@ import {
   Button,
   Card,
   CardContent,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@repo/ui/components/ui';
 import { AlertDialog, EditDialog } from '@repo/ui/dialogs';
-import { DateField, FormField } from '@repo/ui/forms';
+import { DateField, FormField, SelectField } from '@repo/ui/forms';
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -411,41 +406,33 @@ export function RecurringManager({
             step={0.01}
             required
           />
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Category</label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select" />
-              </SelectTrigger>
-              <SelectContent>
-                {filteredCategories.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <SelectField
+            id="category"
+            label="Category"
+            value={category}
+            onChange={setCategory}
+            placeholder="Select"
+            options={filteredCategories.map((c) => ({
+              label: c.name,
+              value: c.id,
+              color: c.color,
+            }))}
+          />
         </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Frequency</label>
-          <Select
-            value={frequency}
-            onValueChange={(v) => setFrequency(v as typeof frequency)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="daily">Daily</SelectItem>
-              <SelectItem value="weekly">Weekly</SelectItem>
-              <SelectItem value="biweekly">Bi-weekly</SelectItem>
-              <SelectItem value="monthly">Monthly</SelectItem>
-              <SelectItem value="quarterly">Quarterly</SelectItem>
-              <SelectItem value="yearly">Yearly</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <SelectField
+          id="frequency"
+          label="Frequency"
+          value={frequency}
+          onChange={(v) => setFrequency(v as typeof frequency)}
+          options={[
+            { label: 'Daily', value: 'daily' },
+            { label: 'Weekly', value: 'weekly' },
+            { label: 'Bi-weekly', value: 'biweekly' },
+            { label: 'Monthly', value: 'monthly' },
+            { label: 'Quarterly', value: 'quarterly' },
+            { label: 'Yearly', value: 'yearly' },
+          ]}
+        />
         <DateField
           id="startDate"
           label="Start Date"
