@@ -1,12 +1,13 @@
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '#/components/ui/collapsible';
 import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useMemo, type ReactNode } from 'react';
+import type {
+  NavCollapsible,
+  NavGroup,
+  NavItem,
+  NavLink,
+} from '../../layout/types';
 import { Badge } from '../../components/ui/badge';
 import {
   DropdownMenu,
@@ -16,12 +17,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../../components/ui/dropdown-menu';
-import type {
-  NavCollapsible,
-  NavGroup,
-  NavItem,
-  NavLink,
-} from '../../layout/types';
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -33,6 +28,11 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from './sidebar';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '#/components/ui/collapsible';
 
 export function NavGroup({ title, items }: NavGroup) {
   const { state, isMobile } = useSidebar();
