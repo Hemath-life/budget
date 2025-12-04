@@ -27,8 +27,6 @@ const renderActiveShape = (props: any) => {
     startAngle,
     endAngle,
     fill,
-    payload,
-    percent,
   } = props;
 
   return (
@@ -78,7 +76,6 @@ export function DonutChart({
   }, []);
 
   const activeItem = activeIndex !== null ? data[activeIndex] : null;
-  const displayValue = activeItem ? activeItem.value : total;
   const displayLabel = activeItem ? activeItem.name : centerLabel;
   const displayPercent = activeItem
     ? `${((activeItem.value / total) * 100).toFixed(0)}%`
