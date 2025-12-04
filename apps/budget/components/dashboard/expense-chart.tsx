@@ -115,33 +115,43 @@ export function ExpenseChart() {
           </TabsList>
 
           <TabsContent value="bar" className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis dataKey="month" className="text-muted-foreground" />
-                <YAxis className="text-muted-foreground" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--popover))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px',
-                  }}
-                  labelStyle={{ color: 'hsl(var(--popover-foreground))' }}
-                />
-                <Bar
-                  dataKey="income"
-                  fill="#10B981"
-                  name="Income"
-                  radius={[4, 4, 0, 0]}
-                />
-                <Bar
-                  dataKey="expenses"
-                  fill="#EF4444"
-                  name="Expenses"
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
+            {monthlyData.every((d) => d.income === 0 && d.expenses === 0) ? (
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                No transaction data available
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={monthlyData}>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    className="stroke-muted"
+                  />
+                  <XAxis dataKey="month" className="text-muted-foreground" />
+                  <YAxis className="text-muted-foreground" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--popover))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
+                    labelStyle={{ color: 'hsl(var(--popover-foreground))' }}
+                  />
+                  <Legend />
+                  <Bar
+                    dataKey="income"
+                    fill="#10B981"
+                    name="Income"
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="expenses"
+                    fill="#EF4444"
+                    name="Expenses"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </TabsContent>
 
           <TabsContent value="pie" className="h-[300px]">
@@ -187,38 +197,47 @@ export function ExpenseChart() {
           </TabsContent>
 
           <TabsContent value="line" className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={monthlyData}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                <XAxis dataKey="month" className="text-muted-foreground" />
-                <YAxis className="text-muted-foreground" />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: 'hsl(var(--popover))',
-                    border: '1px solid hsl(var(--border))',
-                    borderRadius: '8px',
-                  }}
-                  labelStyle={{ color: 'hsl(var(--popover-foreground))' }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="income"
-                  stroke="#10B981"
-                  strokeWidth={2}
-                  dot={{ fill: '#10B981' }}
-                  name="Income"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="expenses"
-                  stroke="#EF4444"
-                  strokeWidth={2}
-                  dot={{ fill: '#EF4444' }}
-                  name="Expenses"
-                />
-                <Legend />
-              </LineChart>
-            </ResponsiveContainer>
+            {monthlyData.every((d) => d.income === 0 && d.expenses === 0) ? (
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                No transaction data available
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={monthlyData}>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    className="stroke-muted"
+                  />
+                  <XAxis dataKey="month" className="text-muted-foreground" />
+                  <YAxis className="text-muted-foreground" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--popover))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                    }}
+                    labelStyle={{ color: 'hsl(var(--popover-foreground))' }}
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="income"
+                    stroke="#10B981"
+                    strokeWidth={2}
+                    dot={{ fill: '#10B981' }}
+                    name="Income"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="expenses"
+                    stroke="#EF4444"
+                    strokeWidth={2}
+                    dot={{ fill: '#EF4444' }}
+                    name="Expenses"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
           </TabsContent>
         </Tabs>
       </CardContent>

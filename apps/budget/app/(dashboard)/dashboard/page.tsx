@@ -1,7 +1,6 @@
 'use client';
 
 import { BudgetOverview } from '@/components/dashboard/budget-overview';
-import { ExpenseChart } from '@/components/dashboard/expense-chart';
 import { GoalsProgress } from '@/components/dashboard/goals-progress';
 import { RecentTransactions } from '@/components/dashboard/recent-transactions';
 import { SummaryCard } from '@/components/dashboard/summary-card';
@@ -142,9 +141,6 @@ export default function DashboardPage() {
           type="savings"
         />
       </div>
-
-      {/* Charts */}
-      <ExpenseChart />
 
       {/* Recent Transactions - Full Width */}
       <RecentTransactions />
