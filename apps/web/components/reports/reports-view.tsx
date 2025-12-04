@@ -16,7 +16,14 @@ import {
   CardTitle,
 } from '@repo/ui/components/ui';
 import { SelectField } from '@repo/ui/forms';
-import { Calendar, Loader2, Target, Wallet } from 'lucide-react';
+import {
+  Calendar,
+  Loader2,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Wallet,
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 import {
   Area,
@@ -25,9 +32,6 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
-  Legend,
-  Line,
-  LineChart,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -65,7 +69,7 @@ function CustomTooltip({
 }: {
   active?: boolean;
   payload?: Array<{ value: number; name: string; color: string }>;
-  label?: string;
+  label?: string | number;
   currency: string;
   showLabel?: boolean;
 }) {
@@ -75,7 +79,7 @@ function CustomTooltip({
     <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl">
       {showLabel && label && (
         <p className="text-xs text-muted-foreground mb-2 font-medium">
-          {label}
+          {String(label)}
         </p>
       )}
       <div className="space-y-1.5">
@@ -439,149 +443,365 @@ export function ReportsView() {
       </div>
 
       {/* Charts Row 1 */}
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-4">
         {/* Income vs Expenses Trend */}
-        <Card className="lg:col-span-2">
+        <Card className="border overflow-hidden bg-gradient-to-br from-violet-500/10 via-purple-500/5 to-transparent">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Income vs Expenses</CardTitle>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <CardTitle className="text-base font-semibold">
+                  Income vs Expenses
+                </CardTitle>
+                <div className="px-3 py-1 rounded-full bg-background/80 border text-xs font-medium">
+                  {monthlyTrend.length > 0
+                    ? `${
+                        (monthlyTrend[monthlyTrend.length - 1]?.income ?? 0) -
+                          (monthlyTrend[monthlyTrend.length - 1]?.expenses ??
+                            0) >=
+                        0
+                          ? '+'
+                          : ''
+                      }${(
+                        (((monthlyTrend[monthlyTrend.length - 1]?.income ?? 0) -
+                          (monthlyTrend[monthlyTrend.length - 1]?.expenses ??
+                            0)) /
+                          Math.max(
+                            monthlyTrend[monthlyTrend.length - 1]?.income ?? 1,
+                            1
+                          )) *
+                        100
+                      ).toFixed(0)}% savings`
+                    : '0%'}
+                </div>
+              </div>
+              <SelectField
+                id="chartPeriod"
+                value={timeRange}
+                onChange={(v) => setTimeRange(v as TimeRange)}
+                hideLabel
+                triggerClassName="w-[100px] h-8 text-xs border-0 bg-background/80 shadow-none"
+                options={[
+                  { label: 'Week', value: 'week' },
+                  { label: 'Month', value: 'month' },
+                  { label: 'Quarter', value: 'quarter' },
+                  { label: 'Year', value: 'year' },
+                ]}
+              />
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4">
             <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={monthlyTrend}>
+                <AreaChart
+                  data={monthlyTrend}
+                  margin={{ top: 20, right: 20, left: 0, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient
+                      id="incomeGradientPurple"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="0%" stopColor="#a78bfa" stopOpacity={0.4} />
+                      <stop
+                        offset="100%"
+                        stopColor="#a78bfa"
+                        stopOpacity={0.05}
+                      />
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid
-                    strokeDasharray="3 3"
-                    className="stroke-muted"
+                    strokeDasharray="2 6"
+                    stroke="hsl(var(--muted-foreground))"
+                    strokeOpacity={0.2}
+                    vertical={false}
                   />
                   <XAxis
                     dataKey="month"
-                    className="text-xs"
-                    tick={{ fontSize: 11 }}
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{
+                      fontSize: 11,
+                      fill: 'hsl(var(--muted-foreground))',
+                    }}
+                    dy={10}
                   />
-                  <YAxis className="text-xs" tick={{ fontSize: 11 }} />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{
+                      fontSize: 11,
+                      fill: 'hsl(var(--muted-foreground))',
+                    }}
+                    tickFormatter={(value) =>
+                      value >= 1000
+                        ? `${(value / 1000).toFixed(0)}k`
+                        : String(value)
+                    }
+                    dx={-5}
+                  />
                   <Tooltip
-                    contentStyle={{
-                      backgroundColor: 'hsl(var(--popover))',
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '8px',
-                      fontSize: '12px',
+                    content={({ active, payload, label }) => {
+                      if (!active || !payload?.length) return null;
+                      const income =
+                        (payload.find((p) => p.dataKey === 'income')
+                          ?.value as number) ?? 0;
+                      const expenses =
+                        (payload.find((p) => p.dataKey === 'expenses')
+                          ?.value as number) ?? 0;
+                      return (
+                        <div className="bg-foreground text-background rounded-xl px-4 py-2 shadow-xl">
+                          <p className="text-2xl font-bold">
+                            {formatCurrency(income - expenses, currency)}
+                          </p>
+                          <p className="text-xs opacity-70">{label} Net</p>
+                        </div>
+                      );
+                    }}
+                    cursor={{
+                      stroke: 'hsl(var(--muted-foreground))',
+                      strokeWidth: 1,
+                      strokeDasharray: '4 4',
                     }}
                   />
                   <Area
-                    type="monotone"
+                    type="natural"
                     dataKey="income"
-                    stroke="#10B981"
-                    fill="#10B981"
-                    fillOpacity={0.2}
-                    strokeWidth={2}
+                    stroke="#a78bfa"
+                    fill="url(#incomeGradientPurple)"
+                    strokeWidth={2.5}
                     name="Income"
+                    dot={{
+                      fill: '#a78bfa',
+                      strokeWidth: 2,
+                      stroke: 'hsl(var(--background))',
+                      r: 4,
+                    }}
+                    activeDot={{
+                      fill: '#8b5cf6',
+                      strokeWidth: 3,
+                      stroke: 'hsl(var(--background))',
+                      r: 6,
+                    }}
                   />
                   <Area
-                    type="monotone"
+                    type="natural"
                     dataKey="expenses"
-                    stroke="#EF4444"
-                    fill="#EF4444"
-                    fillOpacity={0.2}
+                    stroke="#c4b5fd"
+                    fill="transparent"
                     strokeWidth={2}
+                    strokeDasharray="0"
                     name="Expenses"
+                    dot={{
+                      fill: '#c4b5fd',
+                      strokeWidth: 2,
+                      stroke: 'hsl(var(--background))',
+                      r: 3,
+                    }}
+                    activeDot={{
+                      fill: '#a78bfa',
+                      strokeWidth: 3,
+                      stroke: 'hsl(var(--background))',
+                      r: 5,
+                    }}
                   />
-                  <Legend wrapperStyle={{ fontSize: '12px' }} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Expense Breakdown */}
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">Expense Breakdown</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[280px]">
-              {expensesByCategory.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
-                  No expense data
-                </div>
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={expensesByCategory}
-                      cx="50%"
-                      cy="45%"
-                      innerRadius={50}
-                      outerRadius={75}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {expensesByCategory.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: 'hsl(var(--popover))',
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px',
-                        fontSize: '12px',
-                      }}
-                      formatter={(value: number) => [
-                        formatCurrency(value, currency),
-                        'Amount',
-                      ]}
-                    />
-                    <Legend wrapperStyle={{ fontSize: '11px' }} />
-                  </PieChart>
-                </ResponsiveContainer>
-              )}
+            <div className="flex items-center justify-center gap-6 mt-4 text-xs">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-violet-400" />
+                <span className="text-muted-foreground">Income</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-violet-300" />
+                <span className="text-muted-foreground">Expenses</span>
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Charts Row 2 */}
-      <div className="grid gap-4 md:grid-cols-2">
-        {/* Income Sources */}
-        <Card>
+      {/* Charts Row 2 - Breakdown Charts */}
+      <div className="grid gap-4 md:grid-cols-3">
+        {/* Expense Breakdown */}
+        <Card className="border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">Income Sources</CardTitle>
+            <CardTitle className="text-base font-semibold">
+              Expense Breakdown
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-[250px]">
+            <div className="h-[300px]">
+              {expensesByCategory.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-sm text-muted-foreground">
+                  <div className="p-4 rounded-full bg-muted/50 mb-3">
+                    <TrendingDown className="h-6 w-6" />
+                  </div>
+                  <p>No expense data</p>
+                </div>
+              ) : (
+                <div className="flex flex-col h-full">
+                  <div className="flex-1">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={expensesByCategory}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={55}
+                          outerRadius={80}
+                          paddingAngle={3}
+                          dataKey="value"
+                          strokeWidth={0}
+                        >
+                          {expensesByCategory.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={
+                                CHART_COLORS.categories[
+                                  index % CHART_COLORS.categories.length
+                                ]
+                              }
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          content={({ active, payload }) => {
+                            if (!active || !payload?.[0]) return null;
+                            const data = payload[0].payload;
+                            return (
+                              <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl">
+                                <p className="text-xs font-medium mb-1">
+                                  {data.name}
+                                </p>
+                                <p className="text-sm font-semibold">
+                                  {formatCurrency(data.value, currency)}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {data.percentage}% of total
+                                </p>
+                              </div>
+                            );
+                          }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    {expensesByCategory.slice(0, 4).map((category, index) => (
+                      <div
+                        key={category.name}
+                        className="flex items-center gap-2"
+                      >
+                        <div
+                          className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                          style={{
+                            backgroundColor:
+                              CHART_COLORS.categories[
+                                index % CHART_COLORS.categories.length
+                              ],
+                          }}
+                        />
+                        <span className="text-xs text-muted-foreground truncate">
+                          {category.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Income Sources */}
+        <Card className="border">
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-emerald-500/10">
+                <TrendingUp className="h-4 w-4 text-emerald-500" />
+              </div>
+              <CardTitle className="text-base font-semibold">
+                Income Sources
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[280px]">
               {incomeByCategory.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
-                  No income data
+                <div className="flex flex-col items-center justify-center h-full text-sm text-muted-foreground">
+                  <div className="p-4 rounded-full bg-muted/50 mb-3">
+                    <TrendingUp className="h-6 w-6" />
+                  </div>
+                  <p>No income data</p>
                 </div>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={incomeByCategory} layout="vertical">
+                  <BarChart
+                    data={incomeByCategory}
+                    layout="vertical"
+                    margin={{ top: 5, right: 20, left: 5, bottom: 5 }}
+                  >
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      className="stroke-muted"
+                      stroke="hsl(var(--border))"
+                      horizontal={false}
                     />
-                    <XAxis type="number" tick={{ fontSize: 11 }} />
+                    <XAxis
+                      type="number"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{
+                        fontSize: 11,
+                        fill: 'hsl(var(--muted-foreground))',
+                      }}
+                      tickFormatter={(value) =>
+                        value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value
+                      }
+                    />
                     <YAxis
                       type="category"
                       dataKey="name"
-                      width={80}
-                      tick={{ fontSize: 11 }}
+                      width={100}
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{
+                        fontSize: 11,
+                        fill: 'hsl(var(--muted-foreground))',
+                      }}
                     />
                     <Tooltip
-                      contentStyle={{
-                        backgroundColor: 'hsl(var(--popover))',
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px',
-                        fontSize: '12px',
+                      content={({ active, payload }) => {
+                        if (!active || !payload?.[0]) return null;
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl">
+                            <p className="text-xs font-medium mb-1">
+                              {data.name}
+                            </p>
+                            <p className="text-sm font-semibold text-emerald-500">
+                              {formatCurrency(data.value, currency)}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {data.percentage}% of total
+                            </p>
+                          </div>
+                        );
                       }}
-                      formatter={(value: number) => [
-                        formatCurrency(value, currency),
-                        'Amount',
-                      ]}
                     />
-                    <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+                    <Bar dataKey="value" radius={[0, 6, 6, 0]} maxBarSize={24}>
                       {incomeByCategory.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={
+                            CHART_COLORS.categories[
+                              index % CHART_COLORS.categories.length
+                            ]
+                          }
+                        />
                       ))}
                     </Bar>
                   </BarChart>
@@ -592,51 +812,111 @@ export function ReportsView() {
         </Card>
 
         {/* Daily Spending */}
-        <Card>
+        <Card className="border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base">
-              Daily Spending (30 Days)
-            </CardTitle>
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-rose-500/10">
+                <TrendingDown className="h-4 w-4 text-rose-500" />
+              </div>
+              <CardTitle className="text-base font-semibold">
+                Daily Spending
+              </CardTitle>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="h-[250px]">
+            <div className="h-[280px]">
               {dailySpending.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
-                  No spending data
+                <div className="flex flex-col items-center justify-center h-full text-sm text-muted-foreground">
+                  <div className="p-4 rounded-full bg-muted/50 mb-3">
+                    <TrendingDown className="h-6 w-6" />
+                  </div>
+                  <p>No spending data</p>
                 </div>
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={dailySpending}>
+                  <AreaChart
+                    data={dailySpending}
+                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient
+                        id="spendingGradient"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="0%"
+                          stopColor="#f43f5e"
+                          stopOpacity={0.3}
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor="#f43f5e"
+                          stopOpacity={0.05}
+                        />
+                      </linearGradient>
+                    </defs>
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      className="stroke-muted"
+                      stroke="hsl(var(--border))"
+                      vertical={false}
                     />
                     <XAxis
                       dataKey="date"
-                      tick={{ fontSize: 10 }}
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{
+                        fontSize: 10,
+                        fill: 'hsl(var(--muted-foreground))',
+                      }}
                       interval="preserveStartEnd"
                     />
-                    <YAxis tick={{ fontSize: 11 }} />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: 'hsl(var(--popover))',
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px',
-                        fontSize: '12px',
+                    <YAxis
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{
+                        fontSize: 11,
+                        fill: 'hsl(var(--muted-foreground))',
                       }}
-                      formatter={(value: number) => [
-                        formatCurrency(value, currency),
-                        'Spent',
-                      ]}
+                      tickFormatter={(value) =>
+                        value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value
+                      }
                     />
-                    <Line
+                    <Tooltip
+                      content={({ active, payload, label }) => {
+                        if (!active || !payload?.[0]) return null;
+                        return (
+                          <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl">
+                            <p className="text-xs text-muted-foreground mb-1">
+                              {label}
+                            </p>
+                            <p className="text-sm font-semibold text-rose-500">
+                              {formatCurrency(
+                                payload[0].value as number,
+                                currency
+                              )}
+                            </p>
+                          </div>
+                        );
+                      }}
+                    />
+                    <Area
                       type="monotone"
                       dataKey="amount"
-                      stroke="#EF4444"
-                      strokeWidth={2}
-                      dot={{ fill: '#EF4444', r: 2 }}
+                      stroke="#f43f5e"
+                      fill="url(#spendingGradient)"
+                      strokeWidth={2.5}
+                      dot={{ fill: '#f43f5e', strokeWidth: 0, r: 3 }}
+                      activeDot={{
+                        fill: '#f43f5e',
+                        strokeWidth: 2,
+                        stroke: 'hsl(var(--background))',
+                        r: 5,
+                      }}
                     />
-                  </LineChart>
+                  </AreaChart>
                 </ResponsiveContainer>
               )}
             </div>
@@ -645,44 +925,68 @@ export function ReportsView() {
       </div>
 
       {/* Top Categories */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">Top Expense Categories</CardTitle>
+      <Card className="border">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base font-semibold">
+              Top Expense Categories
+            </CardTitle>
+            <span className="text-xs text-muted-foreground">
+              {expensesByCategory.length} categories
+            </span>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {expensesByCategory.slice(0, 5).map((category) => (
-              <div key={category.name} className="flex items-center gap-3">
-                <div
-                  className="h-3 w-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: category.color }}
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-medium truncate">
-                      {category.name}
-                    </span>
-                    <span className="text-xs text-muted-foreground ml-2">
-                      {formatCurrency(category.value, currency)} (
-                      {category.percentage}%)
-                    </span>
-                  </div>
-                  <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+          <div className="space-y-4">
+            {expensesByCategory.slice(0, 5).map((category, index) => (
+              <div key={category.name} className="group">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-3">
                     <div
-                      className="h-full rounded-full transition-all"
+                      className="h-8 w-8 rounded-lg flex items-center justify-center text-xs font-semibold text-white"
                       style={{
-                        width: `${category.percentage}%`,
-                        backgroundColor: category.color,
+                        backgroundColor:
+                          CHART_COLORS.categories[
+                            index % CHART_COLORS.categories.length
+                          ],
                       }}
-                    />
+                    >
+                      {category.name.charAt(0)}
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium">
+                        {category.name}
+                      </span>
+                      <p className="text-xs text-muted-foreground">
+                        {category.percentage}% of total expenses
+                      </p>
+                    </div>
                   </div>
+                  <span className="text-sm font-semibold">
+                    {formatCurrency(category.value, currency)}
+                  </span>
+                </div>
+                <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500 group-hover:opacity-80"
+                    style={{
+                      width: `${category.percentage}%`,
+                      backgroundColor:
+                        CHART_COLORS.categories[
+                          index % CHART_COLORS.categories.length
+                        ],
+                    }}
+                  />
                 </div>
               </div>
             ))}
             {expensesByCategory.length === 0 && (
-              <p className="text-sm text-muted-foreground text-center py-4">
-                No expense data available
-              </p>
+              <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
+                <div className="p-4 rounded-full bg-muted/50 mb-3">
+                  <TrendingDown className="h-6 w-6" />
+                </div>
+                <p className="text-sm">No expense data available</p>
+              </div>
             )}
           </div>
         </CardContent>
