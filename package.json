@@ -23,6 +23,6 @@
   },
   "devDependencies": {
     "knip": "catalog:",
-    "turbo": "^2.5.8"
+    "turbo": "^2.6.2"
   }
 }
