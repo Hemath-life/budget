@@ -603,14 +603,24 @@ export function ReportsView() {
       {/* Charts Row 2 - Breakdown Charts */}
       <div className="grid gap-4 md:grid-cols-3">
         {/* Expense Breakdown */}
-        <Card className="border">
+        <Card className="border overflow-hidden bg-gradient-to-br from-rose-500/5 via-transparent to-transparent dark:from-rose-500/10">
           <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold">
-              Expense Breakdown
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-rose-500/10">
+                  <TrendingDown className="h-4 w-4 text-rose-500" />
+                </div>
+                <CardTitle className="text-base font-semibold">
+                  Expense Breakdown
+                </CardTitle>
+              </div>
+              <span className="text-xs text-muted-foreground">
+                {expensesByCategory.length} categories
+              </span>
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="h-[300px]">
+            <div className="h-[280px]">
               {expensesByCategory.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-sm text-muted-foreground">
                   <div className="p-4 rounded-full bg-muted/50 mb-3">
@@ -694,15 +704,20 @@ export function ReportsView() {
         </Card>
 
         {/* Income Sources */}
-        <Card className="border">
+        <Card className="border overflow-hidden bg-gradient-to-br from-emerald-500/5 via-transparent to-transparent dark:from-emerald-500/10">
           <CardHeader className="pb-2">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-500/10">
-                <TrendingUp className="h-4 w-4 text-emerald-500" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-emerald-500/10">
+                  <TrendingUp className="h-4 w-4 text-emerald-500" />
+                </div>
+                <CardTitle className="text-base font-semibold">
+                  Income Sources
+                </CardTitle>
               </div>
-              <CardTitle className="text-base font-semibold">
-                Income Sources
-              </CardTitle>
+              <span className="text-xs text-muted-foreground">
+                {incomeByCategory.length} sources
+              </span>
             </div>
           </CardHeader>
           <CardContent>
@@ -722,8 +737,9 @@ export function ReportsView() {
                     margin={{ top: 5, right: 20, left: 5, bottom: 5 }}
                   >
                     <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="hsl(var(--border))"
+                      strokeDasharray="2 6"
+                      stroke="#6b7280"
+                      strokeOpacity={0.15}
                       horizontal={false}
                     />
                     <XAxis
@@ -732,21 +748,23 @@ export function ReportsView() {
                       tickLine={false}
                       tick={{
                         fontSize: 11,
-                        fill: 'hsl(var(--muted-foreground))',
+                        fill: '#9ca3af',
                       }}
                       tickFormatter={(value) =>
-                        value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value
+                        value >= 1000
+                          ? `${(value / 1000).toFixed(0)}k`
+                          : String(value)
                       }
                     />
                     <YAxis
                       type="category"
                       dataKey="name"
-                      width={100}
+                      width={80}
                       axisLine={false}
                       tickLine={false}
                       tick={{
                         fontSize: 11,
-                        fill: 'hsl(var(--muted-foreground))',
+                        fill: '#9ca3af',
                       }}
                     />
                     <Tooltip
@@ -788,15 +806,20 @@ export function ReportsView() {
         </Card>
 
         {/* Daily Spending */}
-        <Card className="border">
+        <Card className="border overflow-hidden bg-gradient-to-br from-amber-500/5 via-transparent to-transparent dark:from-amber-500/10">
           <CardHeader className="pb-2">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-rose-500/10">
-                <TrendingDown className="h-4 w-4 text-rose-500" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-amber-500/10">
+                  <Calendar className="h-4 w-4 text-amber-500" />
+                </div>
+                <CardTitle className="text-base font-semibold">
+                  Daily Spending
+                </CardTitle>
               </div>
-              <CardTitle className="text-base font-semibold">
-                Daily Spending
-              </CardTitle>
+              <span className="text-xs text-muted-foreground">
+                Last 30 days
+              </span>
             </div>
           </CardHeader>
           <CardContent>
@@ -835,8 +858,9 @@ export function ReportsView() {
                       </linearGradient>
                     </defs>
                     <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="hsl(var(--border))"
+                      strokeDasharray="2 6"
+                      stroke="#6b7280"
+                      strokeOpacity={0.15}
                       vertical={false}
                     />
                     <XAxis
@@ -845,7 +869,7 @@ export function ReportsView() {
                       tickLine={false}
                       tick={{
                         fontSize: 10,
-                        fill: 'hsl(var(--muted-foreground))',
+                        fill: '#9ca3af',
                       }}
                       interval="preserveStartEnd"
                     />
@@ -854,10 +878,12 @@ export function ReportsView() {
                       tickLine={false}
                       tick={{
                         fontSize: 11,
-                        fill: 'hsl(var(--muted-foreground))',
+                        fill: '#9ca3af',
                       }}
                       tickFormatter={(value) =>
-                        value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value
+                        value >= 1000
+                          ? `${(value / 1000).toFixed(0)}k`
+                          : String(value)
                       }
                     />
                     <Tooltip
@@ -888,7 +914,7 @@ export function ReportsView() {
                       activeDot={{
                         fill: '#f43f5e',
                         strokeWidth: 2,
-                        stroke: 'hsl(var(--background))',
+                        stroke: '#1f2937',
                         r: 5,
                       }}
                     />
@@ -901,12 +927,17 @@ export function ReportsView() {
       </div>
 
       {/* Top Categories */}
-      <Card className="border">
+      <Card className="border overflow-hidden bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent dark:from-indigo-500/10">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-base font-semibold">
-              Top Expense Categories
-            </CardTitle>
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-indigo-500/10">
+                <Target className="h-4 w-4 text-indigo-500" />
+              </div>
+              <CardTitle className="text-base font-semibold">
+                Top Expense Categories
+              </CardTitle>
+            </div>
             <span className="text-xs text-muted-foreground">
               {expensesByCategory.length} categories
             </span>
