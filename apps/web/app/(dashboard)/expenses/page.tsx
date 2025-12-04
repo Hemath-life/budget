@@ -121,7 +121,7 @@ export default function ExpensesPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
+        <Card className="h-[400px]">
           <CardHeader>
             <CardTitle>Expenses by Category</CardTitle>
           </CardHeader>
@@ -166,7 +166,19 @@ export default function ExpensesPage() {
           </CardContent>
         </Card>
 
-        <TransactionList filterType="expense" showFilters={false} />
+        <Card className="h-[400px] flex flex-col">
+          <CardHeader>
+            <CardTitle>Recent Expenses</CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1 overflow-auto">
+            <TransactionList
+              filterType="expense"
+              showFilters={false}
+              showPagination={false}
+              limit={5}
+            />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

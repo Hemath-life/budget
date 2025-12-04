@@ -118,7 +118,7 @@ export default function IncomePage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
+        <Card className="h-[400px]">
           <CardHeader>
             <CardTitle>Income by Source</CardTitle>
           </CardHeader>
@@ -163,7 +163,19 @@ export default function IncomePage() {
           </CardContent>
         </Card>
 
-        <TransactionList filterType="income" showFilters={false} />
+        <Card className="h-[400px] flex flex-col">
+          <CardHeader>
+            <CardTitle>Recent Income</CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1 overflow-auto">
+            <TransactionList
+              filterType="income"
+              showFilters={false}
+              showPagination={false}
+              limit={5}
+            />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -38,6 +38,8 @@ import { toast } from 'sonner';
 interface TransactionListProps {
   filterType?: 'income' | 'expense' | 'all';
   showFilters?: boolean;
+  limit?: number;
+  showPagination?: boolean;
 }
 
 // Custom debounce hook
@@ -55,6 +57,8 @@ function useDebounceValue<T>(value: T, delay: number): T {
 export function TransactionList({
   filterType = 'all',
   showFilters = true,
+  limit,
+  showPagination = true,
 }: TransactionListProps) {
   const router = useRouter();
   const { data: categories = [] } = useCategories();
@@ -81,14 +85,18 @@ export function TransactionList({
     type: typeFilter,
     category: categoryFilter,
     search: debouncedSearch,
-    page,
-    pageSize,
+    page: showPagination ? page : 1,
+    pageSize: limit || pageSize,
   });
 
   const transactions = data?.data || [];
   const pagination = data?.pagination;
   const totalPages = pagination?.totalPages || 1;
   const total = pagination?.total || 0;
+
+  // Apply limit if specified and pagination is disabled
+  const displayTransactions =
+    limit && !showPagination ? transactions.slice(0, limit) : transactions;
 
   const getCategoryName = (
     category: string | { id: string; name?: string }
@@ -329,7 +337,7 @@ export function TransactionList({
                 <ArrowUpRight className="h-12 w-12 text-muted-foreground/50" />
               }
             />
-          ) : transactions.length === 0 ? (
+          ) : displayTransactions.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <p>No transactions match your filters</p>
               <Button
@@ -346,10 +354,14 @@ export function TransactionList({
           ) : (
             <>
               {/* DataTable with scrollable body */}
-              <div className="overflow-auto h-[465px]">
+              <div
+                className={
+                  showPagination ? 'overflow-auto h-[465px]' : 'overflow-auto'
+                }
+              >
                 <DataTable
                   columns={columns}
-                  data={transactions}
+                  data={displayTransactions}
                   enablePagination={false}
                   enableColumnVisibility={false}
                   emptyMessage="No transactions found"
@@ -357,68 +369,72 @@ export function TransactionList({
                 />
               </div>
 
-              {/* Server-side Pagination */}
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
-                <div className="flex items-center gap-4">
-                  <div className="text-sm text-muted-foreground">
-                    Showing {(page - 1) * pageSize + 1} to{' '}
-                    {Math.min(page * pageSize, total)} of {total} transactions
+              {/* Server-side Pagination - only show if enabled */}
+              {showPagination && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
+                  <div className="flex items-center gap-4">
+                    <div className="text-sm text-muted-foreground">
+                      Showing {(page - 1) * pageSize + 1} to{' '}
+                      {Math.min(page * pageSize, total)} of {total} transactions
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground">
+                        Rows per page:
+                      </span>
+                      <SelectField
+                        id="page-size"
+                        hideLabel
+                        value={pageSize.toString()}
+                        onChange={(value) => setPageSize(Number(value))}
+                        triggerClassName="w-[70px] h-8"
+                        options={['10', '25', '50', '100']}
+                      />
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-muted-foreground">
-                      Rows per page:
-                    </span>
-                    <SelectField
-                      id="page-size"
-                      hideLabel
-                      value={pageSize.toString()}
-                      onChange={(value) => setPageSize(Number(value))}
-                      triggerClassName="w-[70px] h-8"
-                      options={['10', '25', '50', '100']}
-                    />
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setPage(1)}
+                      disabled={page === 1}
+                    >
+                      <ChevronsLeft className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={page === 1}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <div className="flex items-center gap-1 mx-2">
+                      <span className="text-sm font-medium">Page {page}</span>
+                      <span className="text-sm text-muted-foreground">
+                        of {totalPages}
+                      </span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() =>
+                        setPage((p) => Math.min(totalPages, p + 1))
+                      }
+                      disabled={page === totalPages}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setPage(totalPages)}
+                      disabled={page === totalPages}
+                    >
+                      <ChevronsRight className="h-4 w-4" />
+                    </Button>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setPage(1)}
-                    disabled={page === 1}
-                  >
-                    <ChevronsLeft className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    disabled={page === 1}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <div className="flex items-center gap-1 mx-2">
-                    <span className="text-sm font-medium">Page {page}</span>
-                    <span className="text-sm text-muted-foreground">
-                      of {totalPages}
-                    </span>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={page === totalPages}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => setPage(totalPages)}
-                    disabled={page === totalPages}
-                  >
-                    <ChevronsRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
+              )}
             </>
           )}
         </div>
