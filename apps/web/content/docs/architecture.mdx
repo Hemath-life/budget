@@ -1,4 +1,7 @@
-# Architecture
+---
+title: Architecture
+description: High-level architecture of the Budget App monorepo.
+---
 
 This document describes the high-level architecture of the Budget App monorepo.
 
@@ -25,19 +28,18 @@ budget-app/
 
 Deployable applications that are the end products.
 
-| App      | Package Name      | Description                  |
-| -------- | ----------------- | ---------------------------- |
-| `budget` | `@budget-app/web` | Main Next.js web application |
+| App   | Package Name | Description                  |
+| ----- | ------------ | ---------------------------- |
+| `web` | `@repo/web`  | Main Next.js web application |
+| `api` | `@repo/api`  | NestJS backend API server    |
 
 ### Packages (`/packages`)
 
 Shared libraries used across applications.
 
-| Package | Name          | Description                |
-| ------- | ------------- | -------------------------- |
-| `ui`    | `@repo/ui`    | Shared React UI components |
-| `utils` | `@repo/utils` | Shared utility functions   |
-| `mds`   | -             | Markdown documentation     |
+| Package | Name       | Description                |
+| ------- | ---------- | -------------------------- |
+| `ui`    | `@repo/ui` | Shared React UI components |
 
 ### Tools (`/tools`)
 
@@ -53,16 +55,18 @@ Shared tooling configurations.
 ## Dependency Graph
 
 ```
-@budget-app/web
+@repo/web
     ├── @repo/ui
     │   ├── @repo/eslint-config
     │   ├── @repo/prettier-config
     │   ├── @repo/tailwind-config
     │   └── @repo/typescript-config
-    └── @repo/utils
-        ├── @repo/eslint-config
-        ├── @repo/prettier-config
-        └── @repo/typescript-config
+    └── @repo/tailwind-config
+
+@repo/api
+    └── @repo/eslint-config
+    └── @repo/prettier-config
+    └── @repo/typescript-config
 ```
 
 ## Build Pipeline
@@ -105,13 +109,20 @@ Turborepo manages the build pipeline with:
 - **Ecosystem**: Rich plugin ecosystem
 - **Deployment**: Easy deployment to Vercel
 
+### Why NestJS?
+
+- **TypeScript**: First-class TypeScript support
+- **Architecture**: Modular and scalable architecture
+- **Decorators**: Clean, declarative code style
+- **Ecosystem**: Rich module ecosystem (Swagger, Prisma, etc.)
+
 ## Adding New Packages
 
 ### New Application
 
 1. Create directory: `apps/<app-name>`
 2. Initialize with `pnpm init`
-3. Name it `@budget-app/<app-name>`
+3. Name it `@repo/<app-name>`
 4. Add necessary dependencies
 5. Configure build scripts
 
@@ -130,11 +141,12 @@ Each app manages its own environment variables:
 ```
 apps/web/.env.local      # Local development
 apps/web/.env.example    # Template for setup
+apps/api/.env            # API environment
 ```
 
 ## Deployment
 
-### Vercel (Recommended)
+### Vercel (Recommended for Web)
 
 1. Connect repository to Vercel
 2. Configure build settings for each app
@@ -152,3 +164,4 @@ apps/web/.env.example    # Template for setup
 - [Turborepo Documentation](https://turbo.build/repo/docs)
 - [pnpm Workspaces](https://pnpm.io/workspaces)
 - [Next.js Documentation](https://nextjs.org/docs)
+- [NestJS Documentation](https://docs.nestjs.com)

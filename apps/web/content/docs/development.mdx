@@ -1,4 +1,7 @@
-# Development Guide
+---
+title: Development Guide
+description: Common development workflows and best practices for the Budget App.
+---
 
 This guide covers common development workflows and best practices.
 
@@ -22,10 +25,7 @@ cd budget-app
 pnpm install
 
 # Set up environment variables
-pnpm env:copy-example
-
-# Initialize the database
-pnpm db:push
+cp apps/web/.env.example apps/web/.env.local
 
 # Start development
 pnpm dev
@@ -40,7 +40,7 @@ pnpm dev
 pnpm dev
 
 # Start a specific app
-pnpm dev --filter @budget-app/web
+pnpm dev --filter @repo/web
 ```
 
 ### Building for Production
@@ -63,21 +63,24 @@ pnpm lint && pnpm typecheck && pnpm format
 pnpm lint:fix && pnpm format:fix
 ```
 
-### Database Operations
+### Database Operations (API)
 
 ```bash
+# Generate Prisma client
+cd apps/api && npx prisma generate
+
 # Push schema changes
-pnpm db:push
+cd apps/api && npx prisma db push
 
 # Open database studio
-pnpm db:studio
+cd apps/api && npx prisma studio
 ```
 
 ### Adding Dependencies
 
 ```bash
 # Add to a specific package
-pnpm add <package> --filter @budget-app/web
+pnpm add <package> --filter @repo/web
 
 # Add to root (dev dependency)
 pnpm add -D <package> -w
@@ -125,7 +128,7 @@ The Query DevTools are automatically included in development mode.
 pnpm test
 
 # Run tests for a specific package
-pnpm test --filter @budget-app/web
+pnpm test --filter @repo/web
 
 # Run in watch mode
 pnpm test --watch

@@ -3,6 +3,8 @@
   "pages": [
     "index",
     "installation",
+    "development",
+    "architecture",
     "structure",
     "---Getting Started---",
     "transactions",
