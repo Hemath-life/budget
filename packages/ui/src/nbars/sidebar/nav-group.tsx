@@ -1,8 +1,7 @@
-import type { ReactNode } from 'react'
 import { useLocation, Link } from '@tanstack/react-router'
 import { ChevronRight } from 'lucide-react'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '#/components/ui/collapsible'
 import type { NavCollapsible, NavItem, NavLink, NavGroup } from '../../layout/types'
+import type { ReactNode } from 'react'
 import { Badge } from '../../components/ui/badge'
 import {
   DropdownMenu,
@@ -23,6 +22,7 @@ import {
   SidebarMenuSubItem,
   SidebarMenuSubButton,
 } from './sidebar'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '#/components/ui/collapsible'
 
 export function NavGroup({ title, items }: NavGroup) {
   const { state, isMobile } = useSidebar()
