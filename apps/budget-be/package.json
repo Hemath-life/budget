@@ -1,10 +1,10 @@
 {
-  "name": "budget-be",
-  "version": "0.0.1",
-  "description": "",
+  "name": "@repo/api",
+  "version": "0.1.0",
+  "description": "NestJS API server for budget management",
   "author": "",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
