@@ -8,7 +8,7 @@ import {
   useTransactions,
 } from '@/lib/hooks';
 import { calculatePercentage, formatCurrency, formatDate } from '@/lib/utils';
-import { StatCard } from '@repo/ui/common';
+import { StatCard } from '@repo/ui/cards';
 import {
   Card,
   CardContent,
@@ -233,31 +233,20 @@ export function ReportsView() {
         <StatCard
           title="Total Income"
           value={totalIncome}
-          change={0}
-          type="income"
           currency={currency}
         />
         <StatCard
           title="Total Expenses"
           value={totalExpenses}
-          change={0}
-          type="expense"
           currency={currency}
         />
         <StatCard
           title="Net Savings"
           value={Math.abs(netSavings)}
           change={savingsRate}
-          type="savings"
           currency={currency}
         />
-        <StatCard
-          title="Savings Rate"
-          value={savingsRate}
-          change={0}
-          type="balance"
-          currency=""
-        />
+        <StatCard title="Savings Rate" value={savingsRate} />
       </div>
 
       {/* Goals & Budget Summary */}

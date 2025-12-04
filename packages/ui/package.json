@@ -115,6 +115,10 @@
     "./tables": {
       "types": "./dist/src/tables/index.d.ts",
       "default": "./src/tables/index.ts"
+    },
+    "./cards": {
+      "types": "./dist/src/cards/index.d.ts",
+      "default": "./src/cards/index.ts"
     }
   },
   "scripts": {

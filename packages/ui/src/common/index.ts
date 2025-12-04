@@ -8,6 +8,5 @@ export * from './icon-wrapper';
 export * from './learn-more';
 export * from './long-text';
 export * from './search/index';
-export * from './stat-card';
 export * from './table';
 export * from './theme';

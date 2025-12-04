@@ -82,6 +82,16 @@ export default function DashboardPage() {
 
   const currency = settings?.defaultCurrency || 'INR';
 
+  // Format currency helper
+  const formatCurrency = (amount: number, curr: string) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: curr,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
   // Calculate income change percentage
   const incomeChange =
     lastMonthIncome > 0
@@ -259,31 +269,25 @@ export default function DashboardPage() {
         <StatCard
           title="Total Income"
           value={currentIncome}
+          previousValue={`${formatCurrency(
+            lastMonthIncome,
+            currency
+          )} last month`}
           change={incomeChange}
-          type="income"
           currency={currency}
         />
         <StatCard
           title="Total Expenses"
           value={currentExpenses}
+          previousValue={`${formatCurrency(
+            lastMonthExpenses,
+            currency
+          )} last month`}
           change={expenseChange}
-          type="expense"
           currency={currency}
         />
-        <StatCard
-          title="Balance"
-          value={balance}
-          change={0}
-          type="balance"
-          currency={currency}
-        />
-        <StatCard
-          title="Monthly Savings"
-          value={savings}
-          change={0}
-          type="savings"
-          currency={currency}
-        />
+        <StatCard title="Balance" value={balance} currency={currency} />
+        <StatCard title="Monthly Savings" value={savings} currency={currency} />
       </div>
 
       {/* Row 2: Revenue Chart + Budget Status */}

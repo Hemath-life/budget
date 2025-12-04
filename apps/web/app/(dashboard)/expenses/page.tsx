@@ -2,12 +2,8 @@
 
 import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
 import { formatCurrency } from '@/lib/utils';
-import {
-  DateFilter,
-  DonutChart,
-  StatCard,
-  getDefaultDateRange,
-} from '@repo/ui/common';
+import { StatCard } from '@repo/ui/cards';
+import { DateFilter, DonutChart, getDefaultDateRange } from '@repo/ui/common';
 import {
   Button,
   Card,
@@ -119,28 +115,20 @@ export default function ExpensesPage() {
           value={totalExpenses}
           change={expenseChange}
           currency={currency}
-          type="expense"
         />
         <StatCard
           title="Previous Period"
           value={prevPeriodExpenses}
-          change={0}
           currency={currency}
-          type="expense"
         />
         <StatCard
           title="All Time"
           value={allTimeExpenses}
-          change={0}
           currency={currency}
-          type="expense"
         />
         <StatCard
           title="Categories"
           value={Object.keys(expensesByCategory).length}
-          change={0}
-          currency=""
-          type="balance"
         />
       </div>
 

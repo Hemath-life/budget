@@ -2,12 +2,8 @@
 
 import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
 import { formatCurrency } from '@/lib/utils';
-import {
-  DateFilter,
-  DonutChart,
-  StatCard,
-  getDefaultDateRange,
-} from '@repo/ui/common';
+import { StatCard } from '@repo/ui/cards';
+import { DateFilter, DonutChart, getDefaultDateRange } from '@repo/ui/common';
 import {
   Button,
   Card,
@@ -117,28 +113,16 @@ export default function IncomePage() {
           value={totalIncome}
           change={incomeChange}
           currency={currency}
-          type="income"
         />
         <StatCard
           title="Previous Period"
           value={prevPeriodIncome}
-          change={0}
           currency={currency}
-          type="income"
         />
-        <StatCard
-          title="All Time"
-          value={allTimeIncome}
-          change={0}
-          currency={currency}
-          type="income"
-        />
+        <StatCard title="All Time" value={allTimeIncome} currency={currency} />
         <StatCard
           title="Sources"
           value={Object.keys(incomeByCategory).length}
-          change={0}
-          currency=""
-          type="balance"
         />
       </div>
 

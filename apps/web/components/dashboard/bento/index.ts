@@ -9,4 +9,4 @@ export { SavedCard } from './saved-card';
 export { VisitorsCard } from './visitors-card';
 
 // Re-export StatCard from @repo/ui for convenience
-export { StatCard } from '@repo/ui/common';
+export { StatCard } from '@repo/ui/cards';
