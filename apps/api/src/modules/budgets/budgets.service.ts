@@ -7,13 +7,14 @@ import { UpdateBudgetDto } from './dto/update-budget.dto';
 export class BudgetsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createBudgetDto: CreateBudgetDto) {
+  async create(createBudgetDto: CreateBudgetDto, userId: string) {
     const { category, startDate, ...rest } = createBudgetDto;
 
     const budget = await this.prisma.budget.create({
       data: {
         ...rest,
         categoryId: category,
+        userId,
         startDate: startDate ? new Date(startDate) : new Date(),
       },
     });
@@ -21,16 +22,17 @@ export class BudgetsService {
     return this.mapToResponse(budget);
   }
 
-  async findAll() {
+  async findAll(userId: string) {
     const budgets = await this.prisma.budget.findMany({
+      where: { userId },
       orderBy: { createdAt: 'desc' },
     });
     return budgets.map((b) => this.mapToResponse(b));
   }
 
-  async findOne(id: string) {
-    const budget = await this.prisma.budget.findUnique({
-      where: { id },
+  async findOne(id: string, userId: string) {
+    const budget = await this.prisma.budget.findFirst({
+      where: { id, userId },
     });
 
     if (!budget) {
@@ -40,33 +42,41 @@ export class BudgetsService {
     return this.mapToResponse(budget);
   }
 
-  async update(id: string, updateBudgetDto: UpdateBudgetDto) {
+  async update(id: string, updateBudgetDto: UpdateBudgetDto, userId: string) {
     const { category, startDate, ...rest } = updateBudgetDto;
     const data: any = { ...rest };
 
     if (category) data.categoryId = category;
     if (startDate) data.startDate = new Date(startDate);
 
-    try {
-      const budget = await this.prisma.budget.update({
-        where: { id },
-        data,
-      });
-      return this.mapToResponse(budget);
-    } catch (error) {
+    // Verify budget belongs to user
+    const existing = await this.prisma.budget.findFirst({
+      where: { id, userId },
+    });
+    if (!existing) {
       throw new NotFoundException(`Budget with ID ${id} not found`);
     }
+
+    const budget = await this.prisma.budget.update({
+      where: { id },
+      data,
+    });
+    return this.mapToResponse(budget);
   }
 
-  async remove(id: string) {
-    try {
-      await this.prisma.budget.delete({
-        where: { id },
-      });
-      return { success: true };
-    } catch (error) {
+  async remove(id: string, userId: string) {
+    // Verify budget belongs to user
+    const existing = await this.prisma.budget.findFirst({
+      where: { id, userId },
+    });
+    if (!existing) {
       throw new NotFoundException(`Budget with ID ${id} not found`);
     }
+
+    await this.prisma.budget.delete({
+      where: { id },
+    });
+    return { success: true };
   }
 
   private mapToResponse(budget: any) {

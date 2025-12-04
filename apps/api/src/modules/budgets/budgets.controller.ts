@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -19,32 +20,31 @@ export class BudgetsController {
   constructor(private readonly budgetsService: BudgetsService) {}
 
   @Post()
-  create(@Body() createBudgetDto: CreateBudgetDto) {
-    // TODO: Associate with current user
-    return this.budgetsService.create(createBudgetDto);
+  create(@Request() req, @Body() createBudgetDto: CreateBudgetDto) {
+    return this.budgetsService.create(createBudgetDto, req.user.userId);
   }
 
   @Get()
-  findAll() {
-    // TODO: Filter by current user
-    return this.budgetsService.findAll();
+  findAll(@Request() req) {
+    return this.budgetsService.findAll(req.user.userId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    // TODO: Ensure budget belongs to current user
-    return this.budgetsService.findOne(id);
+  findOne(@Request() req, @Param('id') id: string) {
+    return this.budgetsService.findOne(id, req.user.userId);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateBudgetDto: UpdateBudgetDto) {
-    // TODO: Ensure budget belongs to current user
-    return this.budgetsService.update(id, updateBudgetDto);
+  update(
+    @Request() req,
+    @Param('id') id: string,
+    @Body() updateBudgetDto: UpdateBudgetDto,
+  ) {
+    return this.budgetsService.update(id, updateBudgetDto, req.user.userId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    // TODO: Ensure budget belongs to current user
-    return this.budgetsService.remove(id);
+  remove(@Request() req, @Param('id') id: string) {
+    return this.budgetsService.remove(id, req.user.userId);
   }
 }

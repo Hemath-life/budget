@@ -18,7 +18,12 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  transactions Transaction[]
+  transactions          Transaction[]
+  budgets               Budget[]
+  goals                 Goal[]
+  reminders             Reminder[]
+  settings              Settings?
+  recurringTransactions RecurringTransaction[]
 
   @@map("users")
 }
@@ -63,6 +68,8 @@ model Transaction {
 
 model Budget {
   id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
   amount     Float
@@ -76,24 +83,28 @@ model Budget {
 }
 
 model Goal {
-  id            String   @id @default(uuid())
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
   name          String
   targetAmount  Float
-  currentAmount Float    @default(0)
-  currency      String   @default("INR")
+  currentAmount Float     @default(0)
+  currency      String    @default("INR")
   deadline      DateTime
   categoryId    String?
   category      Category? @relation(fields: [categoryId], references: [id])
   icon          String
   color         String
-  isCompleted   Boolean  @default(false)
-  createdAt     DateTime @default(now())
+  isCompleted   Boolean   @default(false)
+  createdAt     DateTime  @default(now())
 
   @@map("goals")
 }
 
 model Reminder {
   id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
   title        String
   amount       Float
   currency     String   @default("INR")
@@ -110,19 +121,21 @@ model Reminder {
 }
 
 model RecurringTransaction {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
   type        String // 'income' | 'expense'
   amount      Float
-  currency    String   @default("INR")
+  currency    String    @default("INR")
   categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
+  category    Category  @relation(fields: [categoryId], references: [id])
   description String?
   frequency   String // 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly'
   startDate   DateTime
   endDate     DateTime?
   nextDueDate DateTime
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
 
   transactions Transaction[]
 
@@ -130,7 +143,9 @@ model RecurringTransaction {
 }
 
 model Settings {
-  id                   Int     @id @default(1)
+  id                   String  @id @default(uuid())
+  userId               String  @unique
+  user                 User    @relation(fields: [userId], references: [id])
   defaultCurrency      String  @default("INR")
   theme                String  @default("system")
   dateFormat           String  @default("MMM dd, yyyy")
