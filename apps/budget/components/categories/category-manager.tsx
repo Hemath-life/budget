@@ -56,31 +56,6 @@ const COLORS = [
   '#78716C',
 ];
 
-const ICONS = [
-  'Briefcase',
-  'Laptop',
-  'TrendingUp',
-  'Home',
-  'Gift',
-  'Plus',
-  'ShoppingCart',
-  'Zap',
-  'Car',
-  'Film',
-  'ShoppingBag',
-  'Heart',
-  'GraduationCap',
-  'Utensils',
-  'Plane',
-  'CreditCard',
-  'Shield',
-  'MoreHorizontal',
-  'DollarSign',
-  'Wallet',
-  'Banknote',
-  'Coins',
-];
-
 interface CategoryManagerProps {
   isDialogOpen: boolean;
   setIsDialogOpen: (open: boolean) => void;
