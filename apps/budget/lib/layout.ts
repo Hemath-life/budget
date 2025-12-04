@@ -7,7 +7,6 @@ import {
   FolderOpen,
   LayoutDashboard,
   PiggyBank,
-  PlusCircle,
   Repeat,
   Settings,
   Target,

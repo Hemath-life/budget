@@ -1,7 +1,6 @@
 'use client';
 
 import { useReminders, useSettings } from '@/lib/hooks';
-import { budgetSidebarData } from '@/lib/layout';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Badge } from '@repo/ui/components/ui/badge';
 import { Button } from '@repo/ui/components/ui/button';
@@ -92,7 +91,7 @@ export function Header() {
       <HeaderNav
         variant="search-first"
         logout={logout}
-        sidebarData={budgetSidebarData}
+        showNav={false}
         searchPlaceholder="Search pages, actions, transactions..."
         extraActions={extraActions}
       />

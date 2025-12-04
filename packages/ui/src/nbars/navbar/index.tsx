@@ -1,3 +1,11 @@
+import { Moon, Sun } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { useTheme } from 'next-themes';
+import { type ReactNode, useMemo } from 'react';
+import type { SidebarData } from '../../layout/types';
+import { cn } from '../../lib/utils';
+import { Header } from './header';
+import { TopNav } from './top-nav';
 import { Search } from '#/common';
 import { Button } from '#/components/ui/button';
 import {
@@ -7,14 +15,6 @@ import {
   DropdownMenuTrigger,
 } from '#/components/ui/dropdown-menu';
 import { ProfileDropdown } from '#/forms/profile-dropdown';
-import { Moon, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { usePathname } from 'next/navigation';
-import { type ReactNode, useMemo } from 'react';
-import type { SidebarData } from '../../layout/types';
-import { cn } from '../../lib/utils';
-import { Header } from './header';
-import { TopNav } from './top-nav';
 
 interface NavLinkConfig {
   title: string;
@@ -31,6 +31,7 @@ interface HeaderNavProps {
   navLinks?: NavLinkConfig[];
   sidebarData?: SidebarData;
   searchPlaceholder?: string;
+  showNav?: boolean;
 }
 
 export const HeaderNav = (
@@ -53,11 +54,13 @@ export const HeaderNav = (
     navLinks,
     sidebarData,
     searchPlaceholder,
+    showNav = true,
   } = { ...props };
 
   const pathname = usePathname();
 
   const computedNavLinks = useMemo(() => {
+    if (!showNav) return [];
     const explicitLinks = navLinks?.length
       ? navLinks
       : deriveLinksFromSidebar(sidebarData);
@@ -69,7 +72,7 @@ export const HeaderNav = (
       href: normalizeHref(link.href),
       isActive: isLinkActive(pathname, link.href),
     }));
-  }, [navLinks, sidebarData, pathname]);
+  }, [navLinks, sidebarData, pathname, showNav]);
 
   const navItems = computedNavLinks.filter(Boolean);
 
