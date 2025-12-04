@@ -12,7 +12,6 @@ import {
 } from '@/lib/hooks';
 import { Reminder } from '@/lib/types';
 import {
-  cn,
   formatCurrency,
   formatDate,
   getDaysUntil,
@@ -29,7 +28,6 @@ import {
   AlertDialogTitle,
   Badge,
   Button,
-  Calendar,
   Card,
   CardContent,
   Dialog,
@@ -37,26 +35,20 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  Input,
-  Label,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Switch,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@repo/ui/components/ui';
+import { FormField } from '@repo/ui/forms';
 import {
   AlertTriangle,
   Bell,
-  CalendarIcon,
   Check,
   Clock,
   Loader2,
@@ -392,32 +384,30 @@ export function ReminderManager({
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g., Rent Payment"
-              />
-            </div>
+            <FormField
+              id="title"
+              label="Title"
+              value={title}
+              onChange={setTitle}
+              placeholder="e.g., Rent Payment"
+              required
+            />
             <div className="grid grid-cols-2 gap-4">
+              <FormField
+                id="amount"
+                label="Amount"
+                type="number"
+                value={amount}
+                onChange={setAmount}
+                placeholder="0.00"
+                min={0}
+                step={0.01}
+                required
+              />
               <div className="space-y-2">
-                <Label htmlFor="amount">Amount</Label>
-                <Input
-                  id="amount"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="0.00"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Category</Label>
+                <label className="text-sm font-medium">Category</label>
                 <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -432,48 +422,28 @@ export function ReminderManager({
                 </Select>
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>Due Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      'w-full justify-start text-left font-normal',
-                      !dueDate && 'text-muted-foreground'
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {dueDate ? formatDate(dueDate) : 'Pick a date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={dueDate}
-                    onSelect={(d) => d && setDueDate(d)}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label>Recurring</Label>
-                <p className="text-sm text-muted-foreground">
-                  Repeat this reminder
-                </p>
-              </div>
-              <Switch checked={isRecurring} onCheckedChange={setIsRecurring} />
-            </div>
+            <DateField
+              id="dueDate"
+              label="Due Date"
+              value={dueDate}
+              onChange={(d) => d && setDueDate(d)}
+              required
+            />
+            <SwitchField
+              id="isRecurring"
+              label="Recurring"
+              description="Repeat this reminder"
+              checked={isRecurring}
+              onChange={setIsRecurring}
+            />
             {isRecurring && (
               <div className="space-y-2">
-                <Label>Frequency</Label>
+                <label className="text-sm font-medium">Frequency</label>
                 <Select
                   value={frequency}
                   onValueChange={(v) => setFrequency(v as typeof frequency)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -486,17 +456,15 @@ export function ReminderManager({
                 </Select>
               </div>
             )}
-            <div className="space-y-2">
-              <Label htmlFor="notify">Notify Before (days)</Label>
-              <Input
-                id="notify"
-                type="number"
-                min="1"
-                max="30"
-                value={notifyBefore}
-                onChange={(e) => setNotifyBefore(e.target.value)}
-              />
-            </div>
+            <FormField
+              id="notify"
+              label="Notify Before (days)"
+              type="number"
+              value={notifyBefore}
+              onChange={setNotifyBefore}
+              min={1}
+              max={30}
+            />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>

@@ -27,7 +27,6 @@ import {
   AlertDialogTitle,
   Badge,
   Button,
-  Calendar,
   Card,
   CardContent,
   Dialog,
@@ -35,11 +34,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  Input,
-  Label,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Select,
   SelectContent,
   SelectItem,
@@ -50,10 +44,10 @@ import {
   TabsList,
   TabsTrigger,
 } from '@repo/ui/components/ui';
+import { DateField, FormField } from '@repo/ui/forms';
 import {
   ArrowDownRight,
   ArrowUpRight,
-  CalendarIcon,
   Loader2,
   Pause,
   Pencil,
@@ -413,32 +407,30 @@ export function RecurringManager({
                 Expense
               </Button>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Input
-                id="description"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="e.g., Monthly Salary"
-              />
-            </div>
+            <FormField
+              id="description"
+              label="Description"
+              value={description}
+              onChange={setDescription}
+              placeholder="e.g., Monthly Salary"
+              required
+            />
             <div className="grid grid-cols-2 gap-4">
+              <FormField
+                id="amount"
+                label="Amount"
+                type="number"
+                value={amount}
+                onChange={setAmount}
+                placeholder="0.00"
+                min={0}
+                step={0.01}
+                required
+              />
               <div className="space-y-2">
-                <Label htmlFor="amount">Amount</Label>
-                <Input
-                  id="amount"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="0.00"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Category</Label>
+                <label className="text-sm font-medium">Category</label>
                 <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
                   <SelectContent>
@@ -452,12 +444,12 @@ export function RecurringManager({
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Frequency</Label>
+              <label className="text-sm font-medium">Frequency</label>
               <Select
                 value={frequency}
                 onValueChange={(v) => setFrequency(v as typeof frequency)}
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -470,31 +462,13 @@ export function RecurringManager({
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label>Start Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      'w-full justify-start text-left font-normal',
-                      !startDate && 'text-muted-foreground'
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {startDate ? formatDate(startDate) : 'Pick a date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={startDate}
-                    onSelect={(d) => d && setStartDate(d)}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
+            <DateField
+              id="startDate"
+              label="Start Date"
+              value={startDate}
+              onChange={(d) => d && setStartDate(d)}
+              required
+            />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
