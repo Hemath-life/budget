@@ -29,6 +29,7 @@ import {
   Loader2,
   Pencil,
   PlusCircle,
+  Sparkles,
   Target,
   Trash2,
   Trophy,
