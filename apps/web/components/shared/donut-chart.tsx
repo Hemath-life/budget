@@ -38,9 +38,9 @@ export function DonutChart({
   const sortedData = [...data].sort((a, b) => b.value - a.value);
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Chart Section */}
-      <div className="flex items-center justify-center py-2">
+    <div className="flex flex-col lg:flex-row h-full gap-4">
+      {/* Left: Chart Section */}
+      <div className="flex flex-col items-center justify-center lg:w-[220px] shrink-0">
         <div className="relative">
           <ResponsiveContainer width={180} height={180}>
             <PieChart>
@@ -125,11 +125,27 @@ export function DonutChart({
             </span>
           </div>
         </div>
+
+        {/* Total Summary - Below Chart */}
+        <div className="mt-2 text-center">
+          <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide block">
+            Total {type === 'income' ? 'Income' : 'Expenses'}
+          </span>
+          <span
+            className={`text-base font-bold tabular-nums ${
+              type === 'income'
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : 'text-rose-600 dark:text-rose-400'
+            }`}
+          >
+            {formatCurrency(total, currency)}
+          </span>
+        </div>
       </div>
 
-      {/* Legend Section - Bento Style */}
-      <div className="flex-1 overflow-auto">
-        <div className="space-y-1.5 px-1">
+      {/* Right: Legend Section */}
+      <div className="flex-1 overflow-auto min-w-0">
+        <div className="space-y-1.5">
           {sortedData.map((item) => {
             const percent = ((item.value / total) * 100).toFixed(1);
             const percentNum = (item.value / total) * 100;
@@ -139,29 +155,19 @@ export function DonutChart({
             return (
               <div
                 key={item.name}
-                className={`group relative flex items-center gap-3 p-2.5 rounded-xl transition-all duration-300 cursor-pointer ${
-                  isActive
-                    ? 'bg-gradient-to-r from-muted/80 to-muted/40 shadow-sm'
-                    : 'hover:bg-muted/40'
+                className={`group relative flex items-center gap-3 p-2 rounded-lg transition-all duration-300 cursor-pointer ${
+                  isActive ? 'bg-muted/60' : 'hover:bg-muted/40'
                 }`}
                 onMouseEnter={() => setActiveIndex(originalIndex)}
                 onMouseLeave={() => setActiveIndex(null)}
               >
-                {/* Color indicator with glow */}
-                <div className="relative flex-shrink-0">
-                  <div
-                    className={`w-2.5 h-2.5 rounded-full transition-transform duration-300 ${
-                      isActive ? 'scale-125' : ''
-                    }`}
-                    style={{ backgroundColor: item.color }}
-                  />
-                  {isActive && (
-                    <div
-                      className="absolute inset-0 w-2.5 h-2.5 rounded-full blur-sm opacity-60"
-                      style={{ backgroundColor: item.color }}
-                    />
-                  )}
-                </div>
+                {/* Color indicator */}
+                <div
+                  className={`w-2.5 h-2.5 rounded-full shrink-0 transition-transform duration-300 ${
+                    isActive ? 'scale-125' : ''
+                  }`}
+                  style={{ backgroundColor: item.color }}
+                />
 
                 {/* Category info */}
                 <div className="flex-1 min-w-0 space-y-1">
@@ -193,41 +199,10 @@ export function DonutChart({
                       }}
                     />
                   </div>
-
-                  {/* Amount - shown on hover/active */}
-                  <div
-                    className={`flex items-center justify-between transition-all duration-300 ${
-                      isActive
-                        ? 'opacity-100 max-h-5'
-                        : 'opacity-0 max-h-0 overflow-hidden'
-                    }`}
-                  >
-                    <span className="text-[11px] text-muted-foreground">
-                      {formatCurrency(item.value, currency)}
-                    </span>
-                  </div>
                 </div>
               </div>
             );
           })}
-        </div>
-      </div>
-
-      {/* Total Summary - Bento Footer */}
-      <div className="mt-auto pt-3 border-t border-border/50">
-        <div className="flex items-center justify-between px-2">
-          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Total {type === 'income' ? 'Income' : 'Expenses'}
-          </span>
-          <span
-            className={`text-sm font-bold tabular-nums ${
-              type === 'income'
-                ? 'text-emerald-600 dark:text-emerald-400'
-                : 'text-rose-600 dark:text-rose-400'
-            }`}
-          >
-            {formatCurrency(total, currency)}
-          </span>
         </div>
       </div>
     </div>

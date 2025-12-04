@@ -2,7 +2,6 @@
 
 import { StatCard } from '@/components/dashboard/bento/stat-card';
 import { DonutChart } from '@/components/shared/donut-chart';
-import { TransactionList } from '@/components/transactions/transaction-list';
 import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
 import {
   Button,
@@ -131,44 +130,27 @@ export default function ExpensesPage() {
         />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle>Expenses by Category</CardTitle>
-            <CardDescription>See where your money is going</CardDescription>
-          </CardHeader>
-          <CardContent className="h-[380px]">
-            {chartData.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-muted-foreground">
-                No expense data yet
-              </div>
-            ) : (
-              <DonutChart
-                data={chartData}
-                total={totalExpenses}
-                currency={currency}
-                centerLabel="Total"
-                type="expense"
-              />
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="flex flex-col">
-          <CardHeader className="pb-2">
-            <CardTitle>Recent Expenses</CardTitle>
-            <CardDescription>Your latest spending activity</CardDescription>
-          </CardHeader>
-          <CardContent className="flex-1 overflow-auto">
-            <TransactionList
-              filterType="expense"
-              showFilters={false}
-              showPagination={false}
-              limit={6}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle>Expenses by Category</CardTitle>
+          <CardDescription>See where your money is going</CardDescription>
+        </CardHeader>
+        <CardContent className="h-[280px]">
+          {chartData.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-muted-foreground">
+              No expense data yet
+            </div>
+          ) : (
+            <DonutChart
+              data={chartData}
+              total={totalExpenses}
+              currency={currency}
+              centerLabel="Total"
+              type="expense"
             />
-          </CardContent>
-        </Card>
-      </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

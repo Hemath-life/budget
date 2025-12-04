@@ -2,7 +2,6 @@
 
 import { StatCard } from '@/components/dashboard/bento/stat-card';
 import { DonutChart } from '@/components/shared/donut-chart';
-import { TransactionList } from '@/components/transactions/transaction-list';
 import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
 import {
   Button,
@@ -128,44 +127,27 @@ export default function IncomePage() {
         />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle>Income by Source</CardTitle>
-            <CardDescription>Track where your money comes from</CardDescription>
-          </CardHeader>
-          <CardContent className="h-[380px]">
-            {chartData.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-muted-foreground">
-                No income data yet
-              </div>
-            ) : (
-              <DonutChart
-                data={chartData}
-                total={totalIncome}
-                currency={currency}
-                centerLabel="Total"
-                type="income"
-              />
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="flex flex-col">
-          <CardHeader className="pb-2">
-            <CardTitle>Recent Income</CardTitle>
-            <CardDescription>Your latest income activity</CardDescription>
-          </CardHeader>
-          <CardContent className="flex-1 overflow-auto">
-            <TransactionList
-              filterType="income"
-              showFilters={false}
-              showPagination={false}
-              limit={6}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle>Income by Source</CardTitle>
+          <CardDescription>Track where your money comes from</CardDescription>
+        </CardHeader>
+        <CardContent className="h-[280px]">
+          {chartData.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-muted-foreground">
+              No income data yet
+            </div>
+          ) : (
+            <DonutChart
+              data={chartData}
+              total={totalIncome}
+              currency={currency}
+              centerLabel="Total"
+              type="income"
             />
-          </CardContent>
-        </Card>
-      </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
