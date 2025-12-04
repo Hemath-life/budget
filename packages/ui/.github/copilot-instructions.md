@@ -604,6 +604,237 @@ export function FormSection({
 
 ## 💬 Dialog Components
 
+### Available Dialog Components
+
+The `@repo/ui/dialogs` module provides specialized dialog components for different use cases:
+
+| Component            | Use Case                                              |
+| -------------------- | ----------------------------------------------------- |
+| `AlertDialog`        | Delete confirmations, warnings, error acknowledgments |
+| `EditDialog`         | Create/edit forms                                     |
+| `ContributeDialog`   | Quick amount entry (e.g., goal contributions)         |
+| `ConfirmationDialog` | Generic confirm/cancel actions                        |
+| `FormDialog`         | Form submission dialogs                               |
+| `ViewDialog`         | Read-only data display                                |
+| `FileUploadDialog`   | File upload interface                                 |
+| `SearchDialog`       | Searchable item selection                             |
+| `BaseDialog`         | Custom dialog implementations                         |
+
+### AlertDialog - Delete & Warning Confirmations
+
+```typescript
+import { AlertDialog } from '@repo/ui/dialogs';
+
+// ✅ Delete confirmation
+<AlertDialog
+  open={!!deleteId}
+  onOpenChange={() => setDeleteId(null)}
+  title="Delete Category"
+  description="Are you sure you want to delete this category? This action cannot be undone."
+  variant="delete"
+  onConfirm={handleDelete}
+  confirmText="Delete"
+  isLoading={isDeleting}
+/>
+
+// ✅ Warning dialog
+<AlertDialog
+  open={showWarning}
+  onOpenChange={setShowWarning}
+  title="Unsaved Changes"
+  description="You have unsaved changes. Are you sure you want to leave?"
+  variant="warning"
+  onConfirm={handleLeave}
+  confirmText="Leave"
+  cancelText="Stay"
+/>
+
+// Alert variants: 'info' | 'success' | 'warning' | 'error' | 'delete'
+```
+
+### EditDialog - Create/Edit Forms
+
+```typescript
+import { EditDialog } from '@repo/ui/dialogs';
+import { FormField, SelectField, DateField } from '@repo/ui/forms';
+
+// ✅ Create dialog
+<EditDialog
+  open={isDialogOpen}
+  onOpenChange={(open) => {
+    setIsDialogOpen(open);
+    if (!open) resetForm();
+  }}
+  title="Create Budget"
+  onSubmit={handleSubmit}
+  submitText="Create"
+  isLoading={isSubmitting}
+>
+  <FormField
+    id="amount"
+    label="Budget Amount"
+    type="number"
+    value={amount}
+    onChange={setAmount}
+    required
+  />
+  <SelectField
+    id="category"
+    label="Category"
+    value={category}
+    onChange={setCategory}
+    options={categories}
+  />
+</EditDialog>
+
+// ✅ Edit dialog
+<EditDialog
+  open={!!editItem}
+  onOpenChange={(open) => !open && setEditItem(null)}
+  title="Edit Goal"
+  onSubmit={handleUpdate}
+  submitText="Update"
+  size="lg"
+  scrollable
+>
+  {/* Form fields */}
+</EditDialog>
+```
+
+### ContributeDialog - Quick Amount Entry
+
+```typescript
+import { ContributeDialog } from '@repo/ui/dialogs';
+import { FormField } from '@repo/ui/forms';
+
+<ContributeDialog
+  open={isContributeOpen}
+  onOpenChange={setIsContributeOpen}
+  title="Add Contribution"
+  description="Add funds to your savings goal"
+  onSubmit={handleContribute}
+  submitText="Add"
+  isLoading={isContributing}
+>
+  <FormField
+    id="amount"
+    label="Amount"
+    type="number"
+    value={contributeAmount}
+    onChange={setContributeAmount}
+    placeholder="0.00"
+    required
+  />
+</ContributeDialog>
+```
+
+### Migration Pattern: Raw Dialog → Reusable Dialog
+
+**Before (Raw AlertDialog):**
+
+```typescript
+// ❌ Verbose, repetitive code
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@repo/ui/components/ui';
+
+<AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Delete Category</AlertDialogTitle>
+      <AlertDialogDescription>
+        Are you sure you want to delete this category?
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogAction
+        onClick={handleDelete}
+        className="bg-red-600 hover:bg-red-700"
+      >
+        Delete
+      </AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+```
+
+**After (Reusable AlertDialog):**
+
+```typescript
+// ✅ Clean, consistent, reusable
+import { AlertDialog } from '@repo/ui/dialogs';
+
+<AlertDialog
+  open={!!deleteId}
+  onOpenChange={() => setDeleteId(null)}
+  title="Delete Category"
+  description="Are you sure you want to delete this category?"
+  variant="delete"
+  onConfirm={handleDelete}
+  confirmText="Delete"
+/>
+```
+
+**Before (Raw Dialog for Forms):**
+
+```typescript
+// ❌ Repetitive dialog structure
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@repo/ui/components/ui';
+
+<Dialog
+  open={isDialogOpen}
+  onOpenChange={(open) => {
+    setIsDialogOpen(open);
+    if (!open) resetForm();
+  }}
+>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>{editItem ? 'Edit Budget' : 'Create Budget'}</DialogTitle>
+    </DialogHeader>
+    <div className="space-y-4 py-4">
+      {/* Form fields */}
+    </div>
+    <DialogFooter>
+      <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+        Cancel
+      </Button>
+      <Button onClick={handleSubmit}>
+        {editItem ? 'Update' : 'Create'}
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
+
+**After (Reusable EditDialog):**
+
+```typescript
+// ✅ Simplified, consistent
+import { EditDialog } from '@repo/ui/dialogs';
+
+<EditDialog
+  open={isDialogOpen}
+  onOpenChange={(open) => {
+    setIsDialogOpen(open);
+    if (!open) resetForm();
+  }}
+  title={editItem ? 'Edit Budget' : 'Create Budget'}
+  onSubmit={handleSubmit}
+  submitText={editItem ? 'Update' : 'Create'}
+>
+  {/* Form fields */}
+</EditDialog>
+```
+
 ### Base Dialog Pattern
 
 ```typescript
