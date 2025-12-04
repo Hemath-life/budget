@@ -1,25 +1,19 @@
 'use client';
 
 import { SummaryCard } from '@/components/dashboard/summary-card';
+import { DonutChart } from '@/components/shared/donut-chart';
 import { TransactionList } from '@/components/transactions/transaction-list';
 import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
 import {
   Button,
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from '@repo/ui/components/ui';
 import { Loader2, Plus } from 'lucide-react';
 import Link from 'next/link';
-import {
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-} from 'recharts';
 
 export default function IncomePage() {
   const { data: transactions = [], isLoading } = useTransactions();
@@ -118,54 +112,32 @@ export default function IncomePage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="h-[400px]">
-          <CardHeader>
+        <Card className="h-[420px]">
+          <CardHeader className="pb-2">
             <CardTitle>Income by Source</CardTitle>
+            <CardDescription>Track where your money comes from</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="h-[300px]">
-              {chartData.length === 0 ? (
-                <div className="flex items-center justify-center h-full text-muted-foreground">
-                  No income data yet
-                </div>
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={chartData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={100}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {chartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: 'hsl(var(--popover))',
-                        border: '1px solid hsl(var(--border))',
-                        borderRadius: '8px',
-                      }}
-                      formatter={(value: number) => [
-                        `$${value.toFixed(2)}`,
-                        'Amount',
-                      ]}
-                    />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              )}
-            </div>
+          <CardContent className="h-[340px]">
+            {chartData.length === 0 ? (
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                No income data yet
+              </div>
+            ) : (
+              <DonutChart
+                data={chartData}
+                total={totalIncome}
+                currency={currency}
+                centerLabel="Total"
+                type="income"
+              />
+            )}
           </CardContent>
         </Card>
 
-        <Card className="h-[400px] flex flex-col">
-          <CardHeader>
+        <Card className="h-[420px] flex flex-col">
+          <CardHeader className="pb-2">
             <CardTitle>Recent Income</CardTitle>
+            <CardDescription>Your latest income activity</CardDescription>
           </CardHeader>
           <CardContent className="flex-1 overflow-auto">
             <TransactionList
