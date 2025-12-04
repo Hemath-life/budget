@@ -19,7 +19,7 @@ import {
 import { Textarea } from '#/components/ui/textarea';
 import { showSubmittedData } from '#/utils/show-submitted-data';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link } from '@tanstack/react-router';
+import Link from 'next/link';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { cn } from '../../../lib/utils';
@@ -111,7 +111,7 @@ export default function ProfileForm() {
               </Select>
               <FormDescription>
                 You can manage verified email addresses in your{' '}
-                <Link to="/">email settings</Link>.
+                <Link href="/">email settings</Link>.
               </FormDescription>
               <FormMessage />
             </FormItem>

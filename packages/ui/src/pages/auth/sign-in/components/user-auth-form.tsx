@@ -11,7 +11,7 @@ import { Input } from '#/components/ui/input';
 import { PasswordInput } from '#/forms/password-input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconBrandFacebook, IconBrandGithub } from '@tabler/icons-react';
-import { Link } from '@tanstack/react-router';
+import Link from 'next/link';
 import { type HTMLAttributes, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -44,7 +44,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    // eslint-disable-next-line no-console
+
     console.log(data);
 
     setTimeout(() => {
@@ -83,7 +83,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               </FormControl>
               <FormMessage />
               <Link
-                to="/forgot-password"
+                href="/forgot-password"
                 className="text-muted-foreground absolute -top-0.5 right-0 text-sm font-medium hover:opacity-75"
               >
                 Forgot password?

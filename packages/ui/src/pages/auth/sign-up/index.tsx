@@ -1,5 +1,3 @@
-import type { ComponentType, ReactNode } from 'react'
-import { Link } from '@tanstack/react-router'
 import {
   Card,
   CardContent,
@@ -7,53 +5,52 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '#/components/ui/card'
-import AuthLayout from '../auth-layout'
-import {
-  SignUpForm,
-  type SignUpFormProps,
-} from './components/sign-up-form'
+} from '#/components/ui/card';
+import Link from 'next/link';
+import type { ComponentType, ReactNode } from 'react';
+import AuthLayout from '../auth-layout';
+import { SignUpForm, type SignUpFormProps } from './components/sign-up-form';
 
 const defaultDescription = (
   <>
     Enter your email and password to create an account. <br />
     Already have an account?{' '}
     <Link
-      to='/sign-in'
-      className='hover:text-primary underline underline-offset-4'
+      href="/sign-in"
+      className="hover:text-primary underline underline-offset-4"
     >
       Sign In
     </Link>
   </>
-)
+);
 
 const defaultFooter = (
-  <p className='text-muted-foreground px-8 text-center text-sm'>
+  <p className="text-muted-foreground px-8 text-center text-sm">
     By creating an account, you agree to our{' '}
     <a
-      href='/terms'
-      className='hover:text-primary underline underline-offset-4'
+      href="/terms"
+      className="hover:text-primary underline underline-offset-4"
     >
       Terms of Service
     </a>{' '}
     and{' '}
     <a
-      href='/privacy'
-      className='hover:text-primary underline underline-offset-4'
+      href="/privacy"
+      className="hover:text-primary underline underline-offset-4"
     >
       Privacy Policy
     </a>
     .
   </p>
-)
+);
 
 export interface SignUpProps {
-  brand?: ReactNode
-  title?: ReactNode
-  description?: ReactNode
-  footer?: ReactNode
-  formComponent?: ComponentType<SignUpFormProps>
-  formProps?: SignUpFormProps
+  brand?: ReactNode;
+  title?: ReactNode;
+  description?: ReactNode;
+  footer?: ReactNode;
+  formComponent?: ComponentType<SignUpFormProps>;
+  formProps?: SignUpFormProps;
 }
 
 export default function SignUp({
@@ -66,10 +63,12 @@ export default function SignUp({
 }: SignUpProps = {}) {
   return (
     <AuthLayout brand={brand}>
-      <Card className='gap-4'>
+      <Card className="gap-4">
         <CardHeader>
-          <CardTitle className='text-lg tracking-tight'>{title}</CardTitle>
-          {description ? <CardDescription>{description}</CardDescription> : null}
+          <CardTitle className="text-lg tracking-tight">{title}</CardTitle>
+          {description ? (
+            <CardDescription>{description}</CardDescription>
+          ) : null}
         </CardHeader>
         <CardContent>
           <FormComponent {...(formProps ?? {})} />
@@ -77,5 +76,5 @@ export default function SignUp({
         {footer ? <CardFooter>{footer}</CardFooter> : null}
       </Card>
     </AuthLayout>
-  )
+  );
 }

@@ -7,8 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '#/components/ui/select';
-import { Link, useLocation, useNavigate } from '@tanstack/react-router';
-import { useState, type JSX } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState, type JSX } from 'react';
 import { cn } from '../../../lib/utils';
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
@@ -24,13 +25,17 @@ export default function SidebarNav({
   items,
   ...props
 }: SidebarNavProps) {
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const [val, setVal] = useState(pathname ?? '/settings');
+  const pathname = usePathname() ?? '/settings';
+  const router = useRouter();
+  const [val, setVal] = useState(pathname);
+
+  useEffect(() => {
+    setVal(pathname);
+  }, [pathname]);
 
   const handleSelect = (e: string) => {
     setVal(e);
-    navigate({ to: e });
+    router.push(e);
   };
 
   return (
@@ -68,7 +73,7 @@ export default function SidebarNav({
           {items.map((item) => (
             <Link
               key={item.href}
-              to={item.href}
+              href={item.href}
               className={cn(
                 buttonVariants({ variant: 'ghost' }),
                 pathname === item.href

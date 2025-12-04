@@ -1,25 +1,34 @@
-import { useEffect, useRef } from 'react'
-import { useRouterState } from '@tanstack/react-router'
-import LoadingBar, { type LoadingBarRef } from 'react-top-loading-bar'
+'use client';
 
-export function NavigationProgress() {
-  const ref = useRef<LoadingBarRef>(null)
-  const state = useRouterState()
+import type { AppProgressBarProps } from 'next-nprogress-bar';
+import dynamic from 'next/dynamic';
 
-  useEffect(() => {
-    if (state.status === 'pending') {
-      ref.current?.continuousStart()
-    } else {
-      ref.current?.complete()
-    }
-  }, [state.status])
+const AppRouterProgressBar = dynamic(
+  () => import('next-nprogress-bar').then((mod) => mod.AppProgressBar),
+  { ssr: false },
+);
 
+type NavigationProgressProps = Omit<
+  AppProgressBarProps,
+  'color' | 'height' | 'options'
+> & {
+  color?: string;
+  height?: string | number;
+};
+
+export function NavigationProgress({
+  color = 'hsl(var(--primary))',
+  height = 2,
+  shallowRouting = true,
+  ...rest
+}: NavigationProgressProps) {
   return (
-    <LoadingBar
-      color='var(--muted-foreground)'
-      ref={ref}
-      shadow={true}
-      height={2}
+    <AppRouterProgressBar
+      color={color}
+      height={height}
+      options={{ showSpinner: false }}
+      shallowRouting={shallowRouting}
+      {...rest}
     />
-  )
+  );
 }
