@@ -46,8 +46,14 @@ export function ExpenseChart() {
 
   // Group by category
   const categoryTotals = currentMonthExpenses.reduce((acc, t) => {
-    const categoryKey = t.category?.id || t.categoryId;
-    acc[categoryKey] = (acc[categoryKey] || 0) + t.amount;
+    // Handle both categoryId string and category object
+    const categoryId =
+      typeof t.category === 'object' && t.category?.id
+        ? t.category.id
+        : t.categoryId;
+    if (categoryId) {
+      acc[categoryId] = (acc[categoryId] || 0) + t.amount;
+    }
     return acc;
   }, {} as Record<string, number>);
 
