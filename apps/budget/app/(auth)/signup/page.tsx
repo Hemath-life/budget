@@ -3,11 +3,9 @@
 import { useAuth } from '@/components/providers/auth-provider';
 import { authApi } from '@/lib/api';
 import { Button } from '@repo/ui/components/ui/button';
-import { Checkbox } from '@repo/ui/components/ui/checkbox';
-import { Input } from '@repo/ui/components/ui/input';
-import { Label } from '@repo/ui/components/ui/label';
+import { CheckboxField, FormField, PasswordInput } from '@repo/ui/forms';
 import { useQueryClient } from '@tanstack/react-query';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -19,7 +17,6 @@ export default function SignupPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -68,81 +65,63 @@ export default function SignupPage() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="name">Full Name</Label>
-          <Input
-            id="name"
-            type="text"
-            placeholder="John Doe"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
+        <FormField
+          id="name"
+          label="Full Name"
+          placeholder="John Doe"
+          value={name}
+          onChange={setName}
+          required
+          disabled={loading}
+        />
+
+        <FormField
+          id="email"
+          label="Email"
+          type="email"
+          placeholder="name@example.com"
+          value={email}
+          onChange={setEmail}
+          required
+          disabled={loading}
+        />
+
+        <FormField
+          id="password"
+          label="Password"
+          value={password}
+          onChange={setPassword}
+          required
+          disabled={loading}
+        >
+          <PasswordInput
+            id="password"
+            placeholder="Min. 6 characters"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             disabled={loading}
           />
-        </div>
+        </FormField>
 
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="name@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={loading}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
-          <div className="relative">
-            <Input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Min. 6 characters"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              disabled={loading}
-              className="pr-10"
-            />
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        <div className="flex items-start space-x-2">
-          <Checkbox
-            id="terms"
-            checked={agreedToTerms}
-            onCheckedChange={(checked) => setAgreedToTerms(checked as boolean)}
-            disabled={loading}
-            className="mt-0.5"
-          />
-          <label
-            htmlFor="terms"
-            className="text-sm text-muted-foreground cursor-pointer"
-          >
-            I agree to the{' '}
-            <Link href="#" className="text-emerald-600 hover:underline">
-              Terms
-            </Link>{' '}
-            and{' '}
-            <Link href="#" className="text-emerald-600 hover:underline">
-              Privacy Policy
-            </Link>
-          </label>
-        </div>
+        <CheckboxField
+          id="terms"
+          label={
+            <>
+              I agree to the{' '}
+              <Link href="#" className="text-emerald-600 hover:underline">
+                Terms
+              </Link>{' '}
+              and{' '}
+              <Link href="#" className="text-emerald-600 hover:underline">
+                Privacy Policy
+              </Link>
+            </>
+          }
+          checked={agreedToTerms}
+          onChange={setAgreedToTerms}
+          required
+          disabled={loading}
+        />
 
         <Button
           type="submit"
