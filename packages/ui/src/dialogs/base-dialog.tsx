@@ -1,3 +1,4 @@
+import { cn } from '../lib/utils';
 import {
   Dialog,
   DialogContent,
@@ -5,7 +6,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '#/components/ui/dialog';
-import { cn } from '../lib/utils';
 
 export interface BaseDialogProps {
   open: boolean;
