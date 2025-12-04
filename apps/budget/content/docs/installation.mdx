@@ -3,7 +3,6 @@ title: Installation
 description: Get started with Budget App in your local development environment.
 ---
 
-# Installation
 
 Get Budget App running on your local machine.
 
@@ -45,10 +44,8 @@ Edit `.env.local` with your configuration:
 # Database
 DATABASE_URL="file:./budget.db"
 
-# App URL
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 
-# Environment
 NODE_ENV="development"
 ```
 
@@ -66,7 +63,6 @@ The database is automatically initialized on first run with:
 # From monorepo root
 pnpm dev
 
-# Or specifically the budget app
 pnpm dev --filter @repo/web
 ```
 
