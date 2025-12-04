@@ -29,7 +29,8 @@ export type SelectOption =
 
 export interface SelectFieldProps {
   id: string;
-  label: string;
+  /** Label for the field. Can be hidden with hideLabel for inline usage */
+  label?: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -40,8 +41,12 @@ export interface SelectFieldProps {
   customLabel?: string;
   disabled?: boolean;
   className?: string;
+  /** Custom className for the trigger button */
+  triggerClassName?: string;
   description?: string;
   error?: string;
+  /** Hide the label for inline/compact usage */
+  hideLabel?: boolean;
 }
 
 /** Helper to normalize options to object format */
@@ -77,8 +82,10 @@ export const SelectField: React.FC<SelectFieldProps> = ({
   customLabel = 'Other',
   disabled = false,
   className = '',
+  triggerClassName = '',
   description,
   error,
+  hideLabel = false,
 }) => {
   const optionValues = getOptionValues(options);
 
@@ -111,19 +118,23 @@ export const SelectField: React.FC<SelectFieldProps> = ({
     onChange('');
   };
 
+  const showLabel = label && !hideLabel;
+
   return (
-    <div className={`space-y-2 ${className}`}>
-      <Label
-        htmlFor={id}
-        className={`text-sm font-medium ${error ? 'text-destructive' : ''}`}
-      >
-        {label} {required && <span className="text-destructive">*</span>}
-      </Label>
+    <div className={`${showLabel ? 'space-y-2' : ''} ${className}`}>
+      {showLabel && (
+        <Label
+          htmlFor={id}
+          className={`text-sm font-medium ${error ? 'text-destructive' : ''}`}
+        >
+          {label} {required && <span className="text-destructive">*</span>}
+        </Label>
+      )}
       {isCustomMode ? (
         <Input
           id={id}
           type="text"
-          placeholder={`Enter custom ${label.toLowerCase()}`}
+          placeholder={`Enter custom ${(label || 'value').toLowerCase()}`}
           value={value}
           onChange={(e) => handleCustomInputChange(e.target.value)}
           required={required}
@@ -139,7 +150,7 @@ export const SelectField: React.FC<SelectFieldProps> = ({
           disabled={disabled}
         >
           <SelectTrigger
-            className={`w-full h-10 ${error ? 'border-destructive focus:ring-destructive' : ''}`}
+            className={`w-full h-10 ${error ? 'border-destructive focus:ring-destructive' : ''} ${triggerClassName}`}
           >
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>

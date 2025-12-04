@@ -7,28 +7,18 @@ import {
   usePaginatedTransactions,
   useSettings,
 } from '@/lib/hooks';
+import type { Transaction } from '@/lib/types';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import {
-  Badge,
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@repo/ui/components/ui';
+import { Badge, Button, Input } from '@repo/ui/components/ui';
 import { AlertDialog } from '@repo/ui/dialogs';
+import { SelectField } from '@repo/ui/forms';
+import {
+  DataTable,
+  DataTableColumnHeader,
+  DataTableRowActions,
+  type ColumnDef,
+  type RowAction,
+} from '@repo/ui/tables';
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -37,13 +27,12 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Loader2,
-  MoreHorizontal,
   Pencil,
   Search,
   Trash2,
 } from 'lucide-react';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 interface TransactionListProps {
@@ -67,6 +56,7 @@ export function TransactionList({
   filterType = 'all',
   showFilters = true,
 }: TransactionListProps) {
+  const router = useRouter();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
   const deleteTransaction = useDeleteTransaction();
@@ -83,7 +73,6 @@ export function TransactionList({
 
   // Reset to page 1 when filters change
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPage(1);
   }, [typeFilter, categoryFilter, debouncedSearch, pageSize]);
 
@@ -138,7 +127,136 @@ export function TransactionList({
     }
   };
 
-  const uniqueCategories = categories.map((c) => ({ id: c.id, name: c.name }));
+  // Row actions configuration
+  const rowActions: RowAction<Transaction>[] = [
+    {
+      key: 'edit',
+      label: 'Edit',
+      icon: Pencil,
+      onClick: (transaction) => router.push(`/transactions/${transaction.id}`),
+    },
+    {
+      key: 'delete',
+      label: 'Delete',
+      icon: Trash2,
+      onClick: (transaction) => setDeleteId(transaction.id),
+      className: 'text-red-600',
+      separator: true,
+    },
+  ];
+
+  // Column definitions using DataTable
+  const columns: ColumnDef<Transaction>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'description',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Description" />
+        ),
+        cell: ({ row }) => {
+          const transaction = row.original;
+          return (
+            <div className="flex items-center gap-3">
+              <div
+                className={`h-8 w-8 rounded-full flex items-center justify-center ${
+                  transaction.type === 'income'
+                    ? 'bg-green-100 dark:bg-green-900/20'
+                    : 'bg-red-100 dark:bg-red-900/20'
+                }`}
+              >
+                {transaction.type === 'income' ? (
+                  <ArrowUpRight className="h-4 w-4 text-green-600" />
+                ) : (
+                  <ArrowDownRight className="h-4 w-4 text-red-600" />
+                )}
+              </div>
+              <div>
+                <p className="font-medium">{transaction.description}</p>
+                {transaction.isRecurring && (
+                  <Badge variant="outline" className="text-xs mt-1">
+                    Recurring
+                  </Badge>
+                )}
+              </div>
+            </div>
+          );
+        },
+        meta: { className: 'w-[35%]' },
+      },
+      {
+        accessorKey: 'category',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Category" />
+        ),
+        cell: ({ row }) => {
+          const category = row.original.category;
+          if (!category) return null;
+          return (
+            <Badge
+              variant="outline"
+              style={{
+                borderColor: getCategoryColor(category),
+                color: getCategoryColor(category),
+              }}
+            >
+              {getCategoryName(category)}
+            </Badge>
+          );
+        },
+        meta: { className: 'w-[15%]' },
+      },
+      {
+        accessorKey: 'date',
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Date" />
+        ),
+        cell: ({ row }) => (
+          <span className="text-muted-foreground">
+            {formatDate(row.original.date)}
+          </span>
+        ),
+        meta: { className: 'w-[15%]' },
+      },
+      {
+        accessorKey: 'amount',
+        header: ({ column }) => (
+          <DataTableColumnHeader
+            column={column}
+            title="Amount"
+            className="justify-end"
+          />
+        ),
+        cell: ({ row }) => {
+          const transaction = row.original;
+          return (
+            <div
+              className={`text-right font-semibold ${
+                transaction.type === 'income'
+                  ? 'text-green-600 dark:text-green-400'
+                  : 'text-red-600 dark:text-red-400'
+              }`}
+            >
+              {transaction.type === 'income' ? '+' : '-'}
+              {formatCurrency(
+                transaction.amount,
+                transaction.currency || settings?.defaultCurrency || 'INR'
+              )}
+            </div>
+          );
+        },
+        meta: { className: 'w-[20%] text-right' },
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => (
+          <DataTableRowActions row={row} actions={rowActions} />
+        ),
+        meta: { className: 'w-[50px]' },
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [settings?.defaultCurrency]
+  );
 
   if (isLoading) {
     return (
@@ -162,29 +280,35 @@ export function TransactionList({
                 className="pl-10"
               />
             </div>
-            <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-full sm:w-[150px]">
-                <SelectValue placeholder="Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="income">Income</SelectItem>
-                <SelectItem value="expense">Expense</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {uniqueCategories.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <SelectField
+              id="type-filter"
+              hideLabel
+              value={typeFilter}
+              onChange={setTypeFilter}
+              placeholder="Type"
+              triggerClassName="w-full sm:w-[150px]"
+              options={[
+                { label: 'All Types', value: 'all' },
+                { label: 'Income', value: 'income' },
+                { label: 'Expense', value: 'expense' },
+              ]}
+            />
+            <SelectField
+              id="category-filter"
+              hideLabel
+              value={categoryFilter}
+              onChange={setCategoryFilter}
+              placeholder="Category"
+              triggerClassName="w-full sm:w-[180px]"
+              options={[
+                { label: 'All Categories', value: 'all' },
+                ...categories.map((cat) => ({
+                  label: cat.name,
+                  value: cat.id,
+                  color: cat.color,
+                })),
+              ]}
+            />
           </div>
         )}
 
@@ -221,124 +345,19 @@ export function TransactionList({
             </div>
           ) : (
             <>
-              <div className="rounded-md border">
-                {/* Fixed Header */}
-                <Table>
-                  <TableHeader className="bg-background">
-                    <TableRow>
-                      <TableHead className="w-[35%]">Description</TableHead>
-                      <TableHead className="w-[15%]">Category</TableHead>
-                      <TableHead className="w-[15%]">Date</TableHead>
-                      <TableHead className="w-[20%] text-right">
-                        Amount
-                      </TableHead>
-                      <TableHead className="w-[50px]"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                </Table>
-                {/* Scrollable Body - Fixed height 400px */}
-                <div className="overflow-y-auto" style={{ height: 405 }}>
-                  <Table>
-                    <TableBody>
-                      {transactions.map((transaction) => (
-                        <TableRow key={transaction.id}>
-                          <TableCell className="w-[35%]">
-                            <div className="flex items-center gap-3">
-                              <div
-                                className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                                  transaction.type === 'income'
-                                    ? 'bg-green-100 dark:bg-green-900/20'
-                                    : 'bg-red-100 dark:bg-red-900/20'
-                                }`}
-                              >
-                                {transaction.type === 'income' ? (
-                                  <ArrowUpRight className="h-4 w-4 text-green-600" />
-                                ) : (
-                                  <ArrowDownRight className="h-4 w-4 text-red-600" />
-                                )}
-                              </div>
-                              <div>
-                                <p className="font-medium">
-                                  {transaction.description}
-                                </p>
-                                {transaction.isRecurring && (
-                                  <Badge
-                                    variant="outline"
-                                    className="text-xs mt-1"
-                                  >
-                                    Recurring
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell className="w-[15%]">
-                            {transaction.category && (
-                              <Badge
-                                variant="outline"
-                                style={{
-                                  borderColor: getCategoryColor(
-                                    transaction.category
-                                  ),
-                                  color: getCategoryColor(transaction.category),
-                                }}
-                              >
-                                {getCategoryName(transaction.category)}
-                              </Badge>
-                            )}
-                          </TableCell>
-                          <TableCell className="w-[15%] text-muted-foreground">
-                            {formatDate(transaction.date)}
-                          </TableCell>
-                          <TableCell
-                            className={`w-[20%] text-right font-semibold ${
-                              transaction.type === 'income'
-                                ? 'text-green-600 dark:text-green-400'
-                                : 'text-red-600 dark:text-red-400'
-                            }`}
-                          >
-                            {transaction.type === 'income' ? '+' : '-'}
-                            {formatCurrency(
-                              transaction.amount,
-                              transaction.currency ||
-                                settings?.defaultCurrency ||
-                                'INR'
-                            )}
-                          </TableCell>
-                          <TableCell className="w-[50px]">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem asChild>
-                                  <Link
-                                    href={`/transactions/${transaction.id}`}
-                                  >
-                                    <Pencil className="h-4 w-4 mr-2" />
-                                    Edit
-                                  </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  className="text-red-600"
-                                  onClick={() => setDeleteId(transaction.id)}
-                                >
-                                  <Trash2 className="h-4 w-4 mr-2" />
-                                  Delete
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+              {/* DataTable with scrollable body */}
+              <div className="overflow-auto">
+                <DataTable
+                  columns={columns}
+                  data={transactions}
+                  enablePagination={false}
+                  enableColumnVisibility={false}
+                  emptyMessage="No transactions found"
+                  getRowId={(row) => row.id}
+                />
               </div>
 
-              {/* Pagination */}
+              {/* Server-side Pagination */}
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
                 <div className="flex items-center gap-4">
                   <div className="text-sm text-muted-foreground">
@@ -349,20 +368,14 @@ export function TransactionList({
                     <span className="text-sm text-muted-foreground">
                       Rows per page:
                     </span>
-                    <Select
+                    <SelectField
+                      id="page-size"
+                      hideLabel
                       value={pageSize.toString()}
-                      onValueChange={(value) => setPageSize(Number(value))}
-                    >
-                      <SelectTrigger className="w-[70px] h-8">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="25">25</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                        <SelectItem value="100">100</SelectItem>
-                      </SelectContent>
-                    </Select>
+                      onChange={(value) => setPageSize(Number(value))}
+                      triggerClassName="w-[70px] h-8"
+                      options={['10', '25', '50', '100']}
+                    />
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
