@@ -1,12 +1,13 @@
 'use client';
 
-import { StatCard } from '@/components/dashboard/bento/stat-card';
+import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
+import { formatCurrency } from '@/lib/utils';
 import {
   DateFilter,
+  DonutChart,
+  StatCard,
   getDefaultDateRange,
-} from '@/components/shared/date-filter';
-import { DonutChart } from '@/components/shared/donut-chart';
-import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
+} from '@repo/ui/common';
 import {
   Button,
   Card,
@@ -158,6 +159,7 @@ export default function IncomePage() {
               currency={currency}
               centerLabel="Total"
               type="income"
+              formatCurrency={formatCurrency}
             />
           )}
         </CardContent>

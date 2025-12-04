@@ -28,6 +28,8 @@ interface EmptyStateProps {
   actionLabel?: string;
   /** Click handler for the primary action button */
   onAction?: () => void;
+  /** Href for the primary action (uses Link-style behavior) */
+  actionHref?: string;
   /** Additional content to render in the button area */
   children?: React.ReactNode;
   /** Additional CSS classes for the card */
@@ -46,6 +48,7 @@ export function EmptyState({
   onSeed,
   actionLabel,
   onAction,
+  actionHref,
   children,
   className = '',
 }: EmptyStateProps) {
@@ -75,6 +78,23 @@ export function EmptyState({
     return <Database className="h-8 w-8 text-muted-foreground" />;
   };
 
+  const ActionButton = () => {
+    if (!actionLabel) return null;
+
+    const button = (
+      <Button onClick={onAction} className="gap-2">
+        <Plus className="h-4 w-4" />
+        {actionLabel}
+      </Button>
+    );
+
+    if (actionHref) {
+      return <a href={actionHref}>{button}</a>;
+    }
+
+    return button;
+  };
+
   return (
     <Card className={`border-dashed ${className}`}>
       <CardContent className="flex flex-col items-center justify-center py-12 text-center">
@@ -88,12 +108,7 @@ export function EmptyState({
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3">
-          {onAction && actionLabel && (
-            <Button onClick={onAction} className="gap-2">
-              <Plus className="h-4 w-4" />
-              {actionLabel}
-            </Button>
-          )}
+          <ActionButton />
 
           {children}
 

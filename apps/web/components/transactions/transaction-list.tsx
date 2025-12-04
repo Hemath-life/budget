@@ -1,6 +1,6 @@
 'use client';
 
-import { EmptyState } from '@/components/shared/empty-state';
+import { seedApi } from '@/lib/api';
 import {
   useCategories,
   useDeleteTransaction,
@@ -11,6 +11,7 @@ import type { Transaction } from '@/lib/types';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Badge, Button, Input } from '@repo/ui/components/ui';
 import { AlertDialog } from '@repo/ui/dialogs';
+import { EmptyState } from '@repo/ui/empty';
 import { SelectField } from '@repo/ui/forms';
 import {
   DataTable,
@@ -19,6 +20,7 @@ import {
   type ColumnDef,
   type RowAction,
 } from '@repo/ui/tables';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   ArrowDownRight,
   ArrowUpRight,
@@ -64,6 +66,7 @@ export function TransactionList({
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
   const deleteTransaction = useDeleteTransaction();
+  const queryClient = useQueryClient();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>(filterType);
@@ -71,6 +74,14 @@ export function TransactionList({
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+
+  const handleSeedData = async () => {
+    const data = await seedApi.seed();
+    toast.success('Sample data added successfully!', {
+      description: `Added ${data.counts.transactions} transactions, ${data.counts.budgets} budgets, ${data.counts.goals} goals, and more.`,
+    });
+    queryClient.invalidateQueries();
+  };
 
   // Debounce search term
   const debouncedSearch = useDebounceValue(searchTerm, 300);
@@ -333,6 +344,8 @@ export function TransactionList({
               description="Start tracking your finances by adding your first transaction, or load sample data to explore the app."
               actionLabel="Add Transaction"
               actionHref="/transactions/add"
+              showSeedButton
+              onSeed={handleSeedData}
               icon={
                 <ArrowUpRight className="h-12 w-12 text-muted-foreground/50" />
               }

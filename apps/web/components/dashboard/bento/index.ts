@@ -6,5 +6,7 @@ export { ExpenseBreakdown } from './expense-breakdown';
 export { GoalsCard } from './goals-card';
 export { RevenueChart } from './revenue-chart';
 export { SavedCard } from './saved-card';
-export { StatCard } from './stat-card';
 export { VisitorsCard } from './visitors-card';
+
+// Re-export StatCard from @repo/ui for convenience
+export { StatCard } from '@repo/ui/common';

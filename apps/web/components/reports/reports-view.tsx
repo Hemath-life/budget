@@ -1,6 +1,5 @@
 'use client';
 
-import { StatCard } from '@/components/dashboard/bento/stat-card';
 import {
   useBudgets,
   useCategories,
@@ -9,6 +8,7 @@ import {
   useTransactions,
 } from '@/lib/hooks';
 import { calculatePercentage, formatCurrency, formatDate } from '@/lib/utils';
+import { StatCard } from '@repo/ui/common';
 import {
   Card,
   CardContent,

@@ -1,6 +1,5 @@
 'use client';
 
-import { formatCurrency } from '@/lib/utils';
 import { useState } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
 
@@ -11,20 +10,38 @@ interface ChartDataItem {
   [key: string]: string | number;
 }
 
-interface DonutChartProps {
+export interface DonutChartProps {
   data: ChartDataItem[];
   total: number;
   currency?: string;
   centerLabel?: string;
   type?: 'income' | 'expense';
+  formatCurrency?: (amount: number, currency: string) => string;
 }
+
+// Default currency formatter
+const defaultFormatCurrency = (amount: number, currency: string): string => {
+  if (!currency) {
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  }
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+};
 
 export function DonutChart({
   data,
   total,
-  currency = 'INR',
+  currency = 'USD',
   centerLabel = 'Total',
   type = 'expense',
+  formatCurrency = defaultFormatCurrency,
 }: DonutChartProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 

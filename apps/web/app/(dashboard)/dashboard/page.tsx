@@ -8,7 +8,7 @@ import {
   RevenueChart,
   StatCard,
 } from '@/components/dashboard/bento';
-import { EmptyState } from '@/components/shared/empty-state';
+import { seedApi } from '@/lib/api';
 import {
   useBudgets,
   useGoals,
@@ -16,14 +16,26 @@ import {
   useTransactions,
 } from '@/lib/hooks';
 import { Button } from '@repo/ui/components/ui';
+import { EmptyState } from '@repo/ui/empty';
+import { useQueryClient } from '@tanstack/react-query';
 import { LayoutDashboard, Loader2, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 export default function DashboardPage() {
   const { data: transactions = [], isLoading } = useTransactions();
   const { data: settings } = useSettings();
   const { data: budgets = [] } = useBudgets();
   const { data: goals = [] } = useGoals();
+  const queryClient = useQueryClient();
+
+  const handleSeedData = async () => {
+    const data = await seedApi.seed();
+    toast.success('Sample data added successfully!', {
+      description: `Added ${data.counts.transactions} transactions, ${data.counts.budgets} budgets, ${data.counts.goals} goals, and more.`,
+    });
+    queryClient.invalidateQueries();
+  };
 
   // Calculate summary data
   const now = new Date();
@@ -214,14 +226,11 @@ export default function DashboardPage() {
           title="No transactions yet"
           description="Start tracking your finances by adding your first transaction, or load sample data to explore all features."
           icon={<LayoutDashboard className="h-8 w-8 text-muted-foreground" />}
-        >
-          <Link href="/transactions/add">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Transaction
-            </Button>
-          </Link>
-        </EmptyState>
+          showSeedButton
+          onSeed={handleSeedData}
+          actionLabel="Add Transaction"
+          actionHref="/transactions/add"
+        />
       </div>
     );
   }
