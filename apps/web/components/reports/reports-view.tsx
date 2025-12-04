@@ -60,45 +60,6 @@ const CHART_COLORS = {
 };
 
 // Custom Tooltip Component
-function CustomTooltip({
-  active,
-  payload,
-  label,
-  currency,
-  showLabel = true,
-}: {
-  active?: boolean;
-  payload?: Array<{ value: number; name: string; color: string }>;
-  label?: string | number;
-  currency: string;
-  showLabel?: boolean;
-}) {
-  if (!active || !payload?.length) return null;
-
-  return (
-    <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl">
-      {showLabel && label && (
-        <p className="text-xs text-muted-foreground mb-2 font-medium">
-          {String(label)}
-        </p>
-      )}
-      <div className="space-y-1.5">
-        {payload.map((entry, index) => (
-          <div key={index} className="flex items-center gap-2">
-            <div
-              className="w-2.5 h-2.5 rounded-full"
-              style={{ backgroundColor: entry.color }}
-            />
-            <span className="text-xs text-muted-foreground">{entry.name}:</span>
-            <span className="text-xs font-semibold">
-              {formatCurrency(entry.value, currency)}
-            </span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 type TimeRange = 'week' | 'month' | 'quarter' | 'year' | 'all';
 
@@ -445,14 +406,14 @@ export function ReportsView() {
       {/* Charts Row 1 */}
       <div className="grid gap-4">
         {/* Income vs Expenses Trend */}
-        <Card className="border overflow-hidden bg-gradient-to-br from-violet-500/10 via-purple-500/5 to-transparent">
+        <Card className="border overflow-hidden bg-gradient-to-br from-primary/5 via-primary/[0.02] to-transparent dark:from-primary/10 dark:via-primary/5">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <CardTitle className="text-base font-semibold">
                   Income vs Expenses
                 </CardTitle>
-                <div className="px-3 py-1 rounded-full bg-background/80 border text-xs font-medium">
+                <div className="px-3 py-1 rounded-full bg-muted/50 dark:bg-muted/30 border text-xs font-medium">
                   {monthlyTrend.length > 0
                     ? `${
                         (monthlyTrend[monthlyTrend.length - 1]?.income ?? 0) -
@@ -479,7 +440,7 @@ export function ReportsView() {
                 value={timeRange}
                 onChange={(v) => setTimeRange(v as TimeRange)}
                 hideLabel
-                triggerClassName="w-[100px] h-8 text-xs border-0 bg-background/80 shadow-none"
+                triggerClassName="w-[100px] h-8 text-xs border-0 bg-muted/50 dark:bg-muted/30 shadow-none"
                 options={[
                   { label: 'Week', value: 'week' },
                   { label: 'Month', value: 'month' },
@@ -504,18 +465,32 @@ export function ReportsView() {
                       x2="0"
                       y2="1"
                     >
-                      <stop offset="0%" stopColor="#a78bfa" stopOpacity={0.4} />
+                      <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.4} />
                       <stop
                         offset="100%"
-                        stopColor="#a78bfa"
+                        stopColor="#8b5cf6"
                         stopOpacity={0.05}
+                      />
+                    </linearGradient>
+                    <linearGradient
+                      id="expenseGradientGray"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="0%" stopColor="#6b7280" stopOpacity={0.2} />
+                      <stop
+                        offset="100%"
+                        stopColor="#6b7280"
+                        stopOpacity={0.02}
                       />
                     </linearGradient>
                   </defs>
                   <CartesianGrid
                     strokeDasharray="2 6"
-                    stroke="hsl(var(--muted-foreground))"
-                    strokeOpacity={0.2}
+                    stroke="#6b7280"
+                    strokeOpacity={0.15}
                     vertical={false}
                   />
                   <XAxis
@@ -524,7 +499,7 @@ export function ReportsView() {
                     tickLine={false}
                     tick={{
                       fontSize: 11,
-                      fill: 'hsl(var(--muted-foreground))',
+                      fill: '#9ca3af',
                     }}
                     dy={10}
                   />
@@ -533,7 +508,7 @@ export function ReportsView() {
                     tickLine={false}
                     tick={{
                       fontSize: 11,
-                      fill: 'hsl(var(--muted-foreground))',
+                      fill: '#9ca3af',
                     }}
                     tickFormatter={(value) =>
                       value >= 1000
@@ -552,58 +527,59 @@ export function ReportsView() {
                         (payload.find((p) => p.dataKey === 'expenses')
                           ?.value as number) ?? 0;
                       return (
-                        <div className="bg-foreground text-background rounded-xl px-4 py-2 shadow-xl">
+                        <div className="bg-popover text-popover-foreground border border-border rounded-xl px-4 py-2 shadow-xl">
                           <p className="text-2xl font-bold">
                             {formatCurrency(income - expenses, currency)}
                           </p>
-                          <p className="text-xs opacity-70">{label} Net</p>
+                          <p className="text-xs text-muted-foreground">
+                            {label} Net
+                          </p>
                         </div>
                       );
                     }}
                     cursor={{
-                      stroke: 'hsl(var(--muted-foreground))',
+                      stroke: '#6b7280',
                       strokeWidth: 1,
                       strokeDasharray: '4 4',
                     }}
                   />
                   <Area
-                    type="natural"
+                    type="monotone"
                     dataKey="income"
-                    stroke="#a78bfa"
+                    stroke="#8b5cf6"
                     fill="url(#incomeGradientPurple)"
                     strokeWidth={2.5}
                     name="Income"
                     dot={{
-                      fill: '#a78bfa',
+                      fill: '#8b5cf6',
                       strokeWidth: 2,
-                      stroke: 'hsl(var(--background))',
+                      stroke: '#1f2937',
                       r: 4,
                     }}
                     activeDot={{
-                      fill: '#8b5cf6',
+                      fill: '#a78bfa',
                       strokeWidth: 3,
-                      stroke: 'hsl(var(--background))',
+                      stroke: '#1f2937',
                       r: 6,
                     }}
                   />
                   <Area
-                    type="natural"
+                    type="monotone"
                     dataKey="expenses"
-                    stroke="#c4b5fd"
-                    fill="transparent"
+                    stroke="#9ca3af"
+                    fill="url(#expenseGradientGray)"
                     strokeWidth={2}
-                    strokeDasharray="0"
                     name="Expenses"
                     dot={{
-                      fill: '#c4b5fd',
+                      fill: '#9ca3af',
                       strokeWidth: 2,
-                      stroke: 'hsl(var(--background))',
+                      stroke: '#1f2937',
                       r: 3,
                     }}
                     activeDot={{
-                      fill: '#a78bfa',
+                      fill: '#d1d5db',
                       strokeWidth: 3,
-                      stroke: 'hsl(var(--background))',
+                      stroke: '#1f2937',
                       r: 5,
                     }}
                   />
@@ -612,11 +588,11 @@ export function ReportsView() {
             </div>
             <div className="flex items-center justify-center gap-6 mt-4 text-xs">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-violet-400" />
+                <div className="w-3 h-3 rounded-full bg-violet-500" />
                 <span className="text-muted-foreground">Income</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-violet-300" />
+                <div className="w-3 h-3 rounded-full bg-gray-400" />
                 <span className="text-muted-foreground">Expenses</span>
               </div>
             </div>
