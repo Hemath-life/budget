@@ -128,8 +128,8 @@ Turborepo manages the build pipeline with:
 Each app manages its own environment variables:
 
 ```
-apps/budget/.env.local      # Local development
-apps/budget/.env.example    # Template for setup
+apps/web/.env.local      # Local development
+apps/web/.env.example    # Template for setup
 ```
 
 ## Deployment

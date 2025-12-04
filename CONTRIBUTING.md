@@ -296,10 +296,10 @@ chore(eslint): update eslint rules for react-hooks
 
 ### Adding a New Page/Route
 
-1. Create the page in `apps/budget/app/(dashboard)/`
-2. Add necessary API routes in `apps/budget/app/api/`
-3. Create components in `apps/budget/components/`
-4. Add types to `apps/budget/lib/types.ts`
+1. Create the page in `apps/web/app/(dashboard)/`
+2. Add necessary API routes in `apps/web/app/api/`
+3. Create components in `apps/web/components/`
+4. Add types to `apps/web/lib/types.ts`
 
 ### Adding a New Shared Component
 

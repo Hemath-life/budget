@@ -54,5 +54,6 @@
     "tsconfig.json": "tsconfig.*.json",
     "*.ts": "${capture}.test.ts, ${capture}.spec.ts",
     "*.tsx": "${capture}.test.tsx, ${capture}.spec.tsx"
-  }
+  },
+  "prisma.pinToPrisma6": true
 }

@@ -17,7 +17,7 @@ This is the primary user-facing application that provides:
 ## 🏗️ Project Structure
 
 ```
-apps/budget/
+apps/web/
 ├── app/                     # Next.js App Router
 │   ├── (auth)/              # Authentication routes
 │   │   ├── login/           # Login page
