@@ -1,6 +1,6 @@
 'use client';
 
-import { SummaryCard } from '@/components/dashboard/summary-card';
+import { StatCard } from '@/components/dashboard/bento/stat-card';
 import { DonutChart } from '@/components/shared/donut-chart';
 import { TransactionList } from '@/components/transactions/transaction-list';
 import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
@@ -46,6 +46,14 @@ export default function IncomePage() {
     })
     .reduce((sum, t) => sum + t.amount, 0);
 
+  // Calculate change percentage
+  const incomeChange =
+    lastMonthIncome > 0
+      ? Math.round(
+          ((currentMonthIncome - lastMonthIncome) / lastMonthIncome) * 100
+        )
+      : 0;
+
   // Income by category
   const incomeByCategory = incomeTransactions.reduce((acc, t) => {
     const categoryKey = t.category?.id || t.categoryId;
@@ -73,7 +81,7 @@ export default function IncomePage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Income</h1>
@@ -89,35 +97,44 @@ export default function IncomePage() {
         </Link>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <SummaryCard
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+        <StatCard
           title="Total Income"
           value={totalIncome}
+          change={0}
           currency={currency}
           type="income"
         />
-        <SummaryCard
+        <StatCard
           title="This Month"
           value={currentMonthIncome}
-          previousValue={lastMonthIncome}
+          change={incomeChange}
           currency={currency}
           type="income"
         />
-        <SummaryCard
-          title="Income Sources"
-          value={Object.keys(incomeByCategory).length}
-          currency=""
+        <StatCard
+          title="Last Month"
+          value={lastMonthIncome}
+          change={0}
+          currency={currency}
           type="income"
+        />
+        <StatCard
+          title="Sources"
+          value={Object.keys(incomeByCategory).length}
+          change={0}
+          currency=""
+          type="balance"
         />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="h-[420px]">
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle>Income by Source</CardTitle>
             <CardDescription>Track where your money comes from</CardDescription>
           </CardHeader>
-          <CardContent className="h-[340px]">
+          <CardContent className="h-[380px]">
             {chartData.length === 0 ? (
               <div className="flex items-center justify-center h-full text-muted-foreground">
                 No income data yet
@@ -134,7 +151,7 @@ export default function IncomePage() {
           </CardContent>
         </Card>
 
-        <Card className="h-[420px] flex flex-col">
+        <Card className="flex flex-col">
           <CardHeader className="pb-2">
             <CardTitle>Recent Income</CardTitle>
             <CardDescription>Your latest income activity</CardDescription>
@@ -144,7 +161,7 @@ export default function IncomePage() {
               filterType="income"
               showFilters={false}
               showPagination={false}
-              limit={5}
+              limit={6}
             />
           </CardContent>
         </Card>

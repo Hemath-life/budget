@@ -1,6 +1,6 @@
 'use client';
 
-import { SummaryCard } from '@/components/dashboard/summary-card';
+import { StatCard } from '@/components/dashboard/bento/stat-card';
 import { DonutChart } from '@/components/shared/donut-chart';
 import { TransactionList } from '@/components/transactions/transaction-list';
 import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
@@ -49,6 +49,14 @@ export default function ExpensesPage() {
     })
     .reduce((sum, t) => sum + t.amount, 0);
 
+  // Calculate change percentage
+  const expenseChange =
+    lastMonthExpenses > 0
+      ? Math.round(
+          ((currentMonthExpenses - lastMonthExpenses) / lastMonthExpenses) * 100
+        )
+      : 0;
+
   // Expenses by category
   const expensesByCategory = expenseTransactions.reduce((acc, t) => {
     const categoryKey = t.category?.id || t.categoryId;
@@ -76,7 +84,7 @@ export default function ExpensesPage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Expenses</h1>
@@ -92,35 +100,44 @@ export default function ExpensesPage() {
         </Link>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <SummaryCard
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+        <StatCard
           title="Total Expenses"
           value={totalExpenses}
+          change={0}
           currency={currency}
           type="expense"
         />
-        <SummaryCard
+        <StatCard
           title="This Month"
           value={currentMonthExpenses}
-          previousValue={lastMonthExpenses}
+          change={expenseChange}
           currency={currency}
           type="expense"
         />
-        <SummaryCard
-          title="Categories Used"
-          value={Object.keys(expensesByCategory).length}
-          currency=""
+        <StatCard
+          title="Last Month"
+          value={lastMonthExpenses}
+          change={0}
+          currency={currency}
           type="expense"
+        />
+        <StatCard
+          title="Categories"
+          value={Object.keys(expensesByCategory).length}
+          change={0}
+          currency=""
+          type="balance"
         />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="h-[420px]">
+        <Card>
           <CardHeader className="pb-2">
             <CardTitle>Expenses by Category</CardTitle>
             <CardDescription>See where your money is going</CardDescription>
           </CardHeader>
-          <CardContent className="h-[340px]">
+          <CardContent className="h-[380px]">
             {chartData.length === 0 ? (
               <div className="flex items-center justify-center h-full text-muted-foreground">
                 No expense data yet
@@ -137,7 +154,7 @@ export default function ExpensesPage() {
           </CardContent>
         </Card>
 
-        <Card className="h-[420px] flex flex-col">
+        <Card className="flex flex-col">
           <CardHeader className="pb-2">
             <CardTitle>Recent Expenses</CardTitle>
             <CardDescription>Your latest spending activity</CardDescription>
@@ -147,7 +164,7 @@ export default function ExpensesPage() {
               filterType="expense"
               showFilters={false}
               showPagination={false}
-              limit={5}
+              limit={6}
             />
           </CardContent>
         </Card>
