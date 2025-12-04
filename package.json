@@ -4,25 +4,25 @@
   "private": true,
   "type": "module",
   "license": "MIT",
-  "scripts": {
-    "build": "turbo run build",
-    "clean": "turbo run clean",
-    "postclean": "git clean -xdf .cache .turbo node_modules",
-    "dev": "turbo watch dev --continue",
-    "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
-    "format:fix": "pnpm format --write",
-    "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
-    "lint:fix": "pnpm lint --fix",
-    "start": "turbo run start",
-    "typecheck": "turbo run typecheck",
-    "ui-add": "turbo run ui-add -F @repo/ui --"
-  },
   "packageManager": "pnpm@10.24.0",
+  "engines": {
+    "node": ">=22.10.0"
+  },
+  "scripts": {
+    "build": "turbo build",
+    "clean": "turbo clean",
+    "postclean": "git clean -xdf .cache .turbo node_modules",
+    "dev": "turbo watch dev",
+    "format": "turbo format -- --cache --cache-location .cache/.prettiercache",
+    "format:fix": "turbo format -- --cache --cache-location .cache/.prettiercache --write",
+    "lint": "turbo lint -- --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "turbo lint -- --cache --cache-location .cache/.eslintcache --fix",
+    "start": "turbo start",
+    "typecheck": "turbo typecheck",
+    "ui-add": "turbo ui-add -F @repo/ui --"
+  },
   "devDependencies": {
     "knip": "catalog:",
     "turbo": "^2.5.8"
-  },
-  "engines": {
-    "node": ">=22.10.0"
   }
 }
