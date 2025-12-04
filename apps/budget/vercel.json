@@ -1,12 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "version": 2,
   "framework": "nextjs",
   "installCommand": "pnpm install",
   "buildCommand": "pnpm turbo build --filter=@repo/web",
-  "outputDirectory": "apps/budget/.next",
-  "ignoreCommand": "npx turbo-ignore",
-  "env": {
-    "TURBO_REMOTE_ONLY": "true"
-  }
+  "outputDirectory": ".next",
+  "devCommand": "pnpm dev",
+  "ignoreCommand": "npx turbo-ignore"
 }
