@@ -1,25 +1,33 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/components/ui';
-import { useTransactions, useCategories } from '@/lib/hooks';
+import { useCategories, useTransactions } from '@/lib/hooks';
 import { formatDate } from '@/lib/utils';
 import {
-  BarChart,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@repo/ui/components/ui';
+import { Loader2 } from 'lucide-react';
+import {
   Bar,
-  XAxis,
-  YAxis,
+  BarChart,
   CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
   Cell,
   Legend,
-  LineChart,
   Line,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/components/ui';
-import { Loader2 } from 'lucide-react';
 
 export function ExpenseChart() {
   const { data: transactions = [], isLoading } = useTransactions();
@@ -38,7 +46,8 @@ export function ExpenseChart() {
 
   // Group by category
   const categoryTotals = currentMonthExpenses.reduce((acc, t) => {
-    acc[t.category] = (acc[t.category] || 0) + t.amount;
+    const categoryKey = t.category?.id || t.categoryId;
+    acc[categoryKey] = (acc[categoryKey] || 0) + t.amount;
     return acc;
   }, {} as Record<string, number>);
 
@@ -57,7 +66,7 @@ export function ExpenseChart() {
     const date = new Date();
     date.setMonth(date.getMonth() - i);
     const month = formatDate(date, 'MMM');
-    
+
     const monthTransactions = transactions.filter((t) => {
       const tDate = new Date(t.date);
       return (
@@ -65,14 +74,14 @@ export function ExpenseChart() {
         tDate.getFullYear() === date.getFullYear()
       );
     });
-    
+
     const income = monthTransactions
       .filter((t) => t.type === 'income')
       .reduce((sum, t) => sum + t.amount, 0);
     const expenses = monthTransactions
       .filter((t) => t.type === 'expense')
       .reduce((sum, t) => sum + t.amount, 0);
-    
+
     monthlyData.push({ month, income, expenses });
   }
 
@@ -98,7 +107,7 @@ export function ExpenseChart() {
             <TabsTrigger value="pie">Expense Breakdown</TabsTrigger>
             <TabsTrigger value="line">Trend</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="bar" className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={monthlyData}>
@@ -113,12 +122,22 @@ export function ExpenseChart() {
                   }}
                   labelStyle={{ color: 'hsl(var(--popover-foreground))' }}
                 />
-                <Bar dataKey="income" fill="#10B981" name="Income" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="expenses" fill="#EF4444" name="Expenses" radius={[4, 4, 0, 0]} />
+                <Bar
+                  dataKey="income"
+                  fill="#10B981"
+                  name="Income"
+                  radius={[4, 4, 0, 0]}
+                />
+                <Bar
+                  dataKey="expenses"
+                  fill="#EF4444"
+                  name="Expenses"
+                  radius={[4, 4, 0, 0]}
+                />
               </BarChart>
             </ResponsiveContainer>
           </TabsContent>
-          
+
           <TabsContent value="pie" className="h-[300px]">
             {pieData.length === 0 ? (
               <div className="flex items-center justify-center h-full text-muted-foreground">
@@ -135,7 +154,9 @@ export function ExpenseChart() {
                     outerRadius={100}
                     paddingAngle={2}
                     dataKey="value"
-                    label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
+                    label={({ name, percent }) =>
+                      `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
+                    }
                     labelLine={false}
                   >
                     {pieData.map((entry, index) => (
@@ -148,14 +169,17 @@ export function ExpenseChart() {
                       border: '1px solid hsl(var(--border))',
                       borderRadius: '8px',
                     }}
-                    formatter={(value: number) => [`$${value.toFixed(2)}`, 'Amount']}
+                    formatter={(value: number) => [
+                      `$${value.toFixed(2)}`,
+                      'Amount',
+                    ]}
                   />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
             )}
           </TabsContent>
-          
+
           <TabsContent value="line" className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={monthlyData}>

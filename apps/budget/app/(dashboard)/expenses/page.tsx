@@ -1,20 +1,25 @@
 'use client';
 
-import { useTransactions, useCategories, useSettings } from '@/lib/hooks';
-import { TransactionList } from '@/components/transactions/transaction-list';
 import { SummaryCard } from '@/components/dashboard/summary-card';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/components/ui';
-import { Button } from '@repo/ui/components/ui';
+import { TransactionList } from '@/components/transactions/transaction-list';
+import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
 import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
-} from 'recharts';
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@repo/ui/components/ui';
 import { Loader2, Plus } from 'lucide-react';
 import Link from 'next/link';
+import {
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+} from 'recharts';
 
 export default function ExpensesPage() {
   const { data: transactions = [], isLoading } = useTransactions();
@@ -23,7 +28,10 @@ export default function ExpensesPage() {
 
   const currency = settings?.defaultCurrency || 'INR';
   const expenseTransactions = transactions.filter((t) => t.type === 'expense');
-  const totalExpenses = expenseTransactions.reduce((sum, t) => sum + t.amount, 0);
+  const totalExpenses = expenseTransactions.reduce(
+    (sum, t) => sum + t.amount,
+    0
+  );
 
   // Current month expenses
   const now = new Date();
@@ -49,18 +57,21 @@ export default function ExpensesPage() {
 
   // Expenses by category
   const expensesByCategory = expenseTransactions.reduce((acc, t) => {
-    acc[t.category] = (acc[t.category] || 0) + t.amount;
+    const categoryKey = t.category?.id || t.categoryId;
+    acc[categoryKey] = (acc[categoryKey] || 0) + t.amount;
     return acc;
   }, {} as Record<string, number>);
 
-  const chartData = Object.entries(expensesByCategory).map(([categoryId, amount]) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return {
-      name: category?.name || categoryId,
-      value: amount,
-      color: category?.color || '#EF4444',
-    };
-  });
+  const chartData = Object.entries(expensesByCategory).map(
+    ([categoryId, amount]) => {
+      const category = categories.find((c) => c.id === categoryId);
+      return {
+        name: category?.name || categoryId,
+        value: amount,
+        color: category?.color || '#EF4444',
+      };
+    }
+  );
 
   if (isLoading) {
     return (
@@ -75,7 +86,9 @@ export default function ExpensesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Expenses</h1>
-          <p className="text-muted-foreground">Track and analyze your spending</p>
+          <p className="text-muted-foreground">
+            Track and analyze your spending
+          </p>
         </div>
         <Link href="/transactions/add">
           <Button>
@@ -140,7 +153,10 @@ export default function ExpensesPage() {
                         border: '1px solid hsl(var(--border))',
                         borderRadius: '8px',
                       }}
-                      formatter={(value: number) => [`$${value.toFixed(2)}`, 'Amount']}
+                      formatter={(value: number) => [
+                        `$${value.toFixed(2)}`,
+                        'Amount',
+                      ]}
                     />
                     <Legend />
                   </PieChart>

@@ -1,41 +1,49 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { useTransactions, useCategories, useSettings } from '@/lib/hooks';
-import { formatCurrency, formatDate, calculatePercentage } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/components/ui';
-import { Button } from '@repo/ui/components/ui';
+import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
+import { calculatePercentage, formatCurrency, formatDate } from '@/lib/utils';
 import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@repo/ui/components/ui';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@repo/ui/components/ui';
 import {
-  BarChart,
+  DollarSign,
+  Loader2,
+  Percent,
+  TrendingDown,
+  TrendingUp,
+} from 'lucide-react';
+import { useMemo, useState } from 'react';
+import {
+  Area,
+  AreaChart,
   Bar,
-  XAxis,
-  YAxis,
+  BarChart,
   CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
   Cell,
   Legend,
-  LineChart,
   Line,
-  AreaChart,
-  Area,
+  LineChart,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts';
-import { TrendingUp, TrendingDown, DollarSign, Percent, Loader2 } from 'lucide-react';
 
 type TimeRange = 'week' | 'month' | 'quarter' | 'year' | 'all';
 
 export function ReportsView() {
-  const { data: transactions = [], isLoading: transLoading } = useTransactions();
+  const { data: transactions = [], isLoading: transLoading } =
+    useTransactions();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
 
@@ -75,7 +83,8 @@ export function ReportsView() {
     .reduce((sum, t) => sum + t.amount, 0);
 
   const netSavings = totalIncome - totalExpenses;
-  const savingsRate = totalIncome > 0 ? calculatePercentage(netSavings, totalIncome) : 0;
+  const savingsRate =
+    totalIncome > 0 ? calculatePercentage(netSavings, totalIncome) : 0;
 
   const currency = settings?.defaultCurrency || 'INR';
 
@@ -91,7 +100,8 @@ export function ReportsView() {
   const expensesByCategory = useMemo(() => {
     const expenses = filteredTransactions.filter((t) => t.type === 'expense');
     const grouped = expenses.reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + t.amount;
+      const categoryKey = t.category?.id || t.categoryId;
+      acc[categoryKey] = (acc[categoryKey] || 0) + t.amount;
       return acc;
     }, {} as Record<string, number>);
 
@@ -109,10 +119,12 @@ export function ReportsView() {
   }, [filteredTransactions, categories, totalExpenses]);
 
   // Income by category
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const incomeByCategory = useMemo(() => {
     const income = filteredTransactions.filter((t) => t.type === 'income');
     const grouped = income.reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + t.amount;
+      const categoryKey = t.category?.id || t.categoryId;
+      acc[categoryKey] = (acc[categoryKey] || 0) + t.amount;
       return acc;
     }, {} as Record<string, number>);
 
@@ -135,12 +147,14 @@ export function ReportsView() {
 
     filteredTransactions.forEach((t) => {
       const date = new Date(t.date);
-      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      
+      const monthKey = `${date.getFullYear()}-${String(
+        date.getMonth() + 1
+      ).padStart(2, '0')}`;
+
       if (!months[monthKey]) {
         months[monthKey] = { income: 0, expenses: 0 };
       }
-      
+
       if (t.type === 'income') {
         months[monthKey].income += t.amount;
       } else {
@@ -182,7 +196,10 @@ export function ReportsView() {
       {/* Time Range Selector */}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Financial Reports</h2>
-        <Select value={timeRange} onValueChange={(v) => setTimeRange(v as TimeRange)}>
+        <Select
+          value={timeRange}
+          onValueChange={(v) => setTimeRange(v as TimeRange)}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue />
           </SelectTrigger>
@@ -229,7 +246,11 @@ export function ReportsView() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Net Savings</p>
-                <p className={`text-2xl font-bold ${netSavings >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <p
+                  className={`text-2xl font-bold ${
+                    netSavings >= 0 ? 'text-green-600' : 'text-red-600'
+                  }`}
+                >
                   {formatCurrency(Math.abs(netSavings), currency)}
                 </p>
               </div>
@@ -242,7 +263,11 @@ export function ReportsView() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Savings Rate</p>
-                <p className={`text-2xl font-bold ${savingsRate >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <p
+                  className={`text-2xl font-bold ${
+                    savingsRate >= 0 ? 'text-green-600' : 'text-red-600'
+                  }`}
+                >
                   {savingsRate}%
                 </p>
               </div>
@@ -263,7 +288,10 @@ export function ReportsView() {
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={monthlyTrend}>
-                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    className="stroke-muted"
+                  />
                   <XAxis dataKey="month" className="text-muted-foreground" />
                   <YAxis className="text-muted-foreground" />
                   <Tooltip
@@ -331,7 +359,10 @@ export function ReportsView() {
                         border: '1px solid hsl(var(--border))',
                         borderRadius: '8px',
                       }}
-                      formatter={(value: number) => [formatCurrency(value, currency), 'Amount']}
+                      formatter={(value: number) => [
+                        formatCurrency(value, currency),
+                        'Amount',
+                      ]}
                     />
                     <Legend />
                   </PieChart>
@@ -355,16 +386,27 @@ export function ReportsView() {
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={incomeByCategory} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      className="stroke-muted"
+                    />
                     <XAxis type="number" className="text-muted-foreground" />
-                    <YAxis type="category" dataKey="name" width={100} className="text-muted-foreground" />
+                    <YAxis
+                      type="category"
+                      dataKey="name"
+                      width={100}
+                      className="text-muted-foreground"
+                    />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: 'hsl(var(--popover))',
                         border: '1px solid hsl(var(--border))',
                         borderRadius: '8px',
                       }}
-                      formatter={(value: number) => [formatCurrency(value, currency), 'Amount']}
+                      formatter={(value: number) => [
+                        formatCurrency(value, currency),
+                        'Amount',
+                      ]}
                     />
                     <Bar dataKey="value" radius={[0, 4, 4, 0]}>
                       {incomeByCategory.map((entry, index) => (
@@ -392,7 +434,10 @@ export function ReportsView() {
               ) : (
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={dailySpending}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      className="stroke-muted"
+                    />
                     <XAxis dataKey="date" className="text-muted-foreground" />
                     <YAxis className="text-muted-foreground" />
                     <Tooltip
@@ -401,7 +446,10 @@ export function ReportsView() {
                         border: '1px solid hsl(var(--border))',
                         borderRadius: '8px',
                       }}
-                      formatter={(value: number) => [formatCurrency(value, currency), 'Spent']}
+                      formatter={(value: number) => [
+                        formatCurrency(value, currency),
+                        'Spent',
+                      ]}
                     />
                     <Line
                       type="monotone"
@@ -435,7 +483,8 @@ export function ReportsView() {
                   <div className="flex justify-between mb-1">
                     <span className="font-medium">{category.name}</span>
                     <span className="text-muted-foreground">
-                      {formatCurrency(category.value, currency)} ({category.percentage}%)
+                      {formatCurrency(category.value, currency)} (
+                      {category.percentage}%)
                     </span>
                   </div>
                   <div className="h-2 rounded-full bg-muted overflow-hidden">

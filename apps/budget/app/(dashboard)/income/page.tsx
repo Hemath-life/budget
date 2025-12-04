@@ -1,20 +1,25 @@
 'use client';
 
-import { useTransactions, useCategories, useSettings } from '@/lib/hooks';
-import { TransactionList } from '@/components/transactions/transaction-list';
 import { SummaryCard } from '@/components/dashboard/summary-card';
-import { Card, CardContent, CardHeader, CardTitle } from '@repo/ui/components/ui';
-import { Button } from '@repo/ui/components/ui';
+import { TransactionList } from '@/components/transactions/transaction-list';
+import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
 import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  Legend,
-} from 'recharts';
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@repo/ui/components/ui';
 import { Loader2, Plus } from 'lucide-react';
 import Link from 'next/link';
+import {
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+} from 'recharts';
 
 export default function IncomePage() {
   const { data: transactions = [], isLoading } = useTransactions();
@@ -49,18 +54,21 @@ export default function IncomePage() {
 
   // Income by category
   const incomeByCategory = incomeTransactions.reduce((acc, t) => {
-    acc[t.category] = (acc[t.category] || 0) + t.amount;
+    const categoryKey = t.category?.id || t.categoryId;
+    acc[categoryKey] = (acc[categoryKey] || 0) + t.amount;
     return acc;
   }, {} as Record<string, number>);
 
-  const chartData = Object.entries(incomeByCategory).map(([categoryId, amount]) => {
-    const category = categories.find((c) => c.id === categoryId);
-    return {
-      name: category?.name || categoryId,
-      value: amount,
-      color: category?.color || '#10B981',
-    };
-  });
+  const chartData = Object.entries(incomeByCategory).map(
+    ([categoryId, amount]) => {
+      const category = categories.find((c) => c.id === categoryId);
+      return {
+        name: category?.name || categoryId,
+        value: amount,
+        color: category?.color || '#10B981',
+      };
+    }
+  );
 
   if (isLoading) {
     return (
@@ -75,7 +83,9 @@ export default function IncomePage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Income</h1>
-          <p className="text-muted-foreground">Track and analyze your income sources</p>
+          <p className="text-muted-foreground">
+            Track and analyze your income sources
+          </p>
         </div>
         <Link href="/transactions/add">
           <Button>
@@ -140,7 +150,10 @@ export default function IncomePage() {
                         border: '1px solid hsl(var(--border))',
                         borderRadius: '8px',
                       }}
-                      formatter={(value: number) => [`$${value.toFixed(2)}`, 'Amount']}
+                      formatter={(value: number) => [
+                        `$${value.toFixed(2)}`,
+                        'Amount',
+                      ]}
                     />
                     <Legend />
                   </PieChart>

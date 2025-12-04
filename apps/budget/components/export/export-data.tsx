@@ -122,7 +122,7 @@ export function ExportData() {
       Amount: t.amount,
       Currency: t.currency,
       IsRecurring: t.isRecurring ? 'Yes' : 'No',
-      Tags: t.tags?.join(', ') || '',
+      Tags: t.tags || '',
     }));
 
     exportToCSV(
