@@ -28,8 +28,6 @@ import { useMemo, useState } from 'react';
 import {
   Area,
   AreaChart,
-  Bar,
-  BarChart,
   CartesianGrid,
   Cell,
   Pie,
@@ -730,76 +728,89 @@ export function ReportsView() {
                   <p>No income data</p>
                 </div>
               ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={incomeByCategory}
-                    layout="vertical"
-                    margin={{ top: 5, right: 20, left: 5, bottom: 5 }}
-                  >
-                    <CartesianGrid
-                      strokeDasharray="2 6"
-                      stroke="#6b7280"
-                      strokeOpacity={0.15}
-                      horizontal={false}
-                    />
-                    <XAxis
-                      type="number"
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{
-                        fontSize: 11,
-                        fill: '#9ca3af',
-                      }}
-                      tickFormatter={(value) =>
-                        value >= 1000
-                          ? `${(value / 1000).toFixed(0)}k`
-                          : String(value)
-                      }
-                    />
-                    <YAxis
-                      type="category"
-                      dataKey="name"
-                      width={80}
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{
-                        fontSize: 11,
-                        fill: '#9ca3af',
-                      }}
-                    />
-                    <Tooltip
-                      content={({ active, payload }) => {
-                        if (!active || !payload?.[0]) return null;
-                        const data = payload[0].payload;
-                        return (
-                          <div className="bg-background/95 backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl">
-                            <p className="text-xs font-medium mb-1">
-                              {data.name}
-                            </p>
-                            <p className="text-sm font-semibold text-emerald-500">
-                              {formatCurrency(data.value, currency)}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {data.percentage}% of total
-                            </p>
+                <div className="flex flex-col justify-between h-full py-2">
+                  <div className="space-y-4 flex-1">
+                    {incomeByCategory.slice(0, 5).map((category, index) => {
+                      const maxValue = Math.max(
+                        ...incomeByCategory.map((c) => c.value)
+                      );
+                      const barWidth = (category.value / maxValue) * 100;
+                      const colors = [
+                        '#8b5cf6',
+                        '#f43f5e',
+                        '#10b981',
+                        '#f59e0b',
+                        '#06b6d4',
+                      ];
+                      const color = colors[index % colors.length];
+
+                      return (
+                        <div key={category.name} className="group">
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm text-muted-foreground w-20 text-right truncate flex-shrink-0">
+                              {category.name}
+                            </span>
+                            <div className="flex-1 relative h-7">
+                              {/* Background bar */}
+                              <div className="absolute inset-0 rounded-lg bg-muted/20" />
+                              {/* Colored bar */}
+                              <div
+                                className="absolute top-0 left-0 h-full rounded-lg transition-all duration-500 group-hover:brightness-110"
+                                style={{
+                                  width: `${Math.max(barWidth, 3)}%`,
+                                  backgroundColor: color,
+                                }}
+                              />
+                              {/* Tooltip on hover */}
+                              <div className="absolute left-1/2 -translate-x-1/2 -top-16 opacity-0 group-hover:opacity-100 transition-opacity z-10 pointer-events-none">
+                                <div className="bg-popover border border-border rounded-lg px-3 py-2 shadow-xl whitespace-nowrap">
+                                  <p className="text-sm font-semibold">
+                                    {category.name}
+                                  </p>
+                                  <p
+                                    className="text-base font-bold"
+                                    style={{ color }}
+                                  >
+                                    {formatCurrency(category.value, currency)}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {category.percentage}% of total
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
                           </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {/* X-axis labels */}
+                  <div className="flex items-center gap-3 pt-4 border-t border-border/50 mt-4">
+                    <span className="w-20 flex-shrink-0" />
+                    <div className="flex-1 flex justify-between text-xs text-muted-foreground">
+                      {(() => {
+                        const maxVal = Math.max(
+                          ...incomeByCategory.map((c) => c.value)
                         );
-                      }}
-                    />
-                    <Bar dataKey="value" radius={[0, 6, 6, 0]} maxBarSize={24}>
-                      {incomeByCategory.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={
-                            CHART_COLORS.categories[
-                              index % CHART_COLORS.categories.length
-                            ]
+                        const formatAxis = (val: number) => {
+                          if (val >= 1000) {
+                            return `${(val / 1000).toFixed(0)}k`;
                           }
-                        />
-                      ))}
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+                          return val.toString();
+                        };
+                        return (
+                          <>
+                            <span>0</span>
+                            <span>{formatAxis(maxVal * 0.25)}</span>
+                            <span>{formatAxis(maxVal * 0.5)}</span>
+                            <span>{formatAxis(maxVal * 0.75)}</span>
+                            <span>{formatAxis(maxVal)}</span>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           </CardContent>
