@@ -1,11 +1,3 @@
-import { Moon, Sun } from 'lucide-react';
-import { usePathname } from 'next/navigation';
-import { useTheme } from 'next-themes';
-import { type ReactNode, useMemo } from 'react';
-import type { SidebarData } from '../../layout/types';
-import { cn } from '../../lib/utils';
-import { Header } from './header';
-import { TopNav } from './top-nav';
 import { Search } from '#/common';
 import { Button } from '#/components/ui/button';
 import {
@@ -15,6 +7,14 @@ import {
   DropdownMenuTrigger,
 } from '#/components/ui/dropdown-menu';
 import { ProfileDropdown } from '#/forms/profile-dropdown';
+import { Moon, Sun } from 'lucide-react';
+import { useTheme } from 'next-themes';
+import { usePathname } from 'next/navigation';
+import { type ReactNode, useMemo } from 'react';
+import type { SidebarData } from '../../layout/types';
+import { cn } from '../../lib/utils';
+import { Header } from './header';
+import { TopNav } from './top-nav';
 
 interface NavLinkConfig {
   title: string;
@@ -36,13 +36,9 @@ interface HeaderNavProps {
 
 export const HeaderNav = (
   props: HeaderNavProps = {
-    // showSearch: true,
-    // showThemeSwitch: true,
-    // showProfileDropdown: true,
-    // showTopNav: true,
     fixed: false,
     className: '',
-    variant: 'title-first',
+    variant: 'search-first',
   },
 ) => {
   const {
@@ -75,55 +71,51 @@ export const HeaderNav = (
   }, [navLinks, sidebarData, pathname, showNav]);
 
   const navItems = computedNavLinks.filter(Boolean);
-
-  const themeToggle = <ThemeToggle />;
-
-  const renderHeaderContent = () => {
-    switch (variant) {
-      case 'search-first':
-        return (
-          <>
-            <Search placeholder={searchPlaceholder} />
-            <div className={cn(`ml-auto flex items-center gap-4`, className)}>
-              {themeToggle}
-              <ProfileDropdown logout={logout} />
-              {extraActions}
-            </div>
-          </>
-        );
-      case 'title-first':
-        return (
-          <>
-            {navItems.length > 0 ? <TopNav links={navItems} /> : null}
-            <div
-              className={cn(`ml-auto flex items-center space-x-4`, className)}
-            >
-              <Search placeholder={searchPlaceholder} />
-              {themeToggle}
-              <ProfileDropdown logout={logout} />
-              {extraActions}
-            </div>
-          </>
-        );
-      default:
-        return (
-          <>
-            {navItems.length > 0 ? <TopNav links={navItems} /> : null}
-            <div className="ml-auto flex items-center space-x-4">
-              <Search placeholder={searchPlaceholder} />
-              {themeToggle}
-              <ProfileDropdown logout={logout} />
-              {extraActions}
-            </div>
-          </>
-        );
-    }
-  };
+  const showTopNav = showNav && navItems.length > 0;
+  const isMinimal = variant === 'minimal';
 
   return (
-    <>
-      <Header fixed={fixed}>{renderHeaderContent()}</Header>
-    </>
+    <Header fixed={fixed}>
+      <div className="flex w-full flex-col gap-3">
+        {!isMinimal ? (
+          <div className="flex w-full flex-col gap-3 md:flex-row md:items-center">
+            <div className="flex w-full justify-center md:flex-1">
+              <Search
+                className="w-full md:w-1/2 lg:w-1/2 xl:w-1/2"
+                placeholder={searchPlaceholder}
+              />
+            </div>
+            <div
+              className={cn(
+                'flex items-center justify-center gap-4 md:ml-auto md:justify-end',
+                className,
+              )}
+            >
+              <ThemeToggle />
+              <ProfileDropdown logout={logout} />
+              {extraActions}
+            </div>
+          </div>
+        ) : (
+          <div className={cn('ml-auto flex items-center gap-4', className)}>
+            <ThemeToggle />
+            <ProfileDropdown logout={logout} />
+            {extraActions}
+          </div>
+        )}
+
+        {showTopNav ? (
+          <TopNav
+            links={navItems}
+            className={cn(
+              variant === 'search-first'
+                ? 'justify-center md:justify-start'
+                : 'justify-start',
+            )}
+          />
+        ) : null}
+      </div>
+    </Header>
   );
 };
 
