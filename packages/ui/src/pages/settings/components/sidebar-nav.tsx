@@ -1,3 +1,7 @@
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState, type JSX } from 'react';
+import { cn } from '../../../lib/utils';
 import { buttonVariants } from '#/components/ui/button';
 import { ScrollArea } from '#/components/ui/scroll-area';
 import {
@@ -7,10 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '#/components/ui/select';
-import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState, type JSX } from 'react';
-import { cn } from '../../../lib/utils';
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
   items: {
