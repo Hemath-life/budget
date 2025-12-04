@@ -42,6 +42,7 @@ pnpm dev
 ### Editor Setup
 
 We recommend using **VS Code** with the following extensions:
+
 - ESLint
 - Prettier
 - Tailwind CSS IntelliSense
@@ -65,11 +66,11 @@ budget-app/
 
 ### Package Naming Conventions
 
-| Type | Pattern | Example |
-|------|---------|---------|
-| Apps | `@budget-app/<name>` | `@budget-app/web` |
-| Shared Packages | `@repo/<name>` | `@repo/ui` |
-| Tooling | `@repo/<name>-config` | `@repo/eslint-config` |
+| Type            | Pattern               | Example               |
+| --------------- | --------------------- | --------------------- |
+| Apps            | `@budget-app/<name>`  | `@budget-app/web`     |
+| Shared Packages | `@repo/<name>`        | `@repo/ui`            |
+| Tooling         | `@repo/<name>-config` | `@repo/eslint-config` |
 
 ## 🔄 Development Workflow
 
@@ -148,17 +149,18 @@ export default function ({ budget }) {
 
 ### File Naming
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Components | kebab-case | `budget-card.tsx` |
-| Hooks | camelCase with `use` prefix | `usebudgets.ts` |
-| Utils | kebab-case | `format-currency.ts` |
-| Types | kebab-case | `budget.types.ts` |
-| Constants | SCREAMING_SNAKE_CASE | `API_ENDPOINTS.ts` |
+| Type       | Convention                  | Example              |
+| ---------- | --------------------------- | -------------------- |
+| Components | kebab-case                  | `budget-card.tsx`    |
+| Hooks      | camelCase with `use` prefix | `usebudgets.ts`      |
+| Utils      | kebab-case                  | `format-currency.ts` |
+| Types      | kebab-case                  | `budget.types.ts`    |
+| Constants  | SCREAMING_SNAKE_CASE        | `API_ENDPOINTS.ts`   |
 
 ### Imports
 
 Order imports as follows:
+
 1. React and Next.js imports
 2. External library imports
 3. Internal package imports (`@repo/*`, `@budget-app/*`)
@@ -167,21 +169,21 @@ Order imports as follows:
 
 ```typescript
 // React/Next.js
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 // External libraries
-import { format } from 'date-fns';
+import { format } from "date-fns";
 
 // Internal packages
-import { Button } from '@repo/ui/components';
-import { formatCurrency } from '@repo/utils';
+import { Button } from "@repo/ui/components";
+import { formatCurrency } from "@repo/utils";
 
 // Relative imports
-import { BudgetCard } from './budget-card';
+import { BudgetCard } from "./budget-card";
 
 // Types
-import type { Budget } from '@/lib/types';
+import type { Budget } from "@/lib/types";
 ```
 
 ### CSS/Styling
@@ -192,15 +194,12 @@ import type { Budget } from '@/lib/types';
 - Use CSS variables for theming
 
 ```typescript
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 export function Card({ className, ...props }: CardProps) {
   return (
     <div
-      className={cn(
-        'rounded-lg border bg-card p-6 shadow-sm',
-        className
-      )}
+      className={cn("rounded-lg border bg-card p-6 shadow-sm", className)}
       {...props}
     />
   );
@@ -221,21 +220,22 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ### Types
 
-| Type | Description |
-|------|-------------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation changes |
-| `style` | Code style changes (formatting, etc.) |
-| `refactor` | Code refactoring |
-| `perf` | Performance improvements |
-| `test` | Adding/updating tests |
-| `chore` | Maintenance tasks |
-| `ci` | CI/CD changes |
+| Type       | Description                           |
+| ---------- | ------------------------------------- |
+| `feat`     | New feature                           |
+| `fix`      | Bug fix                               |
+| `docs`     | Documentation changes                 |
+| `style`    | Code style changes (formatting, etc.) |
+| `refactor` | Code refactoring                      |
+| `perf`     | Performance improvements              |
+| `test`     | Adding/updating tests                 |
+| `chore`    | Maintenance tasks                     |
+| `ci`       | CI/CD changes                         |
 
 ### Scopes
 
 Use the package name as scope:
+
 - `web` - Main web application
 - `ui` - UI package
 - `utils` - Utils package
@@ -256,6 +256,7 @@ chore(eslint): update eslint rules for react-hooks
 ### Before Submitting
 
 1. **Create a feature branch**
+
    ```bash
    git checkout -b feat/your-feature-name
    ```
@@ -263,6 +264,7 @@ chore(eslint): update eslint rules for react-hooks
 2. **Make your changes**
 
 3. **Run quality checks**
+
    ```bash
    pnpm lint
    pnpm typecheck
