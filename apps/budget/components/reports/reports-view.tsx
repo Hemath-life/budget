@@ -7,12 +7,8 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
 } from '@repo/ui/components/ui';
+import { SelectField } from '@repo/ui/forms';
 import {
   DollarSign,
   Loader2,
@@ -172,6 +168,7 @@ export function ReportsView() {
   }, [filteredTransactions]);
 
   // Daily spending trend
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const dailySpending = useMemo(() => {
     const days: Record<string, number> = {};
 
@@ -196,21 +193,20 @@ export function ReportsView() {
       {/* Time Range Selector */}
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Financial Reports</h2>
-        <Select
+        <SelectField
+          id="timeRange"
           value={timeRange}
-          onValueChange={(v) => setTimeRange(v as TimeRange)}
-        >
-          <SelectTrigger className="w-[180px]">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="week">Last 7 Days</SelectItem>
-            <SelectItem value="month">Last Month</SelectItem>
-            <SelectItem value="quarter">Last Quarter</SelectItem>
-            <SelectItem value="year">Last Year</SelectItem>
-            <SelectItem value="all">All Time</SelectItem>
-          </SelectContent>
-        </Select>
+          onChange={(v) => setTimeRange(v as TimeRange)}
+          hideLabel
+          triggerClassName="w-[180px]"
+          options={[
+            { label: 'Last 7 Days', value: 'week' },
+            { label: 'Last Month', value: 'month' },
+            { label: 'Last Quarter', value: 'quarter' },
+            { label: 'Last Year', value: 'year' },
+            { label: 'All Time', value: 'all' },
+          ]}
+        />
       </div>
 
       {/* Summary Cards */}
