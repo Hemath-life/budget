@@ -1,6 +1,12 @@
 'use client';
 
-import { useCategories, useSettings, useTransactions } from '@/lib/hooks';
+import {
+  useBudgets,
+  useCategories,
+  useGoals,
+  useSettings,
+  useTransactions,
+} from '@/lib/hooks';
 import { calculatePercentage, formatCurrency, formatDate } from '@/lib/utils';
 import {
   Card,
@@ -10,11 +16,14 @@ import {
 } from '@repo/ui/components/ui';
 import { SelectField } from '@repo/ui/forms';
 import {
+  Check,
   DollarSign,
   Loader2,
   Percent,
+  Target,
   TrendingDown,
   TrendingUp,
+  Wallet,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import {
@@ -42,6 +51,8 @@ export function ReportsView() {
     useTransactions();
   const { data: categories = [] } = useCategories();
   const { data: settings } = useSettings();
+  const { data: goals = [] } = useGoals();
+  const { data: budgets = [] } = useBudgets();
 
   const [timeRange, setTimeRange] = useState<TimeRange>('month');
 
@@ -84,13 +95,19 @@ export function ReportsView() {
 
   const currency = settings?.defaultCurrency || 'INR';
 
-  if (transLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
+  // Goals calculations
+  const totalTarget = goals.reduce((sum, g) => sum + g.targetAmount, 0);
+  const totalSaved = goals.reduce((sum, g) => sum + g.currentAmount, 0);
+  const activeGoals = goals.filter((g) => !g.isCompleted);
+  const completedGoals = goals.filter((g) => g.isCompleted);
+  const goalsProgress = calculatePercentage(totalSaved, totalTarget);
+
+  // Budget calculations
+  const totalBudget = budgets.reduce((sum, b) => sum + b.amount, 0);
+  const totalSpent = budgets.reduce((sum, b) => sum + b.spent, 0);
+  const overBudgetCount = budgets.filter((b) => b.spent > b.amount).length;
+  const onTrackCount = budgets.filter((b) => b.spent <= b.amount).length;
+  const spendingProgress = calculatePercentage(totalSpent, totalBudget);
 
   // Category breakdown for expenses
   const expensesByCategory = useMemo(() => {
@@ -115,7 +132,6 @@ export function ReportsView() {
   }, [filteredTransactions, categories, totalExpenses]);
 
   // Income by category
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const incomeByCategory = useMemo(() => {
     const income = filteredTransactions.filter((t) => t.type === 'income');
     const grouped = income.reduce((acc, t) => {
@@ -138,7 +154,6 @@ export function ReportsView() {
   }, [filteredTransactions, categories, totalIncome]);
 
   // Monthly trend data
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const monthlyTrend = useMemo(() => {
     const months: Record<string, { income: number; expenses: number }> = {};
 
@@ -169,7 +184,6 @@ export function ReportsView() {
   }, [filteredTransactions]);
 
   // Daily spending trend
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const dailySpending = useMemo(() => {
     const days: Record<string, number> = {};
 
@@ -188,6 +202,14 @@ export function ReportsView() {
         amount,
       }));
   }, [filteredTransactions]);
+
+  if (transLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -208,6 +230,123 @@ export function ReportsView() {
             { label: 'All Time', value: 'all' },
           ]}
         />
+      </div>
+
+      {/* Goals & Budget Summary Cards */}
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Goals Summary Card */}
+        <Card className="bg-muted/30">
+          <CardContent className="pt-6">
+            <div className="flex items-start justify-between">
+              <div className="flex items-start gap-4">
+                <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center">
+                  <Target className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <div>
+                  <p className="text-muted-foreground">Total Savings Goal</p>
+                  <p className="text-3xl font-bold tracking-tight">
+                    {formatCurrency(totalSaved, currency)}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    of {formatCurrency(totalTarget, currency)} target
+                  </p>
+                </div>
+              </div>
+              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <Check className="h-4 w-4 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+
+          <Card className="mx-4 mb-4">
+            <CardContent className="py-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">
+                    Overall Progress
+                  </span>
+                  <span className="text-sm font-medium">{goalsProgress}%</span>
+                </div>
+                <div className="relative h-3 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-[#c4e456] transition-all"
+                    style={{ width: `${Math.min(goalsProgress, 100)}%` }}
+                  />
+                  <div
+                    className="absolute top-0 right-0 h-full bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,rgba(0,0,0,0.05)_4px,rgba(0,0,0,0.05)_8px)]"
+                    style={{ width: `${100 - Math.min(goalsProgress, 100)}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>{activeGoals.length} active goals</span>
+                  <span>{completedGoals.length} completed</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </Card>
+
+        {/* Budget Summary Card */}
+        <Card className="bg-muted/30">
+          <CardContent className="pt-6">
+            <div className="flex items-start justify-between">
+              <div className="flex items-start gap-4">
+                <div className="h-12 w-12 rounded-full bg-background flex items-center justify-center">
+                  <Wallet className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <div>
+                  <p className="text-muted-foreground">
+                    This Month&apos;s Spend
+                  </p>
+                  <p className="text-3xl font-bold tracking-tight">
+                    {formatCurrency(totalSpent, currency)}
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    of {formatCurrency(totalBudget, currency)} budgeted
+                  </p>
+                </div>
+              </div>
+              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                <Check className="h-4 w-4 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+
+          <Card className="mx-4 mb-4">
+            <CardContent className="py-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Manage spending</span>
+                  <span className="text-sm font-medium">
+                    {spendingProgress}%
+                  </span>
+                </div>
+                <div className="relative h-3 w-full overflow-hidden rounded-full bg-muted">
+                  <div
+                    className={`h-full rounded-full transition-all ${
+                      spendingProgress >= 100
+                        ? 'bg-red-500'
+                        : spendingProgress >= 80
+                        ? 'bg-yellow-500'
+                        : 'bg-[#c4e456]'
+                    }`}
+                    style={{ width: `${Math.min(spendingProgress, 100)}%` }}
+                  />
+                  <div
+                    className="absolute top-0 right-0 h-full bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,rgba(0,0,0,0.05)_4px,rgba(0,0,0,0.05)_8px)]"
+                    style={{
+                      width: `${100 - Math.min(spendingProgress, 100)}%`,
+                    }}
+                  />
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>{onTrackCount} on track</span>
+                  <span>{overBudgetCount} over budget</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </Card>
       </div>
 
       {/* Summary Cards */}
