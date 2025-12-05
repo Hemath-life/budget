@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd ../.. && corepack enable && pnpm install",
-  "buildCommand": "cd ../.. && pnpm turbo build --filter=@repo/api",
+  "installCommand": "corepack enable && pnpm install",
+  "buildCommand": "pnpm build",
   "version": 2,
   "builds": [
     {
