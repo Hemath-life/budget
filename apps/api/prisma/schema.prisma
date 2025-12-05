@@ -3,16 +3,15 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid())
   email     String   @unique
   password  String
   name      String?
@@ -30,7 +29,7 @@ model User {
 }
 
 model Category {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(uuid())
   name      String
   type      String // 'income' | 'expense'
   icon      String
@@ -47,18 +46,18 @@ model Category {
 }
 
 model Transaction {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String   @id @default(uuid())
   type        String // 'income' | 'expense'
   amount      Float
   currency    String   @default("INR")
-  categoryId  String   @db.ObjectId
+  categoryId  String
   category    Category @relation(fields: [categoryId], references: [id])
-  userId      String   @db.ObjectId
+  userId      String
   user        User     @relation(fields: [userId], references: [id])
   description String?
   date        DateTime
   isRecurring Boolean  @default(false)
-  recurringId String?  @db.ObjectId
+  recurringId String?
   recurring   RecurringTransaction? @relation(fields: [recurringId], references: [id])
   tags        String[] // Array of tags
   createdAt   DateTime @default(now())
@@ -68,10 +67,10 @@ model Transaction {
 }
 
 model Budget {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId     String   @db.ObjectId
+  id         String   @id @default(uuid())
+  userId     String
   user       User     @relation(fields: [userId], references: [id])
-  categoryId String   @db.ObjectId
+  categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
   amount     Float
   currency   String   @default("INR")
@@ -84,15 +83,15 @@ model Budget {
 }
 
 model Goal {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String    @db.ObjectId
+  id            String    @id @default(uuid())
+  userId        String
   user          User      @relation(fields: [userId], references: [id])
   name          String
   targetAmount  Float
   currentAmount Float     @default(0)
   currency      String    @default("INR")
   deadline      DateTime
-  categoryId    String?   @db.ObjectId
+  categoryId    String?
   category      Category? @relation(fields: [categoryId], references: [id])
   icon          String
   color         String
@@ -103,14 +102,14 @@ model Goal {
 }
 
 model Reminder {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId       String   @db.ObjectId
+  id           String   @id @default(uuid())
+  userId       String
   user         User     @relation(fields: [userId], references: [id])
   title        String
   amount       Float
   currency     String   @default("INR")
   dueDate      DateTime
-  categoryId   String   @db.ObjectId
+  categoryId   String
   category     Category @relation(fields: [categoryId], references: [id])
   isRecurring  Boolean  @default(false)
   frequency    String? // 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly'
@@ -122,13 +121,13 @@ model Reminder {
 }
 
 model RecurringTransaction {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String    @db.ObjectId
+  id          String    @id @default(uuid())
+  userId      String
   user        User      @relation(fields: [userId], references: [id])
   type        String // 'income' | 'expense'
   amount      Float
   currency    String    @default("INR")
-  categoryId  String    @db.ObjectId
+  categoryId  String
   category    Category  @relation(fields: [categoryId], references: [id])
   description String?
   frequency   String // 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly'
@@ -144,8 +143,8 @@ model RecurringTransaction {
 }
 
 model Settings {
-  id                   String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId               String  @unique @db.ObjectId
+  id                   String  @id @default(uuid())
+  userId               String  @unique
   user                 User    @relation(fields: [userId], references: [id])
   defaultCurrency      String  @default("INR")
   theme                String  @default("system")
@@ -157,7 +156,7 @@ model Settings {
 }
 
 model Currency {
-  code   String @id @map("_id")
+  code   String @id
   name   String
   symbol String
   rate   Float  @default(1)
