@@ -3,6 +3,9 @@
   "description": "Main Next.js web application for budget management",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

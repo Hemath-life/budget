@@ -4,6 +4,9 @@
   "description": "NestJS API server for budget management",
   "private": true,
   "license": "MIT",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "prebuild": "prisma generate",
     "build": "nest build",
