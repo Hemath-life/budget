@@ -4,117 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-catalogs:
-  default:
-    '@eslint/js':
-      specifier: ^9.36.0
-      version: 9.36.0
-    '@radix-ui/react-avatar':
-      specifier: 1.1.10
-      version: 1.1.10
-    '@radix-ui/react-dialog':
-      specifier: 1.1.14
-      version: 1.1.14
-    '@radix-ui/react-dropdown-menu':
-      specifier: 2.1.15
-      version: 2.1.15
-    '@radix-ui/react-icons':
-      specifier: 1.3.2
-      version: 1.3.2
-    '@radix-ui/react-label':
-      specifier: 2.1.7
-      version: 2.1.7
-    '@radix-ui/react-slot':
-      specifier: 1.2.3
-      version: 1.2.3
-    '@radix-ui/react-toast':
-      specifier: ^1.2.15
-      version: 1.2.15
-    '@radix-ui/react-tooltip':
-      specifier: 1.2.7
-      version: 1.2.7
-    '@tanstack/react-router':
-      specifier: ^1.132.7
-      version: 1.132.7
-    '@types/eslint-config-prettier':
-      specifier: ^6.11.3
-      version: 6.11.3
-    '@types/pg':
-      specifier: ^8.15.6
-      version: 8.15.6
-    '@types/react':
-      specifier: ^19.1.13
-      version: 19.1.13
-    class-variance-authority:
-      specifier: 0.7.1
-      version: 0.7.1
-    eslint:
-      specifier: ^9.36.0
-      version: 9.36.0
-    eslint-config-prettier:
-      specifier: ^10.1.8
-      version: 10.1.8
-    eslint-config-turbo:
-      specifier: ^2.5.8
-      version: 2.5.8
-    eslint-plugin-import:
-      specifier: ^2.32.0
-      version: 2.32.0
-    eslint-plugin-only-warn:
-      specifier: ^1.1.0
-      version: 1.1.0
-    eslint-plugin-react:
-      specifier: ^7.37.5
-      version: 7.37.5
-    eslint-plugin-react-hooks:
-      specifier: ^5.2.0
-      version: 5.2.0
-    eslint-plugin-turbo:
-      specifier: ^2.5.8
-      version: 2.5.8
-    globals:
-      specifier: ^16.4.0
-      version: 16.4.0
-    knip:
-      specifier: ^5.64.0
-      version: 5.64.0
-    next-themes:
-      specifier: 0.4.6
-      version: 0.4.6
-    pg:
-      specifier: ^8.16.3
-      version: 8.16.3
-    prettier:
-      specifier: ^3.6.2
-      version: 3.6.2
-    react:
-      specifier: ^19.1.1
-      version: 19.2.0
-    react-dom:
-      specifier: ^19.1.1
-      version: 19.2.0
-    sonner:
-      specifier: 2.0.6
-      version: 2.0.6
-    tailwind-merge:
-      specifier: 3.3.1
-      version: 3.3.1
-    tailwindcss:
-      specifier: 4.1.11
-      version: 4.1.11
-    tailwindcss-animate:
-      specifier: ^1.0.7
-      version: 1.0.7
-    tsx:
-      specifier: ^4.20.6
-      version: 4.20.6
-    typescript:
-      specifier: ^5.9.2
-      version: 5.9.2
-    typescript-eslint:
-      specifier: ^8.44.1
-      version: 8.48.1
-
 overrides:
   brace-expansion@<=2.0.1: 2.0.2
   esbuild@<=0.24.2: '>=0.25.0'
@@ -124,7 +13,7 @@ importers:
   .:
     devDependencies:
       knip:
-        specifier: 'catalog:'
+        specifier: ^5.64.0
         version: 5.64.0(@types/node@24.5.2)(typescript@5.9.2)
       turbo:
         specifier: ^2.6.2
@@ -178,7 +67,7 @@ importers:
         specifier: ^4.0.1
         version: 4.0.1
       pg:
-        specifier: 'catalog:'
+        specifier: ^8.16.3
         version: 8.16.3
       reflect-metadata:
         specifier: ^0.2.0
@@ -221,7 +110,7 @@ importers:
         specifier: ^4.0.1
         version: 4.0.1
       '@types/pg':
-        specifier: 'catalog:'
+        specifier: ^8.15.6
         version: 8.15.6
       '@types/supertest':
         specifier: ^6.0.0
@@ -251,7 +140,7 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0
       tsx:
-        specifier: 'catalog:'
+        specifier: ^4.20.6
         version: 4.20.6
       typescript:
         specifier: ^5.1.3
@@ -444,7 +333,7 @@ importers:
         specifier: ^1.1.7
         version: 1.1.7(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@radix-ui/react-avatar':
-        specifier: 'catalog:'
+        specifier: 1.1.10
         version: 1.1.10(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@radix-ui/react-checkbox':
         specifier: ^1.3.3
@@ -453,16 +342,16 @@ importers:
         specifier: ^1.1.12
         version: 1.1.12(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@radix-ui/react-dialog':
-        specifier: 'catalog:'
+        specifier: 1.1.14
         version: 1.1.14(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@radix-ui/react-dropdown-menu':
-        specifier: 'catalog:'
+        specifier: 2.1.15
         version: 2.1.15(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@radix-ui/react-icons':
-        specifier: 'catalog:'
+        specifier: 1.3.2
         version: 1.3.2(react@19.2.0)
       '@radix-ui/react-label':
-        specifier: 'catalog:'
+        specifier: 2.1.7
         version: 2.1.7(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@radix-ui/react-navigation-menu':
         specifier: ^1.2.14
@@ -486,7 +375,7 @@ importers:
         specifier: ^1.1.7
         version: 1.1.7(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@radix-ui/react-slot':
-        specifier: 'catalog:'
+        specifier: 1.2.3
         version: 1.2.3(@types/react@19.1.13)(react@19.2.0)
       '@radix-ui/react-switch':
         specifier: ^1.2.6
@@ -495,16 +384,16 @@ importers:
         specifier: ^1.1.13
         version: 1.1.13(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@radix-ui/react-toast':
-        specifier: 'catalog:'
+        specifier: ^1.2.15
         version: 1.2.15(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@radix-ui/react-tooltip':
-        specifier: 'catalog:'
+        specifier: 1.2.7
         version: 1.2.7(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@tabler/icons-react':
         specifier: ^3.35.0
         version: 3.35.0(react@19.2.0)
       '@tanstack/react-router':
-        specifier: 'catalog:'
+        specifier: ^1.132.7
         version: 1.132.7(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@tanstack/react-table':
         specifier: ^8.20.5
@@ -513,7 +402,7 @@ importers:
         specifier: ^1.12.2
         version: 1.12.2
       class-variance-authority:
-        specifier: 'catalog:'
+        specifier: 0.7.1
         version: 0.7.1
       cmdk:
         specifier: 1.1.1
@@ -540,7 +429,7 @@ importers:
         specifier: ^2.4.7
         version: 2.4.7
       next-themes:
-        specifier: 'catalog:'
+        specifier: 0.4.6
         version: 0.4.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react-day-picker:
         specifier: 9.8.0
@@ -555,13 +444,13 @@ importers:
         specifier: ^3.2.1
         version: 3.2.1(@types/react@19.1.13)(react-dom@19.2.0(react@19.2.0))(react-is@18.3.1)(react@19.2.0)(redux@5.0.1)
       sonner:
-        specifier: 'catalog:'
+        specifier: 2.0.6
         version: 2.0.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       tailwind-merge:
-        specifier: 'catalog:'
+        specifier: 3.3.1
         version: 3.3.1
       tailwindcss:
-        specifier: 'catalog:'
+        specifier: 4.1.11
         version: 4.1.11
       zod:
         specifier: ^4.1.11
@@ -583,25 +472,25 @@ importers:
         specifier: ^3.0.6
         version: 3.0.6
       '@types/react':
-        specifier: 'catalog:'
+        specifier: ^19.1.13
         version: 19.1.13
       eslint:
-        specifier: 'catalog:'
+        specifier: ^9.36.0
         version: 9.36.0(jiti@2.6.1)
       next:
         specifier: 16.0.6
         version: 16.0.6(@babel/core@7.28.4)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       prettier:
-        specifier: 'catalog:'
+        specifier: ^3.6.2
         version: 3.6.2
       react:
-        specifier: 'catalog:'
+        specifier: ^19.1.1
         version: 19.2.0
       react-dom:
-        specifier: 'catalog:'
+        specifier: ^19.1.1
         version: 19.2.0(react@19.2.0)
       typescript:
-        specifier: 'catalog:'
+        specifier: ^5.9.2
         version: 5.9.2
       vite-plugin-svgr:
         specifier: ^4.5.0
@@ -610,11 +499,11 @@ importers:
   tools/eslint:
     dependencies:
       eslint-config-turbo:
-        specifier: 'catalog:'
+        specifier: ^2.5.8
         version: 2.5.8(eslint@9.36.0(jiti@2.6.1))(turbo@2.6.2)
     devDependencies:
       '@eslint/js':
-        specifier: 'catalog:'
+        specifier: ^9.36.0
         version: 9.36.0
       '@repo/prettier-config':
         specifier: workspace:*
@@ -623,65 +512,65 @@ importers:
         specifier: workspace:*
         version: link:../typescript
       '@types/eslint-config-prettier':
-        specifier: 'catalog:'
+        specifier: ^6.11.3
         version: 6.11.3
       eslint:
-        specifier: 'catalog:'
+        specifier: ^9.36.0
         version: 9.36.0(jiti@2.6.1)
       eslint-config-prettier:
-        specifier: 'catalog:'
+        specifier: ^10.1.8
         version: 10.1.8(eslint@9.36.0(jiti@2.6.1))
       eslint-plugin-import:
-        specifier: 'catalog:'
+        specifier: ^2.32.0
         version: 2.32.0(@typescript-eslint/parser@8.48.1(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.2))(eslint@9.36.0(jiti@2.6.1))
       eslint-plugin-only-warn:
-        specifier: 'catalog:'
+        specifier: ^1.1.0
         version: 1.1.0
       eslint-plugin-react:
-        specifier: 'catalog:'
+        specifier: ^7.37.5
         version: 7.37.5(eslint@9.36.0(jiti@2.6.1))
       eslint-plugin-react-hooks:
-        specifier: 'catalog:'
+        specifier: ^5.2.0
         version: 5.2.0(eslint@9.36.0(jiti@2.6.1))
       eslint-plugin-turbo:
-        specifier: 'catalog:'
+        specifier: ^2.5.8
         version: 2.5.8(eslint@9.36.0(jiti@2.6.1))(turbo@2.6.2)
       globals:
-        specifier: 'catalog:'
+        specifier: ^16.4.0
         version: 16.4.0
       prettier:
-        specifier: 'catalog:'
+        specifier: ^3.6.2
         version: 3.6.2
       typescript:
-        specifier: 'catalog:'
+        specifier: ^5.9.2
         version: 5.9.2
       typescript-eslint:
-        specifier: 'catalog:'
+        specifier: ^8.44.1
         version: 8.48.1(eslint@9.36.0(jiti@2.6.1))(typescript@5.9.2)
 
   tools/prettier:
     dependencies:
       prettier:
-        specifier: 'catalog:'
+        specifier: ^3.6.2
         version: 3.6.2
     devDependencies:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript
       typescript:
-        specifier: 'catalog:'
+        specifier: ^5.9.2
         version: 5.9.2
 
   tools/tailwind:
     dependencies:
       eslint:
-        specifier: 'catalog:'
+        specifier: ^9.36.0
         version: 9.36.0(jiti@2.6.1)
       tailwindcss:
-        specifier: 'catalog:'
+        specifier: 4.1.11
         version: 4.1.11
       tailwindcss-animate:
-        specifier: 'catalog:'
+        specifier: ^1.0.7
         version: 1.0.7(tailwindcss@4.1.11)
     devDependencies:
       '@repo/eslint-config':
@@ -691,7 +580,7 @@ importers:
         specifier: workspace:*
         version: link:../prettier
       prettier:
-        specifier: 'catalog:'
+        specifier: ^3.6.2
         version: 3.6.2
 
   tools/typescript: {}
@@ -10673,8 +10562,8 @@ snapshots:
       '@next/eslint-plugin-next': 16.0.6
       eslint: 9.36.0(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(eslint@9.36.0(jiti@2.6.1)))(eslint@9.36.0(jiti@2.6.1))
-      eslint-plugin-import: 2.32.0(eslint-import-resolver-typescript@3.10.1)(eslint@9.36.0(jiti@2.6.1))
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.36.0(jiti@2.6.1))
+      eslint-plugin-import: 2.32.0(eslint@9.36.0(jiti@2.6.1))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@9.36.0(jiti@2.6.1))
       eslint-plugin-react: 7.37.5(eslint@9.36.0(jiti@2.6.1))
       eslint-plugin-react-hooks: 7.0.1(eslint@9.36.0(jiti@2.6.1))
@@ -10706,7 +10595,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(eslint@9.36.0(jiti@2.6.1)))(eslint@9.36.0(jiti@2.6.1)):
+  eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@9.36.0(jiti@2.6.1)):
     dependencies:
       '@nolyfill/is-core-module': 1.0.39
       debug: 4.4.3
@@ -10717,7 +10606,7 @@ snapshots:
       tinyglobby: 0.2.15
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(eslint-import-resolver-typescript@3.10.1)(eslint@9.36.0(jiti@2.6.1))
+      eslint-plugin-import: 2.32.0(eslint@9.36.0(jiti@2.6.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -10731,13 +10620,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(eslint@9.36.0(jiti@2.6.1)))(eslint@9.36.0(jiti@2.6.1)))(eslint@9.36.0(jiti@2.6.1)):
+  eslint-module-utils@2.12.1(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.36.0(jiti@2.6.1)):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       eslint: 9.36.0(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(eslint@9.36.0(jiti@2.6.1)))(eslint@9.36.0(jiti@2.6.1))
+      eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0)(eslint@9.36.0(jiti@2.6.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -10770,7 +10659,7 @@ snapshots:
       - eslint-import-resolver-webpack
       - supports-color
 
-  eslint-plugin-import@2.32.0(eslint-import-resolver-typescript@3.10.1)(eslint@9.36.0(jiti@2.6.1)):
+  eslint-plugin-import@2.32.0(eslint@9.36.0(jiti@2.6.1)):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9
@@ -10781,7 +10670,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 9.36.0(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(eslint@9.36.0(jiti@2.6.1)))(eslint@9.36.0(jiti@2.6.1)))(eslint@9.36.0(jiti@2.6.1))
+      eslint-module-utils: 2.12.1(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@9.36.0(jiti@2.6.1))
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
