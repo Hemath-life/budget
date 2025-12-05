@@ -55,5 +55,6 @@
     "*.ts": "${capture}.test.ts, ${capture}.spec.ts",
     "*.tsx": "${capture}.test.tsx, ${capture}.spec.tsx"
   },
-  "prisma.pinToPrisma6": true
+  "prisma.pinToPrisma6": true,
+  "cSpell.words": ["autoincrement"]
 }

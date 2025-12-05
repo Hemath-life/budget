@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
   name      String?
@@ -29,7 +29,7 @@ model User {
 }
 
 model Category {
-  id        String   @id @default(uuid())
+  id        Int      @id @default(autoincrement())
   name      String
   type      String // 'income' | 'expense'
   icon      String
@@ -46,18 +46,18 @@ model Category {
 }
 
 model Transaction {
-  id          String   @id @default(uuid())
+  id          Int      @id @default(autoincrement())
   type        String // 'income' | 'expense'
   amount      Float
   currency    String   @default("INR")
-  categoryId  String
+  categoryId  Int
   category    Category @relation(fields: [categoryId], references: [id])
-  userId      String
+  userId      Int
   user        User     @relation(fields: [userId], references: [id])
   description String?
   date        DateTime
   isRecurring Boolean  @default(false)
-  recurringId String?
+  recurringId Int?
   recurring   RecurringTransaction? @relation(fields: [recurringId], references: [id])
   tags        String[] // Array of tags
   createdAt   DateTime @default(now())
@@ -67,10 +67,10 @@ model Transaction {
 }
 
 model Budget {
-  id         String   @id @default(uuid())
-  userId     String
+  id         Int      @id @default(autoincrement())
+  userId     Int
   user       User     @relation(fields: [userId], references: [id])
-  categoryId String
+  categoryId Int
   category   Category @relation(fields: [categoryId], references: [id])
   amount     Float
   currency   String   @default("INR")
@@ -83,15 +83,15 @@ model Budget {
 }
 
 model Goal {
-  id            String    @id @default(uuid())
-  userId        String
+  id            Int       @id @default(autoincrement())
+  userId        Int
   user          User      @relation(fields: [userId], references: [id])
   name          String
   targetAmount  Float
   currentAmount Float     @default(0)
   currency      String    @default("INR")
   deadline      DateTime
-  categoryId    String?
+  categoryId    Int?
   category      Category? @relation(fields: [categoryId], references: [id])
   icon          String
   color         String
@@ -102,14 +102,14 @@ model Goal {
 }
 
 model Reminder {
-  id           String   @id @default(uuid())
-  userId       String
+  id           Int      @id @default(autoincrement())
+  userId       Int
   user         User     @relation(fields: [userId], references: [id])
   title        String
   amount       Float
   currency     String   @default("INR")
   dueDate      DateTime
-  categoryId   String
+  categoryId   Int
   category     Category @relation(fields: [categoryId], references: [id])
   isRecurring  Boolean  @default(false)
   frequency    String? // 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly'
@@ -121,13 +121,13 @@ model Reminder {
 }
 
 model RecurringTransaction {
-  id          String    @id @default(uuid())
-  userId      String
+  id          Int       @id @default(autoincrement())
+  userId      Int
   user        User      @relation(fields: [userId], references: [id])
   type        String // 'income' | 'expense'
   amount      Float
   currency    String    @default("INR")
-  categoryId  String
+  categoryId  Int
   category    Category  @relation(fields: [categoryId], references: [id])
   description String?
   frequency   String // 'daily' | 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | 'yearly'
@@ -143,8 +143,8 @@ model RecurringTransaction {
 }
 
 model Settings {
-  id                   String  @id @default(uuid())
-  userId               String  @unique
+  id                   Int     @id @default(autoincrement())
+  userId               Int     @unique
   user                 User    @relation(fields: [userId], references: [id])
   defaultCurrency      String  @default("INR")
   theme                String  @default("system")
