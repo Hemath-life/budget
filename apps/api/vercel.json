@@ -1,16 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd ../.. && npx pnpm@9.15.0 install && npx pnpm@9.15.0 --filter=@repo/api exec prisma generate",
-  "buildCommand": "",
-  "functions": {
-    "src/main.ts": {
-      "runtime": "@vercel/node@3"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/src/main.ts"
-    }
-  ]
+  "installCommand": "cd ../.. && npx pnpm@9.15.0 install && npx pnpm@9.15.0 --filter=@repo/api exec prisma generate"
 }
