@@ -497,7 +497,7 @@ export function ReportsView() {
                     tickLine={false}
                     tick={{
                       fontSize: 11,
-                      fill: '#9ca3af',
+                      fill: 'hsl(var(--muted-foreground))',
                     }}
                     dy={10}
                   />
@@ -506,7 +506,7 @@ export function ReportsView() {
                     tickLine={false}
                     tick={{
                       fontSize: 11,
-                      fill: '#9ca3af',
+                      fill: 'hsl(var(--muted-foreground))',
                     }}
                     tickFormatter={(value) =>
                       value >= 1000
@@ -880,7 +880,7 @@ export function ReportsView() {
                       tickLine={false}
                       tick={{
                         fontSize: 10,
-                        fill: '#9ca3af',
+                        fill: 'hsl(var(--muted-foreground))',
                       }}
                       interval="preserveStartEnd"
                     />
@@ -889,7 +889,7 @@ export function ReportsView() {
                       tickLine={false}
                       tick={{
                         fontSize: 11,
-                        fill: '#9ca3af',
+                        fill: 'hsl(var(--muted-foreground))',
                       }}
                       tickFormatter={(value) =>
                         value >= 1000

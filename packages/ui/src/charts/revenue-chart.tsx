@@ -1,5 +1,7 @@
 'use client';
 
+import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui';
+import { cn } from '#/lib/utils';
 import { BarChart3, TrendingDown, TrendingUp } from 'lucide-react';
 import {
   Area,
@@ -9,8 +11,6 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { Card, CardContent, CardHeader, CardTitle } from '#/components/ui';
-import { cn } from '#/lib/utils';
 
 export interface RevenueChartProps {
   data: Array<{
@@ -99,12 +99,18 @@ export function RevenueChart({
               dataKey="month"
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 11, fill: '#94A3B8' }}
+              tick={{
+                fontSize: 11,
+                fill: 'hsl(var(--muted-foreground))',
+              }}
             />
             <YAxis
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 11, fill: '#94A3B8' }}
+              tick={{
+                fontSize: 11,
+                fill: 'hsl(var(--muted-foreground))',
+              }}
               tickFormatter={(value) => `${value / 1000}k`}
             />
             <Tooltip
