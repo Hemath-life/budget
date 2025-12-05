@@ -33,7 +33,7 @@ export const Header = ({
   return (
     <header
       className={cn(
-        'bg-background flex h-14 items-center gap-2 px-3 sm:h-16 sm:gap-4 sm:px-4',
+        'bg-background flex h-14 items-center gap-2 px-3 sm:h-16 sm:gap-4 sm:px-4 overflow-hidden',
         // Apply fixed positioning and styling when fixed prop is true
         fixed && 'header-fixed peer/header fixed z-50 w-[inherit] rounded-md',
         offset > 10 && fixed ? 'shadow-sm' : 'shadow-none',
