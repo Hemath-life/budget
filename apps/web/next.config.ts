@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || 'https://api-puce-delta.vercel.app';
 
 const nextConfig: NextConfig = {
   /* config options here */

@@ -10,13 +10,16 @@ async function bootstrap() {
   if (!app) {
     app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-    app.enableCors();
+    app.enableCors({
+      origin: ['http://localhost:3000', 'https://web-psi-silk-47.vercel.app'],
+      credentials: true,
+    });
     app.setGlobalPrefix('api');
     app.useGlobalPipes(
       new ValidationPipe({
         whitelist: true,
         transform: true,
-      })
+      }),
     );
 
     const config = new DocumentBuilder()
