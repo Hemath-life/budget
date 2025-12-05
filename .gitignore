@@ -55,5 +55,8 @@ pnpm-debug.log*
 *.sqlite3
 *.db
 
+# Prisma
+generated/
+
 # Vercel
 .vercel
