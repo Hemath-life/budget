@@ -10,9 +10,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-const DUMMY_CREDENTIALS = {
-  email: 'demo@budgetapp.com',
-  password: 'demo123',
+const DEMO_CREDENTIALS = {
+  email: process.env.NEXT_PUBLIC_DEMO_USER_EMAIL || 'demo@budgetapp.com',
+  password: process.env.NEXT_PUBLIC_DEMO_USER_PASSWORD || 'demo123',
 };
 
 export default function LoginPage() {
@@ -49,8 +49,8 @@ export default function LoginPage() {
   };
 
   const fillDemoCredentials = () => {
-    setEmail(DUMMY_CREDENTIALS.email);
-    setPassword(DUMMY_CREDENTIALS.password);
+    setEmail(DEMO_CREDENTIALS.email);
+    setPassword(DEMO_CREDENTIALS.password);
   };
 
   return (
