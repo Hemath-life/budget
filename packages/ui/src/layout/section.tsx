@@ -11,8 +11,8 @@ export const Section = ({ fixed, className, grid, ...props }: SectionProps) => {
   return (
     <section
       className={cn(
-        grid && 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6', // Add grid class if type is grid
-        fixed && 'no-scrollbar overflow-auto pt-4 relative',
+        grid && 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6',
+        fixed && 'no-scrollbar overflow-auto relative',
         className,
       )}
       {...props}

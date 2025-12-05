@@ -14,13 +14,10 @@ export default function DashboardLayout({
       sidebarDefaultOpen
       searchPlaceholder="Search pages & quick actions"
     >
-      <Main className="flex flex-col bg-background p-0" fixed>
+      <Main className="flex flex-col bg-background !p-0" fixed>
         <Header />
-        <Section
-          className="p-2"
-          fixed
-        >
-          <div className="space-y-6">{children}</div>
+        <Section className="px-4 py-4 sm:px-6" fixed>
+          {children}
         </Section>
       </Main>
     </AuthenticatedLayout>
