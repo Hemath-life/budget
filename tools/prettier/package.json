@@ -13,11 +13,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "prettier": "catalog:"
+    "prettier": "^3.6.2"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "typescript": "catalog:"
+    "typescript": "^5.9.2"
   },
   "prettier": "@repo/prettier-config"
 }
