@@ -10,8 +10,12 @@ async function bootstrap() {
   if (!app) {
     app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+    const allowedOrigins = process.env.CORS_ORIGINS
+      ? process.env.CORS_ORIGINS.split(',')
+      : ['http://localhost:3000'];
+
     app.enableCors({
-      origin: ['http://localhost:3000', 'https://web-psi-silk-47.vercel.app'],
+      origin: allowedOrigins,
       credentials: true,
     });
     app.setGlobalPrefix('api');
