@@ -1,7 +1,7 @@
+import { Separator } from '#/components/ui/separator';
 import React from 'react';
 import { cn } from '../../lib/utils';
 import { SidebarTrigger } from '../sidebar';
-import { Separator } from '#/components/ui/separator';
 
 interface HeaderProps extends React.HTMLAttributes<HTMLElement> {
   fixed?: boolean;
@@ -33,7 +33,7 @@ export const Header = ({
   return (
     <header
       className={cn(
-        'bg-background flex h-16 items-center gap-3 p-4 sm:gap-4',
+        'bg-background flex h-14 items-center gap-2 px-3 sm:h-16 sm:gap-4 sm:px-4',
         // Apply fixed positioning and styling when fixed prop is true
         fixed && 'header-fixed peer/header fixed z-50 w-[inherit] rounded-md',
         offset > 10 && fixed ? 'shadow-sm' : 'shadow-none',
@@ -45,14 +45,14 @@ export const Header = ({
       {sidebarTrigger && (
         <SidebarTrigger
           variant="outline"
-          className="scale-125 sm:scale-100"
+          className="size-8 sm:size-9"
           datatype="header-trigger"
         />
       )}
-      {/* Vertical separator between sidebar trigger and header content */}
+      {/* Vertical separator between sidebar trigger and header content - hidden on mobile */}
       <Separator
         orientation="vertical"
-        className="h-6"
+        className="hidden h-6 sm:block"
         datatype="header-separator"
       />
       {/* Render any children components passed to the header */}
