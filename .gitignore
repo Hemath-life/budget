@@ -60,3 +60,4 @@ generated/
 
 # Vercel
 .vercel
+.env*.local
