@@ -1,7 +1,15 @@
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const prisma = new PrismaClient();
+
+// Demo user credentials from environment variables
+const DEMO_EMAIL = process.env.DEMO_USER_EMAIL || 'demo@budgetapp.com';
+const DEMO_PASSWORD = process.env.DEMO_USER_PASSWORD || 'demo123';
+const DEMO_NAME = process.env.DEMO_USER_NAME || 'Demo User';
 
 async function main() {
   console.log('🌱 Starting seed...');
@@ -237,13 +245,13 @@ async function main() {
   ]);
   console.log(`💰 Created ${incomeCategories.length} income categories`);
 
-  // Create a demo user
-  const hashedPassword = await bcrypt.hash('demo123', 10);
+  // Create a demo user from environment variables
+  const hashedPassword = await bcrypt.hash(DEMO_PASSWORD, 10);
   const demoUser = await prisma.user.create({
     data: {
-      email: 'demo@budgetapp.com',
+      email: DEMO_EMAIL,
       password: hashedPassword,
-      name: 'Demo User',
+      name: DEMO_NAME,
     },
   });
   console.log(`👤 Created demo user: ${demoUser.email}`);
