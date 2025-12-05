@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "installCommand": "cd ../.. && npx pnpm@9.15.0 install",
-  "buildCommand": "cd ../.. && npx pnpm@9.15.0 --filter=@repo/web... build",
+  "installCommand": "cd ../.. && npx pnpm@latest install",
+  "buildCommand": "cd ../.. && npx pnpm@latest --filter=@repo/web... build",
   "rewrites": [
     {
       "source": "/api/:path*",
