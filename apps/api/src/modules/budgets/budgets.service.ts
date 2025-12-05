@@ -17,6 +17,7 @@ export class BudgetsService {
         userId,
         startDate: startDate ? new Date(startDate) : new Date(),
       },
+      include: { category: true },
     });
 
     return this.mapToResponse(budget);
@@ -25,6 +26,7 @@ export class BudgetsService {
   async findAll(userId: string) {
     const budgets = await this.prisma.budget.findMany({
       where: { userId },
+      include: { category: true },
       orderBy: { createdAt: 'desc' },
     });
     return budgets.map((b) => this.mapToResponse(b));
@@ -33,6 +35,7 @@ export class BudgetsService {
   async findOne(id: string, userId: string) {
     const budget = await this.prisma.budget.findFirst({
       where: { id, userId },
+      include: { category: true },
     });
 
     if (!budget) {
@@ -60,6 +63,7 @@ export class BudgetsService {
     const budget = await this.prisma.budget.update({
       where: { id },
       data,
+      include: { category: true },
     });
     return this.mapToResponse(budget);
   }
@@ -139,7 +143,8 @@ export class BudgetsService {
   private mapToResponse(budget: any) {
     return {
       id: budget.id,
-      category: budget.categoryId,
+      category: budget.category?.name || budget.categoryId,
+      categoryId: budget.categoryId,
       amount: budget.amount,
       currency: budget.currency,
       period: budget.period,
