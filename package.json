@@ -4,7 +4,6 @@
   "private": true,
   "type": "module",
   "license": "MIT",
-  "packageManager": "pnpm@latest",
   "engines": {
     "node": "20.x"
   },
