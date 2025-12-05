@@ -76,7 +76,10 @@ ignoredBuiltDependencies:
   - sharp
 
 onlyBuiltDependencies:
+  - '@prisma/client'
+  - '@prisma/engines'
   - argon2
+  - prisma
 
 overrides:
   brace-expansion@<=2.0.1: 2.0.2
