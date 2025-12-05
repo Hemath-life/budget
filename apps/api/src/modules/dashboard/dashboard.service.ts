@@ -16,7 +16,7 @@ export class DashboardService {
     const firstDayOfLastMonth = new Date(
       now.getFullYear(),
       now.getMonth() - 1,
-      1,
+      1
     );
     const lastDayOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
 
@@ -153,7 +153,7 @@ export class DashboardService {
         date: t.date.toISOString(),
         isRecurring: t.isRecurring,
         recurringId: t.recurringId,
-        tags: t.tags ? JSON.parse(t.tags) : [],
+        tags: t.tags || [],
         createdAt: t.createdAt.toISOString(),
         updatedAt: t.updatedAt.toISOString(),
       })),

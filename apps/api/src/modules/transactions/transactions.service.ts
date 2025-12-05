@@ -44,14 +44,14 @@ export class TransactionsService {
 
     if (!category) {
       throw new NotFoundException(
-        `Category with ID "${createTransactionDto.categoryId}" not found`,
+        `Category with ID "${createTransactionDto.categoryId}" not found`
       );
     }
 
     // Verify category type matches transaction type
     if (category.type !== createTransactionDto.type) {
       throw new BadRequestException(
-        `Category type "${category.type}" does not match transaction type "${createTransactionDto.type}"`,
+        `Category type "${category.type}" does not match transaction type "${createTransactionDto.type}"`
       );
     }
 
@@ -66,7 +66,9 @@ export class TransactionsService {
           date: new Date(createTransactionDto.date),
           isRecurring: createTransactionDto.isRecurring || false,
           recurringId: createTransactionDto.recurringId,
-          tags: createTransactionDto.tags,
+          tags: createTransactionDto.tags
+            ? createTransactionDto.tags.split(',').map((t) => t.trim())
+            : [],
           userId,
         },
         include: { category: true },
@@ -75,7 +77,7 @@ export class TransactionsService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2003') {
           throw new BadRequestException(
-            `Invalid foreign key reference. Please ensure the user and category exist.`,
+            `Invalid foreign key reference. Please ensure the user and category exist.`
           );
         }
       }
@@ -162,11 +164,32 @@ export class TransactionsService {
   update(
     id: string,
     userId: string,
-    updateTransactionDto: UpdateTransactionDto,
+    updateTransactionDto: UpdateTransactionDto
   ) {
+    const data: Record<string, unknown> = {};
+
+    if (updateTransactionDto.type !== undefined)
+      data.type = updateTransactionDto.type;
+    if (updateTransactionDto.amount !== undefined)
+      data.amount = updateTransactionDto.amount;
+    if (updateTransactionDto.currency !== undefined)
+      data.currency = updateTransactionDto.currency;
+    if (updateTransactionDto.categoryId !== undefined)
+      data.categoryId = updateTransactionDto.categoryId;
+    if (updateTransactionDto.description !== undefined)
+      data.description = updateTransactionDto.description;
+    if (updateTransactionDto.date !== undefined)
+      data.date = new Date(updateTransactionDto.date);
+    if (updateTransactionDto.isRecurring !== undefined)
+      data.isRecurring = updateTransactionDto.isRecurring;
+    if (updateTransactionDto.recurringId !== undefined)
+      data.recurringId = updateTransactionDto.recurringId;
+    if (updateTransactionDto.tags !== undefined)
+      data.tags = updateTransactionDto.tags.split(',').map((t) => t.trim());
+
     return this.prisma.transaction.updateMany({
       where: { id, userId },
-      data: updateTransactionDto,
+      data,
     });
   }
 
