@@ -22,7 +22,7 @@
     "ui-add": "turbo ui-add -F @repo/ui --"
   },
   "devDependencies": {
-    "knip": "catalog:",
+    "knip": "^5.64.0",
     "turbo": "^2.6.2"
   }
 }
