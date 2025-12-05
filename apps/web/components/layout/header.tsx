@@ -53,7 +53,7 @@ export function Header() {
         variant="search-first"
         logout={logout}
         showNav={false}
-        searchPlaceholder="Search pages, actions, transactions..."
+        searchPlaceholder="Search pages, actions..."
         badge={{ label: currency, variant: 'outline' }}
         reminderDropdown={reminderDropdown}
       />
