@@ -1,4 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd ../.. && npx pnpm@9 install --no-frozen-lockfile && npx pnpm@9 --filter=@repo/api exec prisma generate"
+  "installCommand": "cd ../.. && npx pnpm@9.15.0 install --no-frozen-lockfile && npx pnpm@9.15.0 --filter=@repo/api exec prisma generate"
 }
