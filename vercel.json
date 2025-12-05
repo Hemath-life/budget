@@ -3,5 +3,5 @@
   "installCommand": "corepack enable && pnpm install",
   "buildCommand": "pnpm turbo build --filter=@repo/web",
   "outputDirectory": "apps/web/.next",
-  "framework": "nextjs"
+  "framework": null
 }
