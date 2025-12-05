@@ -15,7 +15,14 @@
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*", "tsconfig*.json"],
       "outputs": ["dist/**", "build/**", ".next/**", "storybook-static/**"],
-      "env": ["PUBLIC_*", "PROD", "NODE_ENV"]
+      "env": [
+        "PUBLIC_*",
+        "PROD",
+        "NODE_ENV",
+        "DATABASE_URL",
+        "JWT_SECRET",
+        "CORS_ORIGINS"
+      ]
     },
     "preview": {
       "dependsOn": ["build"],
@@ -88,5 +95,12 @@
     }
   },
   "globalEnv": ["NODE_ENV", "CI", "VERCEL", "NEXT_PUBLIC_*", "PUBLIC_*"],
-  "globalPassThroughEnv": ["NODE_ENV", "CI", "npm_lifecycle_event", "VERCEL", "VERCEL_*", "PUBLIC_*"]
+  "globalPassThroughEnv": [
+    "NODE_ENV",
+    "CI",
+    "npm_lifecycle_event",
+    "VERCEL",
+    "VERCEL_*",
+    "PUBLIC_*"
+  ]
 }
