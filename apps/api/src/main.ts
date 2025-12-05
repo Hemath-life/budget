@@ -10,12 +10,8 @@ async function bootstrap() {
   if (!app) {
     app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-    const allowedOrigins = process.env.CORS_ORIGINS
-      ? process.env.CORS_ORIGINS.split(',')
-      : ['http://localhost:3000'];
-
     app.enableCors({
-      origin: allowedOrigins,
+      origin: '*',
       credentials: true,
     });
     app.setGlobalPrefix('api');
@@ -49,6 +45,12 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Export for Vercel serverless
 export default async (req: any, res: any) => {
+  // Handle root path directly for health check
+  if (req.url === '/' || req.url === '') {
+    res.status(200).json({ message: 'Hello World! Budget API is running 🚀' });
+    return;
+  }
+
   const app = await bootstrap();
   const expressApp = app.getHttpAdapter().getInstance();
   return expressApp(req, res);
