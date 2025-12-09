@@ -25,10 +25,32 @@
     "db:studio": "turbo studio -F @repo/api",
     "db:push": "turbo push -F @repo/api",
     "knip": "knip",
-    "ui-add": "turbo ui-add -F @repo/ui --"
+    "ui-add": "turbo ui-add -F @repo/ui --",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.2.0",
+    "@commitlint/config-conventional": "^20.2.0",
+    "husky": "^9.1.7",
     "knip": "^5.64.0",
+    "lint-staged": "^16.2.7",
     "turbo": "^2.6.2"
+  },
+  "lint-staged": {
+    "apps/api/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "apps/web/**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "packages/ui/**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
   }
 }
