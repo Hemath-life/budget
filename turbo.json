@@ -37,6 +37,11 @@
       "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"],
       "outputs": [".cache/tsbuildinfo.json", "tsconfig.tsbuildinfo"]
     },
+    "test": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "**/*.test.*", "**/*.spec.*"],
+      "outputs": ["coverage/**"]
+    },
     "lint": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".eslintrc*", "eslint.config.*"],
