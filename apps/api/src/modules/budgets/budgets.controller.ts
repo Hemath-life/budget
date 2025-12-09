@@ -9,6 +9,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { AuthenticatedRequest } from '../../types/authenticated-request';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { BudgetsService } from './budgets.service';
 import { CreateBudgetDto } from './dto/create-budget.dto';
@@ -20,28 +21,31 @@ export class BudgetsController {
   constructor(private readonly budgetsService: BudgetsService) {}
 
   @Post()
-  create(@Request() req, @Body() createBudgetDto: CreateBudgetDto) {
+  create(
+    @Request() req: AuthenticatedRequest,
+    @Body() createBudgetDto: CreateBudgetDto,
+  ) {
     return this.budgetsService.create(createBudgetDto, req.user.userId);
   }
 
   @Post('load-defaults')
-  loadDefaults(@Request() req) {
+  loadDefaults(@Request() req: AuthenticatedRequest) {
     return this.budgetsService.loadDefaults(req.user.userId);
   }
 
   @Get()
-  findAll(@Request() req) {
+  findAll(@Request() req: AuthenticatedRequest) {
     return this.budgetsService.findAll(req.user.userId);
   }
 
   @Get(':id')
-  findOne(@Request() req, @Param('id') id: string) {
+  findOne(@Request() req: AuthenticatedRequest, @Param('id') id: string) {
     return this.budgetsService.findOne(id, req.user.userId);
   }
 
   @Put(':id')
   update(
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Body() updateBudgetDto: UpdateBudgetDto,
   ) {
@@ -49,7 +53,7 @@ export class BudgetsController {
   }
 
   @Delete(':id')
-  remove(@Request() req, @Param('id') id: string) {
+  remove(@Request() req: AuthenticatedRequest, @Param('id') id: string) {
     return this.budgetsService.remove(id, req.user.userId);
   }
 }

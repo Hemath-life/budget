@@ -5,21 +5,21 @@ export class CreateCategoryDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  name: string;
+  name!: string;
 
   @ApiProperty({ enum: ['income', 'expense'] })
   @IsNotEmpty()
   @IsString()
   @IsIn(['income', 'expense'])
-  type: string;
+  type!: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  icon: string;
+  icon!: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  color: string;
+  color!: string;
 }

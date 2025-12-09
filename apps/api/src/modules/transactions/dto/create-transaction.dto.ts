@@ -14,12 +14,12 @@ export class CreateTransactionDto {
   @IsNotEmpty()
   @IsString()
   @IsIn(['income', 'expense'])
-  type: string;
+  type!: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsNumber()
-  amount: number;
+  amount!: number;
 
   @ApiProperty({ default: 'INR' })
   @IsOptional()
@@ -29,7 +29,7 @@ export class CreateTransactionDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  categoryId: string;
+  categoryId!: string;
 
   @ApiProperty()
   @IsOptional()
@@ -39,7 +39,7 @@ export class CreateTransactionDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsDateString()
-  date: string;
+  date!: string;
 
   @ApiProperty()
   @IsOptional()

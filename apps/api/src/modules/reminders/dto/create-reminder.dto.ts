@@ -10,11 +10,11 @@ import {
 export class CreateReminderDto {
   @IsNotEmpty()
   @IsString()
-  title: string;
+  title!: string;
 
   @IsNotEmpty()
   @IsNumber()
-  amount: number;
+  amount!: number;
 
   @IsOptional()
   @IsString()
@@ -22,11 +22,11 @@ export class CreateReminderDto {
 
   @IsNotEmpty()
   @IsString()
-  dueDate: string;
+  dueDate!: string;
 
   @IsNotEmpty()
   @IsString()
-  category: string; // categoryId
+  category!: string; // categoryId
 
   @IsOptional()
   @IsBoolean()

@@ -10,11 +10,11 @@ import {
 export class CreateRecurringDto {
   @IsNotEmpty()
   @IsEnum(['income', 'expense'])
-  type: 'income' | 'expense';
+  type!: 'income' | 'expense';
 
   @IsNotEmpty()
   @IsNumber()
-  amount: number;
+  amount!: number;
 
   @IsOptional()
   @IsString()
@@ -22,7 +22,7 @@ export class CreateRecurringDto {
 
   @IsNotEmpty()
   @IsString()
-  category: string; // categoryId
+  category!: string; // categoryId
 
   @IsOptional()
   @IsString()
@@ -30,7 +30,7 @@ export class CreateRecurringDto {
 
   @IsNotEmpty()
   @IsEnum(['daily', 'weekly', 'biweekly', 'monthly', 'quarterly', 'yearly'])
-  frequency:
+  frequency!:
     | 'daily'
     | 'weekly'
     | 'biweekly'
@@ -40,7 +40,7 @@ export class CreateRecurringDto {
 
   @IsNotEmpty()
   @IsString()
-  startDate: string;
+  startDate!: string;
 
   @IsOptional()
   @IsString()

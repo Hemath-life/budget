@@ -15,6 +15,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { TransactionsService } from './transactions.service';
+import { AuthenticatedRequest } from '../../types/authenticated-request';
 
 @ApiTags('transactions')
 @ApiBearerAuth()
@@ -24,7 +25,10 @@ export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
-  create(@Request() req, @Body() createTransactionDto: CreateTransactionDto) {
+  create(
+    @Request() req: AuthenticatedRequest,
+    @Body() createTransactionDto: CreateTransactionDto,
+  ) {
     return this.transactionsService.create(
       createTransactionDto,
       req.user.userId,
@@ -33,7 +37,7 @@ export class TransactionsController {
 
   @Get()
   findAll(
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
     @Query('type') type?: string,
     @Query('category') category?: string,
     @Query('search') search?: string,
@@ -70,13 +74,13 @@ export class TransactionsController {
   }
 
   @Get(':id')
-  findOne(@Request() req, @Param('id') id: string) {
+  findOne(@Request() req: AuthenticatedRequest, @Param('id') id: string) {
     return this.transactionsService.findOne(id, req.user.userId);
   }
 
   @Patch(':id')
   update(
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
@@ -88,7 +92,7 @@ export class TransactionsController {
   }
 
   @Delete(':id')
-  remove(@Request() req, @Param('id') id: string) {
+  remove(@Request() req: AuthenticatedRequest, @Param('id') id: string) {
     return this.transactionsService.remove(id, req.user.userId);
   }
 }

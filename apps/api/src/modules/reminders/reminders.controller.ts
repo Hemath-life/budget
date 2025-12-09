@@ -11,6 +11,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { AuthenticatedRequest } from '../../types/authenticated-request';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateReminderDto } from './dto/create-reminder.dto';
 import { UpdateReminderDto } from './dto/update-reminder.dto';
@@ -22,23 +23,29 @@ export class RemindersController {
   constructor(private readonly remindersService: RemindersService) {}
 
   @Post()
-  create(@Request() req, @Body() createReminderDto: CreateReminderDto) {
+  create(
+    @Request() req: AuthenticatedRequest,
+    @Body() createReminderDto: CreateReminderDto,
+  ) {
     return this.remindersService.create(createReminderDto, req.user.userId);
   }
 
   @Get()
-  findAll(@Request() req, @Query('status') status?: 'paid' | 'unpaid') {
+  findAll(
+    @Request() req: AuthenticatedRequest,
+    @Query('status') status?: 'paid' | 'unpaid',
+  ) {
     return this.remindersService.findAll(req.user.userId, status);
   }
 
   @Get(':id')
-  findOne(@Request() req, @Param('id') id: string) {
+  findOne(@Request() req: AuthenticatedRequest, @Param('id') id: string) {
     return this.remindersService.findOne(id, req.user.userId);
   }
 
   @Put(':id')
   update(
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Body() updateReminderDto: UpdateReminderDto,
   ) {
@@ -47,7 +54,7 @@ export class RemindersController {
 
   @Patch(':id')
   async patch(
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
     @Param('id') id: string,
     @Body() body: { action?: string },
   ) {
@@ -60,7 +67,7 @@ export class RemindersController {
   }
 
   @Delete(':id')
-  remove(@Request() req, @Param('id') id: string) {
+  remove(@Request() req: AuthenticatedRequest, @Param('id') id: string) {
     return this.remindersService.remove(id, req.user.userId);
   }
 }

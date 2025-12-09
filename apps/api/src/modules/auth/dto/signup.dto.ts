@@ -10,12 +10,12 @@ import {
 export class SignupDto {
   @ApiProperty()
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @MinLength(6)
-  password: string;
+  password!: string;
 
   @ApiPropertyOptional()
   @IsOptional()

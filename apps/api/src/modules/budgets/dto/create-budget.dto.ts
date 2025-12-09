@@ -9,11 +9,11 @@ import {
 export class CreateBudgetDto {
   @IsNotEmpty()
   @IsString()
-  category: string; // This is the category ID
+  category!: string; // This is the category ID
 
   @IsNotEmpty()
   @IsNumber()
-  amount: number;
+  amount!: number;
 
   @IsOptional()
   @IsString()
@@ -21,7 +21,7 @@ export class CreateBudgetDto {
 
   @IsNotEmpty()
   @IsEnum(['weekly', 'monthly', 'quarterly', 'yearly'])
-  period: 'weekly' | 'monthly' | 'quarterly' | 'yearly';
+  period!: 'weekly' | 'monthly' | 'quarterly' | 'yearly';
 
   @IsOptional()
   @IsNumber()

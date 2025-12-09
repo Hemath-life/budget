@@ -3,15 +3,15 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 export class CreateCurrencyDto {
   @IsNotEmpty()
   @IsString()
-  code: string;
+  code!: string;
 
   @IsNotEmpty()
   @IsString()
-  name: string;
+  name!: string;
 
   @IsNotEmpty()
   @IsString()
-  symbol: string;
+  symbol!: string;
 
   @IsOptional()
   @IsNumber()

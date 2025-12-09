@@ -9,11 +9,11 @@ import {
 export class CreateGoalDto {
   @IsNotEmpty()
   @IsString()
-  name: string;
+  name!: string;
 
   @IsNotEmpty()
   @IsNumber()
-  targetAmount: number;
+  targetAmount!: number;
 
   @IsOptional()
   @IsNumber()
@@ -25,7 +25,7 @@ export class CreateGoalDto {
 
   @IsNotEmpty()
   @IsString()
-  deadline: string;
+  deadline!: string;
 
   @IsOptional()
   @IsString()
@@ -33,11 +33,11 @@ export class CreateGoalDto {
 
   @IsNotEmpty()
   @IsString()
-  icon: string;
+  icon!: string;
 
   @IsNotEmpty()
   @IsString()
-  color: string;
+  color!: string;
 
   @IsOptional()
   @IsBoolean()
