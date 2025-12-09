@@ -1,12 +1,4 @@
 import {
-  AlertTriangle,
-  CheckCircle,
-  Info,
-  Trash2,
-  XCircle,
-} from 'lucide-react';
-import { cn } from '../lib/utils';
-import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
@@ -16,6 +8,14 @@ import {
   AlertDialog as AlertDialogPrimitive,
   AlertDialogTitle,
 } from '#/components/ui/alert-dialog';
+import {
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  Trash2,
+  XCircle,
+} from 'lucide-react';
+import { cn } from '../lib/utils';
 
 /**
  * Alert dialog variant types
@@ -159,43 +159,49 @@ export function AlertDialogComponent({
 
   return (
     <AlertDialogPrimitive open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className={className}>
-        <AlertDialogHeader>
-          <div className="flex items-start gap-4">
+      <AlertDialogContent className={cn('max-w-md', className)}>
+        <AlertDialogHeader className="text-center sm:text-left">
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
             {icon ?? (
               <div
                 className={cn(
-                  'flex h-10 w-10 shrink-0 items-center justify-center rounded-full',
+                  'flex h-12 w-12 shrink-0 items-center justify-center rounded-full',
                   variant === 'delete' || variant === 'error'
-                    ? 'bg-red-100 dark:bg-red-900/20'
+                    ? 'bg-red-100 dark:bg-red-950'
                     : variant === 'warning'
-                      ? 'bg-yellow-100 dark:bg-yellow-900/20'
+                      ? 'bg-yellow-100 dark:bg-yellow-950'
                       : variant === 'success'
-                        ? 'bg-green-100 dark:bg-green-900/20'
-                        : 'bg-blue-100 dark:bg-blue-900/20',
+                        ? 'bg-green-100 dark:bg-green-950'
+                        : 'bg-blue-100 dark:bg-blue-950',
                 )}
               >
                 <IconComponent
-                  className={cn('h-5 w-5', config.iconClassName)}
+                  className={cn('h-6 w-6', config.iconClassName)}
                 />
               </div>
             )}
-            <div className="flex-1">
-              <AlertDialogTitle>{title}</AlertDialogTitle>
-              <AlertDialogDescription className="mt-2">
+            <div className="flex-1 space-y-2">
+              <AlertDialogTitle className="text-center sm:text-left">
+                {title}
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-center sm:text-left">
                 {description}
               </AlertDialogDescription>
             </div>
           </div>
         </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleCancel} disabled={isLoading}>
+        <AlertDialogFooter className="mt-4 flex-col-reverse gap-2 sm:flex-row">
+          <AlertDialogCancel
+            onClick={handleCancel}
+            disabled={isLoading}
+            className="w-full sm:w-auto"
+          >
             {cancelText}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isLoading}
-            className={cn(config.buttonClassName)}
+            className={cn('w-full sm:w-auto', config.buttonClassName)}
           >
             {isLoading ? 'Loading...' : confirmText}
           </AlertDialogAction>

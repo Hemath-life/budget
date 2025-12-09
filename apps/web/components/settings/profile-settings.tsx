@@ -3,14 +3,6 @@
 import { useAuth } from '@/components/providers/auth-provider';
 import { useDeleteUser, useUpdateUser } from '@/lib/hooks';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
   Avatar,
   AvatarFallback,
   AvatarImage,
@@ -21,6 +13,7 @@ import {
   Input,
   Label,
 } from '@repo/ui/components/ui';
+import { AlertDialog } from '@repo/ui/dialogs';
 import {
   Check,
   Download,
@@ -262,30 +255,17 @@ export function ProfileSettings() {
       </div>
 
       {/* Delete Account Confirmation Dialog */}
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              account and remove all your data including transactions, budgets,
-              categories, goals, and settings.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleteUser.isPending}>
-              Cancel
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteAccount}
-              disabled={deleteUser.isPending}
-              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
-            >
-              {deleteUser.isPending ? 'Deleting...' : 'Delete Account'}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <AlertDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        title="Are you absolutely sure?"
+        description="This will permanently delete your account and remove all your data including transactions, budgets, categories, goals, and settings. This action cannot be undone."
+        variant="delete"
+        isLoading={deleteUser.isPending}
+        confirmText={deleteUser.isPending ? 'Deleting...' : 'Delete Account'}
+        cancelText="Cancel"
+        onConfirm={handleDeleteAccount}
+      />
     </div>
   );
 }
