@@ -65,23 +65,28 @@ budget-app/
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/your-org/budget-app.git
    cd budget-app
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    ```
 
 3. **Set up environment variables**
+
    ```bash
    pnpm env:copy-example
    ```
+
    Then edit the `.env` files in each app with your configuration.
 
 4. **Set up the database**
+
    ```bash
    pnpm db:push
    ```
@@ -97,65 +102,66 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 
 ### Development
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start all apps in development mode |
-| `pnpm build` | Build all apps and packages |
-| `pnpm start` | Start all apps in production mode |
+| Command      | Description                                |
+| ------------ | ------------------------------------------ |
+| `pnpm dev`   | Start all apps in development mode         |
+| `pnpm build` | Build all apps and packages                |
+| `pnpm start` | Start all apps in production mode          |
 | `pnpm clean` | Clean all build artifacts and node_modules |
 
 ### Database
 
-| Command | Description |
-|---------|-------------|
-| `pnpm db:push` | Push database schema changes |
+| Command          | Description                                 |
+| ---------------- | ------------------------------------------- |
+| `pnpm db:push`   | Push database schema changes                |
 | `pnpm db:studio` | Open Drizzle Studio for database management |
 
 ### Code Quality
 
-| Command | Description |
-|---------|-------------|
-| `pnpm lint` | Run ESLint across all packages |
-| `pnpm lint:fix` | Fix linting issues automatically |
-| `pnpm format` | Check code formatting with Prettier |
-| `pnpm format:fix` | Fix formatting issues |
-| `pnpm typecheck` | Run TypeScript type checking |
-| `pnpm knip` | Find unused code and dependencies |
+| Command           | Description                         |
+| ----------------- | ----------------------------------- |
+| `pnpm lint`       | Run ESLint across all packages      |
+| `pnpm lint:fix`   | Fix linting issues automatically    |
+| `pnpm format`     | Check code formatting with Prettier |
+| `pnpm format:fix` | Fix formatting issues               |
+| `pnpm typecheck`  | Run TypeScript type checking        |
+| `pnpm knip`       | Find unused code and dependencies   |
 
 ### UI Development
 
-| Command | Description |
-|---------|-------------|
-| `pnpm ui-add` | Add new shadcn/ui components |
+| Command          | Description                        |
+| ---------------- | ---------------------------------- |
+| `pnpm ui-add`    | Add new shadcn/ui components       |
 | `pnpm storybook` | Start Storybook development server |
 
 ## 📦 Packages
 
 ### Apps
 
-| Package | Description |
-|---------|-------------|
+| Package           | Description                  |
+| ----------------- | ---------------------------- |
 | `@budget-app/web` | Main Next.js web application |
 
 ### Shared Packages
 
-| Package | Description |
-|---------|-------------|
-| `@repo/ui` | Shared React UI components (shadcn/ui based) |
-| `@repo/utils` | Shared utility functions and hooks |
+| Package       | Description                                  |
+| ------------- | -------------------------------------------- |
+| `@repo/ui`    | Shared React UI components (shadcn/ui based) |
+| `@repo/utils` | Shared utility functions and hooks           |
 
 ### Tooling
 
-| Package | Description |
-|---------|-------------|
-| `@repo/eslint-config` | Shared ESLint configuration |
-| `@repo/prettier-config` | Shared Prettier configuration |
-| `@repo/tailwind-config` | Shared Tailwind CSS configuration |
-| `@repo/typescript-config` | Shared TypeScript configuration |
+| Package                   | Description                       |
+| ------------------------- | --------------------------------- |
+| `@repo/eslint-config`     | Shared ESLint configuration       |
+| `@repo/prettier-config`   | Shared Prettier configuration     |
+| `@repo/tailwind-config`   | Shared Tailwind CSS configuration |
+| `@repo/typescript-config` | Shared TypeScript configuration   |
 
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **Framework**: [Next.js 16](https://nextjs.org/) with App Router
 - **UI Library**: [React 19](https://react.dev/)
 - **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
@@ -166,10 +172,12 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 - **Animations**: [Framer Motion](https://www.framer.com/motion/)
 
 ### Backend
+
 - **Database**: SQLite with [better-sqlite3](https://github.com/WiseLibs/better-sqlite3)
 - **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
 
 ### Tooling
+
 - **Monorepo**: [Turborepo](https://turbo.build/)
 - **Package Manager**: [pnpm](https://pnpm.io/)
 - **Linting**: [ESLint 9](https://eslint.org/)
@@ -216,6 +224,21 @@ pnpm add <package>@catalog: --filter @repo/ui
 ### Environment Variables
 
 Each app may have its own `.env` file. See `.env.example` in each app for required variables.
+
+### Google OAuth Setup
+
+To enable Google Sign-in/Sign-up, configure OAuth credentials:
+
+1. Go to [Google Cloud Console - Budget App](https://console.cloud.google.com/auth/overview?project=budget-480715)
+2. Navigate to **APIs & Services** → **Credentials**
+3. Use the OAuth 2.0 Client ID credentials
+4. Add the following environment variables to `apps/api/.env`:
+   ```env
+   GOOGLE_CLIENT_ID="your-client-id.apps.googleusercontent.com"
+   GOOGLE_CLIENT_SECRET="your-client-secret"
+   GOOGLE_CALLBACK_URL="http://localhost:3001/auth/google/callback"
+   FRONTEND_URL="http://localhost:3000"
+   ```
 
 ### Turborepo
 
