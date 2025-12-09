@@ -160,29 +160,38 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 
 ## 🛠️ Tech Stack
 
-### Frontend
+### Frontend (Web App)
 
 - **Framework**: [Next.js 16](https://nextjs.org/) with App Router
 - **UI Library**: [React 19](https://react.dev/)
 - **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
 - **Components**: [Radix UI](https://www.radix-ui.com/) + [shadcn/ui](https://ui.shadcn.com/)
 - **State Management**: [TanStack Query](https://tanstack.com/query)
-- **Forms**: [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/)
 - **Charts**: [Recharts](https://recharts.org/)
 - **Animations**: [Framer Motion](https://www.framer.com/motion/)
 
-### Backend
+### Backend (API)
 
-- **Database**: SQLite with [better-sqlite3](https://github.com/WiseLibs/better-sqlite3)
-- **ORM**: [Drizzle ORM](https://orm.drizzle.team/)
+- **Framework**: [NestJS 10](https://nestjs.com/) - Progressive Node.js framework
+- **Database**: [PostgreSQL](https://www.postgresql.org/) hosted on [Supabase](https://supabase.com/)
+- **ORM**: [Prisma](https://www.prisma.io/) - Next-generation Node.js and TypeScript ORM
+- **Authentication**: [Passport.js](http://www.passportjs.org/) with JWT + Google OAuth 2.0
+- **API Documentation**: [Swagger/OpenAPI](https://swagger.io/)
+
+### DevOps & Deployment
+
+- **Hosting**: [Vercel](https://vercel.com/) - Frontend and Backend deployment
+- **Database Hosting**: [Supabase](https://supabase.com/) - PostgreSQL database
+- **Monorepo**: [Turborepo](https://turbo.build/) - High-performance build system
 
 ### Tooling
 
-- **Monorepo**: [Turborepo](https://turbo.build/)
 - **Package Manager**: [pnpm](https://pnpm.io/)
 - **Linting**: [ESLint 9](https://eslint.org/)
 - **Formatting**: [Prettier](https://prettier.io/)
 - **Type Checking**: [TypeScript 5](https://www.typescriptlang.org/)
+- **Git Hooks**: [Husky](https://typicode.github.io/husky/) + [lint-staged](https://github.com/okonet/lint-staged)
+- **Commit Convention**: [Commitlint](https://commitlint.js.org/)
 
 ## 🗂️ Adding New Packages
 
