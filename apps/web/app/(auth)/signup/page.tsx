@@ -10,6 +10,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
 export default function SignupPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -45,6 +47,11 @@ export default function SignupPage() {
       setError(err instanceof Error ? err.message : 'Signup failed');
       setLoading(false);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    // Redirect to backend Google OAuth endpoint
+    window.location.href = `${API_URL}/auth/google`;
   };
 
   return (
@@ -143,7 +150,11 @@ export default function SignupPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Button variant="outline" disabled={loading}>
+        <Button
+          variant="outline"
+          disabled={loading}
+          onClick={handleGoogleLogin}
+        >
           <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"

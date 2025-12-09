@@ -11,12 +11,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(uuid())
+  email      String   @unique
+  password   String?  // Optional for OAuth users
+  name       String?
+  avatar     String?  // Profile picture from OAuth provider
+  provider   String?  // 'google', 'github', or null for email/password
+  providerId String?  // OAuth provider's user ID
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   transactions          Transaction[]
   budgets               Budget[]
@@ -25,6 +28,7 @@ model User {
   settings              Settings?
   recurringTransactions RecurringTransaction[]
 
+  @@unique([provider, providerId])
   @@map("users")
 }
 
