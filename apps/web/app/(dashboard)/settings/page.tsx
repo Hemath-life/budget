@@ -1,12 +1,5 @@
-'use client';
-
-import { SettingsLayout } from '@/components/settings/settings-layout';
-import { GeneralSettings } from '@/components/settings/general-settings';
+import { redirect } from 'next/navigation';
 
 export default function SettingsPage() {
-  return (
-    <SettingsLayout>
-      <GeneralSettings />
-    </SettingsLayout>
-  );
+  redirect('/settings/profile');
 }

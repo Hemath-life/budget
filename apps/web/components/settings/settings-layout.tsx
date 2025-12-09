@@ -14,7 +14,7 @@ const settingsLinks = [
   },
   {
     name: 'General',
-    href: '/settings',
+    href: '/settings/general',
     icon: Settings,
   },
   {
@@ -36,7 +36,7 @@ export function SettingsLayout({ children }: { children: React.ReactNode }) {
     <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
       {/* Sidebar - Main sidebar style */}
       <aside className="hidden lg:block">
-        <div className="sticky top-20 rounded-lg border border-sidebar-border bg-sidebar p-4 space-y-4">
+        <div className="sticky top-0 rounded-lg border border-sidebar-border bg-sidebar p-4 space-y-4">
           <div className="px-2">
             <p className="text-xs font-medium text-sidebar-foreground/70 uppercase tracking-wider">
               Settings
