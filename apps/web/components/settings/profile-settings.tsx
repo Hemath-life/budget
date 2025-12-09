@@ -6,23 +6,18 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-  Badge,
   Button,
-  Card,
-  CardContent,
   Input,
-  Label,
+  Separator,
 } from '@repo/ui/components/ui';
 import { AlertDialog } from '@repo/ui/dialogs';
 import {
   Check,
+  ChevronRight,
   Download,
   LogOut,
-  Mail,
   Pencil,
-  Shield,
   Trash2,
-  User,
   X,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -91,141 +86,134 @@ export function ProfileSettings() {
   };
 
   return (
-    <div className="space-y-8">
-      {/* Profile Header */}
-      <div className="relative">
-        {/* Background Gradient */}
-        <div className="h-32 rounded-xl bg-gradient-to-r from-primary/20 via-primary/10 to-transparent" />
-
-        {/* Profile Info */}
-        <div className="absolute -bottom-12 left-6 flex items-end gap-4">
-          <Avatar className="h-24 w-24 border-4 border-background shadow-lg">
+    <div className="max-w-2xl space-y-6">
+      {/* Profile Card */}
+      <div className="rounded-xl border bg-card p-6">
+        <div className="flex items-center gap-4">
+          <Avatar className="h-16 w-16">
             <AvatarImage src={user?.avatar || undefined} alt={displayName} />
-            <AvatarFallback className="text-2xl bg-primary text-primary-foreground">
+            <AvatarFallback className="text-lg bg-primary text-primary-foreground">
               {initials}
             </AvatarFallback>
           </Avatar>
-        </div>
-      </div>
-
-      {/* Name and Email */}
-      <div className="pt-14 px-2">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold">{displayName}</h1>
-            <p className="text-muted-foreground">{displayEmail}</p>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-xl font-semibold truncate">{displayName}</h2>
+            <p className="text-sm text-muted-foreground truncate">
+              {displayEmail}
+            </p>
           </div>
-          <Badge
-            variant="secondary"
-            className="gap-1.5 px-3 py-1.5 w-fit text-sm"
-          >
-            <Shield className="h-3.5 w-3.5" />
-            Google Account
-          </Badge>
+          <div className="hidden sm:block">
+            <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+              Google
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Account Details */}
-      <Card>
-        <CardContent className="p-6">
-          <h3 className="font-semibold mb-4 flex items-center gap-2">
-            <User className="h-4 w-4" />
-            Account Details
-          </h3>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-muted-foreground">
-                Full Name
-              </Label>
-              <div className="flex gap-2">
+      {/* Account Settings */}
+      <div className="rounded-xl border bg-card">
+        <div className="p-4 border-b">
+          <h3 className="font-medium">Account</h3>
+        </div>
+
+        {/* Name */}
+        <div className="p-4 flex items-center justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <p className="text-sm text-muted-foreground">Name</p>
+            {isEditing ? (
+              <div className="flex items-center gap-2 mt-1">
                 <Input
-                  id="name"
-                  value={isEditing ? editName : displayName}
+                  value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  disabled={!isEditing || updateUser.isPending}
-                  className={isEditing ? '' : 'bg-muted/50'}
+                  className="h-8 max-w-[200px]"
+                  disabled={updateUser.isPending}
+                  autoFocus
                 />
-                {isEditing ? (
-                  <>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={handleSaveName}
-                      disabled={updateUser.isPending || !editName.trim()}
-                    >
-                      <Check className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={handleCancelEdit}
-                      disabled={updateUser.isPending}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </>
-                ) : (
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => {
-                      setEditName(user?.name || '');
-                      setIsEditing(true);
-                    }}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                )}
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  onClick={handleSaveName}
+                  disabled={updateUser.isPending || !editName.trim()}
+                >
+                  <Check className="h-4 w-4" />
+                </Button>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-8 w-8"
+                  onClick={handleCancelEdit}
+                  disabled={updateUser.isPending}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
+            ) : (
+              <p className="font-medium truncate">{displayName}</p>
+            )}
+          </div>
+          {!isEditing && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="shrink-0"
+              onClick={() => {
+                setEditName(user?.name || '');
+                setIsEditing(true);
+              }}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+
+        <Separator />
+
+        {/* Email */}
+        <div className="p-4 flex items-center justify-between gap-4">
+          <div className="min-w-0 flex-1">
+            <p className="text-sm text-muted-foreground">Email</p>
+            <p className="font-medium truncate">{displayEmail}</p>
+          </div>
+          <span className="text-xs text-muted-foreground shrink-0">
+            Managed by Google
+          </span>
+        </div>
+      </div>
+
+      {/* Actions */}
+      <div className="rounded-xl border bg-card">
+        <div className="p-4 border-b">
+          <h3 className="font-medium">Actions</h3>
+        </div>
+
+        <Link
+          href="/export"
+          className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-full bg-blue-500/10 flex items-center justify-center">
+              <Download className="h-4 w-4 text-blue-500" />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-muted-foreground">
-                Email Address
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  value={displayEmail}
-                  disabled
-                  className="bg-muted/50 pl-9"
-                />
-              </div>
+            <div>
+              <p className="font-medium">Export Data</p>
+              <p className="text-sm text-muted-foreground">
+                Download all your data
+              </p>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground mt-4">
-            Click the pencil icon to edit your display name. Email is managed by
-            your sign-in provider.
-          </p>
-        </CardContent>
-      </Card>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </Link>
 
-      {/* Quick Actions */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="hover:shadow-md transition-shadow cursor-pointer">
-          <Link href="/export">
-            <CardContent className="p-6 flex flex-col items-center text-center gap-3">
-              <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
-                <Download className="h-6 w-6 text-blue-500" />
-              </div>
-              <div>
-                <p className="font-medium">Export Data</p>
-                <p className="text-sm text-muted-foreground">
-                  Download your data
-                </p>
-              </div>
-            </CardContent>
-          </Link>
-        </Card>
+        <Separator />
 
-        <Card
-          className="hover:shadow-md transition-shadow cursor-pointer"
+        <button
           onClick={logout}
+          className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors text-left"
         >
-          <CardContent className="p-6 flex flex-col items-center text-center gap-3">
-            <div className="h-12 w-12 rounded-full bg-orange-500/10 flex items-center justify-center">
-              <LogOut className="h-6 w-6 text-orange-500" />
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-full bg-orange-500/10 flex items-center justify-center">
+              <LogOut className="h-4 w-4 text-orange-500" />
             </div>
             <div>
               <p className="font-medium">Sign Out</p>
@@ -233,33 +221,42 @@ export function ProfileSettings() {
                 Log out of your account
               </p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </button>
+      </div>
 
-        <Card
-          className="hover:shadow-md transition-shadow cursor-pointer hover:border-red-500/50"
+      {/* Danger Zone */}
+      <div className="rounded-xl border border-red-500/20 bg-card">
+        <div className="p-4 border-b border-red-500/20">
+          <h3 className="font-medium text-red-500">Danger Zone</h3>
+        </div>
+
+        <button
           onClick={() => setShowDeleteDialog(true)}
+          className="w-full flex items-center justify-between p-4 hover:bg-red-500/5 transition-colors text-left"
         >
-          <CardContent className="p-6 flex flex-col items-center text-center gap-3">
-            <div className="h-12 w-12 rounded-full bg-red-500/10 flex items-center justify-center">
-              <Trash2 className="h-6 w-6 text-red-500" />
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-full bg-red-500/10 flex items-center justify-center">
+              <Trash2 className="h-4 w-4 text-red-500" />
             </div>
             <div>
-              <p className="font-medium">Delete Account</p>
+              <p className="font-medium text-red-500">Delete Account</p>
               <p className="text-sm text-muted-foreground">
-                Permanently delete account
+                Permanently delete your account and data
               </p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          <ChevronRight className="h-4 w-4 text-red-500" />
+        </button>
       </div>
 
       {/* Delete Account Confirmation Dialog */}
       <AlertDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        title="Are you absolutely sure?"
-        description="This will permanently delete your account and remove all your data including transactions, budgets, categories, goals, and settings. This action cannot be undone."
+        title="Delete account?"
+        description="This will permanently delete your account and all your data including transactions, budgets, categories, goals, and settings. This action cannot be undone."
         variant="delete"
         isLoading={deleteUser.isPending}
         confirmText={deleteUser.isPending ? 'Deleting...' : 'Delete Account'}
