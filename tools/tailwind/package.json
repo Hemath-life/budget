@@ -1,16 +1,19 @@
 {
   "name": "@repo/tailwind-config",
   "description": "Shared Tailwind CSS configuration",
-  "private": true,
   "version": "0.1.0",
+  "private": true,
   "type": "module",
-  "scripts": {
-    "clean": "git clean -xdf .cache .turbo node_modules",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
-    "lint": "eslint"
+  "engines": {
+    "node": ">=20"
   },
   "exports": {
     "./style.css": "./style.css"
+  },
+  "scripts": {
+    "lint": "eslint",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "clean": "git clean -xdf .cache .turbo node_modules"
   },
   "prettier": "@repo/prettier-config",
   "dependencies": {
