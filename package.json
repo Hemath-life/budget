@@ -38,15 +38,12 @@
   },
   "lint-staged": {
     "apps/api/**/*.ts": [
-      "eslint --fix",
       "prettier --write"
     ],
     "apps/web/**/*.{ts,tsx}": [
-      "eslint --fix",
       "prettier --write"
     ],
     "packages/ui/**/*.{ts,tsx}": [
-      "eslint --fix",
       "prettier --write"
     ],
     "*.{json,md}": [

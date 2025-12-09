@@ -29,6 +29,9 @@ export default {
         'deps', // Dependencies
         'release', // Release related
         'root', // Root/monorepo level
+        'auth', // Authentication
+        'db', // Database/Prisma
+        'tools', // Tools packages
       ],
     ],
     'scope-empty': [1, 'never'], // Warn if scope is empty

@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { useAuth } from '../providers/auth-provider';
 
 export function Header() {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const { data: settings } = useSettings();
   const { data: reminders = [] } = useReminders();
 
@@ -18,7 +18,7 @@ export function Header() {
       const dueDate = new Date(r.dueDate);
       const today = new Date();
       const daysUntil = Math.ceil(
-        (dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)
+        (dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
       );
       return !r.isPaid && daysUntil <= r.notifyBefore && daysUntil >= 0;
     });
@@ -30,7 +30,7 @@ export function Header() {
       title: reminder.title,
       description: `Due: ${formatDate(reminder.dueDate)} · ${formatCurrency(
         reminder.amount,
-        currency
+        currency,
       )}`,
       href: '/reminders',
     }));
@@ -52,6 +52,7 @@ export function Header() {
       <HeaderNav
         variant="search-first"
         logout={logout}
+        user={user}
         showNav={false}
         searchPlaceholder="Search pages, actions..."
         badge={{ label: currency, variant: 'outline' }}

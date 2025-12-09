@@ -22,10 +22,16 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     done: VerifyCallback,
   ): Promise<any> {
     const { id, name, emails, photos } = profile;
+
+    // Handle cases where familyName might be undefined
+    const fullName = name.familyName
+      ? `${name.givenName} ${name.familyName}`
+      : name.givenName || profile.displayName || emails[0].value.split('@')[0];
+
     const user = {
       providerId: id,
       email: emails[0].value,
-      name: `${name.givenName} ${name.familyName}`,
+      name: fullName,
       avatar: photos[0]?.value,
       provider: 'google',
     };

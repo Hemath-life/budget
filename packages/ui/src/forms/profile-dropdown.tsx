@@ -12,27 +12,52 @@ import {
   DropdownMenuTrigger,
 } from '#/components/ui/dropdown-menu';
 
-interface ProfileDropdownProps {
-  logout?: () => void;
+interface User {
+  name?: string | null;
+  email?: string;
+  avatar?: string | null;
 }
 
-export function ProfileDropdown({ logout }: ProfileDropdownProps = {}) {
+interface ProfileDropdownProps {
+  logout?: () => void;
+  user?: User | null;
+}
+
+function getInitials(name?: string | null, email?: string): string {
+  if (name) {
+    const parts = name.split(' ');
+    if (parts.length >= 2 && parts[0] && parts[1]) {
+      return `${parts[0][0] ?? ''}${parts[1][0] ?? ''}`.toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  }
+  if (email) {
+    return email.slice(0, 2).toUpperCase();
+  }
+  return 'U';
+}
+
+export function ProfileDropdown({ logout, user }: ProfileDropdownProps = {}) {
+  const displayName = user?.name || 'User';
+  const displayEmail = user?.email || '';
+  const initials = getInitials(user?.name, user?.email);
+
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="/avatars/01.png" alt="@shadcn" />
-            <AvatarFallback>SN</AvatarFallback>
+            <AvatarImage src={user?.avatar || undefined} alt={displayName} />
+            <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm leading-none font-medium">satnaing</p>
+            <p className="text-sm leading-none font-medium">{displayName}</p>
             <p className="text-muted-foreground text-xs leading-none">
-              satnaingdev@gmail.com
+              {displayEmail}
             </p>
           </div>
         </DropdownMenuLabel>

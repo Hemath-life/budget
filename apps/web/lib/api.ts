@@ -11,7 +11,7 @@ function getAuthToken(): string | null {
 // Generic fetch wrapper with error handling
 async function fetchApi<T>(
   endpoint: string,
-  options?: RequestInit
+  options?: RequestInit,
 ): Promise<T> {
   const token = getAuthToken();
   const headers: HeadersInit = {
@@ -83,6 +83,7 @@ export interface AuthUser {
   id: string;
   email: string;
   name?: string;
+  avatar?: string | null;
 }
 
 export interface AuthResponse {
@@ -184,7 +185,7 @@ export const transactionsApi = {
   getById: (id: string) => fetchApi<Transaction>(`/transactions/${id}`),
 
   create: (
-    data: Omit<Transaction, 'id' | 'category' | 'createdAt' | 'updatedAt'>
+    data: Omit<Transaction, 'id' | 'category' | 'createdAt' | 'updatedAt'>,
   ) =>
     fetchApi<Transaction>('/transactions', {
       method: 'POST',
@@ -228,7 +229,7 @@ export const categoriesApi = {
   loadDefaults: () =>
     fetchApi<{ success: boolean; message: string; count: number }>(
       '/categories/load-defaults',
-      { method: 'POST' }
+      { method: 'POST' },
     ),
 };
 
@@ -256,7 +257,7 @@ export const budgetsApi = {
   loadDefaults: () =>
     fetchApi<{ success: boolean; message: string; count: number }>(
       '/budgets/load-defaults',
-      { method: 'POST' }
+      { method: 'POST' },
     ),
 };
 
@@ -287,7 +288,7 @@ export const goalsApi = {
   loadDefaults: () =>
     fetchApi<{ success: boolean; message: string; count: number }>(
       '/goals/load-defaults',
-      { method: 'POST' }
+      { method: 'POST' },
     ),
 };
 
@@ -441,7 +442,7 @@ export const subscriptionApi = {
     const query = userId ? `?userId=${userId}` : '';
     return fetchApi<{ success: boolean; message: string }>(
       `/subscription${query}`,
-      { method: 'DELETE' }
+      { method: 'DELETE' },
     );
   },
 };

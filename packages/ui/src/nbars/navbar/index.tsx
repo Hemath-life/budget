@@ -43,11 +43,18 @@ interface ReminderDropdownProps {
   triggerLabel?: string;
 }
 
+interface UserProfile {
+  name?: string | null;
+  email?: string;
+  avatar?: string | null;
+}
+
 interface HeaderNavProps {
   fixed?: boolean;
   className?: string;
   variant?: 'search-first' | 'title-first' | 'minimal';
   logout?: () => void;
+  user?: UserProfile | null;
   extraActions?: ReactNode;
   navLinks?: NavLinkConfig[];
   sidebarData?: SidebarData;
@@ -73,6 +80,7 @@ export const HeaderNav = (
     variant,
     fixed,
     logout,
+    user,
     extraActions,
     navLinks,
     sidebarData,
@@ -126,7 +134,7 @@ export const HeaderNav = (
               {reminderDropdown ? (
                 <ReminderDropdown {...reminderDropdown} />
               ) : null}
-              <ProfileDropdown logout={logout} />
+              <ProfileDropdown logout={logout} user={user} />
               {extraActions}
             </div>
             {/* Mobile Actions - More menu */}
@@ -149,7 +157,7 @@ export const HeaderNav = (
             {reminderDropdown ? (
               <ReminderDropdown {...reminderDropdown} />
             ) : null}
-            <ProfileDropdown logout={logout} />
+            <ProfileDropdown logout={logout} user={user} />
             {extraActions}
           </div>
         )}
