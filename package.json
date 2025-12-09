@@ -21,6 +21,8 @@
     "check": "turbo lint typecheck",
     "clean": "turbo clean",
     "clean:all": "turbo clean && git clean -xdf .cache .turbo node_modules",
+    "db:studio": "turbo studio -F @repo/api",
+    "db:push": "turbo push -F @repo/api",
     "knip": "knip",
     "ui-add": "turbo ui-add -F @repo/ui --"
   },
