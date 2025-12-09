@@ -3,6 +3,7 @@
   "description": "Shared Tailwind CSS configuration",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -17,13 +18,13 @@
   },
   "prettier": "@repo/prettier-config",
   "dependencies": {
-    "eslint": "^9.36.0",
     "tailwindcss": "4.1.11",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/prettier-config": "workspace:*",
+    "eslint": "^9.36.0",
     "prettier": "^3.6.2"
   }
 }

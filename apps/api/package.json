@@ -17,6 +17,7 @@
     "lint": "eslint",
     "format": "prettier --check \"src/**/*.ts\"",
     "format:fix": "prettier --write \"src/**/*.ts\"",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",

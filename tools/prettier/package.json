@@ -3,6 +3,7 @@
   "description": "Shared Prettier configuration",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -12,7 +13,6 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
     "clean": "git clean -xdf .cache .turbo node_modules"
   },
   "dependencies": {
@@ -21,6 +21,5 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "typescript": "^5.9.2"
-  },
-  "prettier": "@repo/prettier-config"
+  }
 }
