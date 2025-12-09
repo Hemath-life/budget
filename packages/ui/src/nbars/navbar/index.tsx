@@ -1,3 +1,12 @@
+import { Bell, LogOut, Moon, MoreVertical, Sun } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useTheme } from 'next-themes';
+import { type ComponentProps, type ReactNode, useMemo } from 'react';
+import type { SidebarData } from '../../layout/types';
+import { cn } from '../../lib/utils';
+import { Header } from './header';
+import { TopNav } from './top-nav';
 import { Search } from '#/common';
 import { Badge } from '#/components/ui/badge';
 import { Button } from '#/components/ui/button';
@@ -9,15 +18,6 @@ import {
   DropdownMenuTrigger,
 } from '#/components/ui/dropdown-menu';
 import { ProfileDropdown } from '#/forms/profile-dropdown';
-import { Bell, LogOut, Moon, MoreVertical, Sun } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { type ComponentProps, type ReactNode, useMemo } from 'react';
-import type { SidebarData } from '../../layout/types';
-import { cn } from '../../lib/utils';
-import { Header } from './header';
-import { TopNav } from './top-nav';
 
 interface NavLinkConfig {
   title: string;
