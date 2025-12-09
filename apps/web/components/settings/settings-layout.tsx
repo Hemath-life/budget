@@ -2,7 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@repo/ui/components/ui';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@repo/ui/components/ui';
 import { cn } from '@/lib/utils';
 import {
   Settings,
@@ -15,6 +21,12 @@ import {
 } from 'lucide-react';
 
 const settingsLinks = [
+  {
+    name: 'Profile',
+    href: '/settings/profile',
+    icon: User,
+    description: 'View and manage your profile information',
+  },
   {
     name: 'General',
     href: '/settings',
@@ -57,7 +69,7 @@ export function SettingsLayout({ children }: { children: React.ReactNode }) {
                     'flex items-center justify-between px-4 py-3 text-sm transition-colors border-l-2',
                     isActive
                       ? 'border-primary bg-muted text-foreground'
-                      : 'border-transparent text-muted-foreground hover:bg-muted hover:text-foreground'
+                      : 'border-transparent text-muted-foreground hover:bg-muted hover:text-foreground',
                   )}
                 >
                   <div className="flex items-center gap-3">

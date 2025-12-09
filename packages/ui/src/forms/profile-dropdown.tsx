@@ -64,7 +64,7 @@ export function ProfileDropdown({ logout, user }: ProfileDropdownProps = {}) {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/settings">
+            <Link href="/settings/profile">
               Profile
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </Link>
