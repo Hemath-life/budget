@@ -1,65 +1,58 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalEnv": [
+    "NODE_ENV",
+    "CI",
+    "VERCEL",
+    "VERCEL_*",
+    "NEXT_PUBLIC_*",
+    "PUBLIC_*"
+  ],
+  "globalPassThroughEnv": ["npm_lifecycle_event"],
   "tasks": {
-    "dev": {
-      "dependsOn": ["^build"],
-      "persistent": true,
-      "cache": false,
-      "env": ["PUBLIC_*", "PROD", "NODE_ENV"]
-    },
-    "clean": {
-      "cache": false
-    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*", "tsconfig*.json"],
       "outputs": ["dist/**", "build/**", ".next/**", "storybook-static/**"],
-      "env": [
-        "PUBLIC_*",
-        "PROD",
-        "NODE_ENV",
-        "DATABASE_URL",
-        "JWT_SECRET",
-        "CORS_ORIGINS"
-      ]
+      "env": ["DATABASE_URL", "JWT_SECRET", "CORS_ORIGINS"]
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "start": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
     },
     "preview": {
       "dependsOn": ["build"],
       "cache": false,
       "persistent": true
     },
-    "gen:route": {
-      "cache": false,
-      "inputs": ["src/routes/**"]
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"],
+      "outputs": [".cache/tsbuildinfo.json", "tsconfig.tsbuildinfo"]
     },
-    "auth:schema:generate": {
-      "cache": false,
-      "interactive": true
+    "lint": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".eslintrc*", "eslint.config.*"],
+      "outputs": [".cache/.eslintcache"]
     },
     "format": {
       "outputs": [".cache/.prettiercache"],
       "outputLogs": "new-only"
     },
-    "lint": {
-      "dependsOn": ["^build"],
-      "outputs": [".cache/.eslintcache"],
-      "inputs": ["$TURBO_DEFAULT$", ".eslintrc*", "eslint.config.*"]
-    },
-    "typecheck": {
-      "dependsOn": ["^build"],
-      "outputs": [".cache/tsbuildinfo.json", "tsconfig.tsbuildinfo"],
-      "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"]
+    "clean": {
+      "cache": false
     },
     "push": {
-      "env": ["DB_POSTGRES_URL"],
       "cache": false,
-      "interactive": true
-    },
-    "start": {
-      "dependsOn": ["^build"],
-      "persistent": true,
-      "env": ["PUBLIC_*", "PROD", "NODE_ENV"]
+      "interactive": true,
+      "env": ["DATABASE_URL"]
     },
     "studio": {
       "cache": false,
@@ -73,12 +66,6 @@
       "cache": false,
       "dependsOn": ["ui-add"]
     },
-    "env:copy-example": {
-      "cache": false
-    },
-    "env:remove": {
-      "cache": false
-    },
     "knip": {
       "cache": false,
       "inputs": ["knip.config.*", "package.json", "src/**"]
@@ -90,17 +77,8 @@
     },
     "build-storybook": {
       "dependsOn": ["^build"],
-      "outputs": ["storybook-static/**"],
-      "inputs": ["$TURBO_DEFAULT$", ".storybook/**", "src/stories/**"]
+      "inputs": ["$TURBO_DEFAULT$", ".storybook/**", "src/stories/**"],
+      "outputs": ["storybook-static/**"]
     }
-  },
-  "globalEnv": ["NODE_ENV", "CI", "VERCEL", "NEXT_PUBLIC_*", "PUBLIC_*"],
-  "globalPassThroughEnv": [
-    "NODE_ENV",
-    "CI",
-    "npm_lifecycle_event",
-    "VERCEL",
-    "VERCEL_*",
-    "PUBLIC_*"
-  ]
+  }
 }

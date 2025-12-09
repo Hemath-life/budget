@@ -1,10 +1,13 @@
 {
   "name": "@repo/ui",
   "description": "Shared UI component library",
-  "private": true,
   "version": "0.1.0",
+  "private": true,
   "type": "module",
   "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
   "files": [
     "dist"
   ],
@@ -122,14 +125,14 @@
     }
   },
   "scripts": {
-    "build": "tsc && tsc --emitDeclarationOnly",
-    "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "tsc --watch",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
-    "lint": "eslint",
-    "postui-add": "prettier src --write --list-different",
+    "build": "tsc && tsc --emitDeclarationOnly",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "lint": "eslint",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
     "ui-add": "pnpm dlx shadcn@canary add",
+    "postui-add": "prettier src --write --list-different",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
