@@ -1,24 +1,27 @@
 {
   "name": "@repo/monorepo",
+  "version": "0.0.0",
   "description": "Personal finance and budget management app - Turborepo monorepo",
   "private": true,
   "type": "module",
   "license": "MIT",
   "packageManager": "pnpm@9.15.0",
   "engines": {
-    "node": "20.x"
+    "node": ">=20"
   },
   "scripts": {
-    "build": "turbo build",
-    "clean": "turbo clean",
-    "postclean": "git clean -xdf .cache .turbo node_modules",
     "dev": "turbo watch dev",
-    "format": "turbo format -- --cache --cache-location .cache/.prettiercache",
-    "format:fix": "turbo format -- --cache --cache-location .cache/.prettiercache --write",
-    "lint": "turbo lint -- --cache --cache-location .cache/.eslintcache",
-    "lint:fix": "turbo lint -- --cache --cache-location .cache/.eslintcache --fix",
+    "build": "turbo build",
     "start": "turbo start",
     "typecheck": "turbo typecheck",
+    "lint": "turbo lint -- --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "turbo lint -- --cache --cache-location .cache/.eslintcache --fix",
+    "format": "turbo format -- --cache --cache-location .cache/.prettiercache",
+    "format:fix": "turbo format -- --cache --cache-location .cache/.prettiercache --write",
+    "check": "turbo lint typecheck",
+    "clean": "turbo clean",
+    "clean:all": "turbo clean && git clean -xdf .cache .turbo node_modules",
+    "knip": "knip",
     "ui-add": "turbo ui-add -F @repo/ui --"
   },
   "devDependencies": {
