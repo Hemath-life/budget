@@ -58,17 +58,7 @@ export const budgetSidebarData: SidebarData = {
 
     {
       title: 'Settings',
-      items: [
-        {
-          title: 'Preferences',
-          icon: Settings,
-          items: [
-            { title: 'General', url: '/settings' },
-            { title: 'Currency', url: '/settings/currency' },
-            { title: 'Theme', url: '/settings/theme' },
-          ],
-        },
-      ],
+      items: [{ title: 'Settings', url: '/settings', icon: Settings }],
     },
   ],
 };
