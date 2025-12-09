@@ -9,6 +9,10 @@
     "streetsidesoftware.code-spell-checker",
     "usernamehw.errorlens",
     "yoavbls.pretty-ts-errors",
-    "formulahendry.auto-rename-tag"
+    "formulahendry.auto-rename-tag",
+    "vivaxy.vscode-conventional-commits",
+    "eamodio.gitlens",
+    "github.copilot",
+    "mikestead.dotenv"
   ]
 }
