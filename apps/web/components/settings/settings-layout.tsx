@@ -1,24 +1,22 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from '@repo/ui/components/ui';
-import { cn } from '@/lib/utils';
 import {
-  Settings,
-  Palette,
-  DollarSign,
-  Bell,
-  User,
-  Shield,
   ChevronRight,
+  DollarSign,
+  Palette,
+  Settings,
+  User,
 } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const settingsLinks = [
   {
@@ -52,7 +50,7 @@ export function SettingsLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="grid gap-6 lg:grid-cols-4">
-      <Card className="lg:col-span-1 h-fit">
+      <Card className="lg:col-span-1 h-fit hidden lg:block">
         <CardHeader>
           <CardTitle>Settings</CardTitle>
           <CardDescription>Manage your preferences</CardDescription>
