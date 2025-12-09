@@ -16,6 +16,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (token: string, user?: AuthUser) => void;
   logout: () => void;
+  setUser: (user: AuthUser) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -54,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (isLoading) return;
 
     const isPublicPath = PUBLIC_PATHS.some(
-      (path) => pathname === path || pathname.startsWith('/docs')
+      (path) => pathname === path || pathname.startsWith('/docs'),
     );
 
     if (!authApi.isAuthenticated() && !isPublicPath) {
@@ -76,6 +77,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.push('/login');
   };
 
+  const updateUser = (userData: AuthUser) => {
+    localStorage.setItem('user', JSON.stringify(userData));
+    setUser(userData);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -84,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         login,
         logout,
+        setUser: updateUser,
       }}
     >
       {children}

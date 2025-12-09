@@ -466,3 +466,19 @@ export const seedApi = {
       method: 'POST',
     }),
 };
+
+// ============ USERS ============
+export const usersApi = {
+  getMe: () => fetchApi<AuthUser>('/users/me'),
+
+  updateMe: (data: { name?: string }) =>
+    fetchApi<AuthUser>('/users/me', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+
+  deleteMe: () =>
+    fetchApi<void>('/users/me', {
+      method: 'DELETE',
+    }),
+};

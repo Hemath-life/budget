@@ -51,4 +51,31 @@ export class UsersService {
       },
     });
   }
+
+  async update(userId: string, data: { name?: string }): Promise<User> {
+    return this.prisma.user.update({
+      where: { id: userId },
+      data,
+    });
+  }
+
+  async delete(userId: string): Promise<void> {
+    // Delete all related data in a transaction
+    await this.prisma.$transaction([
+      // Delete transactions
+      this.prisma.transaction.deleteMany({ where: { userId } }),
+      // Delete budgets
+      this.prisma.budget.deleteMany({ where: { userId } }),
+      // Delete goals
+      this.prisma.goal.deleteMany({ where: { userId } }),
+      // Delete recurring transactions
+      this.prisma.recurringTransaction.deleteMany({ where: { userId } }),
+      // Delete reminders
+      this.prisma.reminder.deleteMany({ where: { userId } }),
+      // Delete settings
+      this.prisma.settings.deleteMany({ where: { userId } }),
+      // Finally delete the user
+      this.prisma.user.delete({ where: { id: userId } }),
+    ]);
+  }
 }

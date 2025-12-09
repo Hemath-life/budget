@@ -12,6 +12,7 @@ import {
   settingsApi,
   subscriptionApi,
   transactionsApi,
+  usersApi,
 } from './api';
 import type {
   Budget,
@@ -45,7 +46,7 @@ export const queryKeys = {
 
 // ============ TRANSACTIONS HOOKS ============
 export function useTransactions(
-  params?: Parameters<typeof transactionsApi.getAll>[0]
+  params?: Parameters<typeof transactionsApi.getAll>[0],
 ) {
   return useQuery({
     queryKey: [...queryKeys.transactions, params],
@@ -54,7 +55,7 @@ export function useTransactions(
 }
 
 export function usePaginatedTransactions(
-  params: Parameters<typeof transactionsApi.getPaginated>[0]
+  params: Parameters<typeof transactionsApi.getPaginated>[0],
 ) {
   return useQuery({
     queryKey: [...queryKeys.transactions, 'paginated', params],
@@ -475,5 +476,18 @@ export function useCancelSubscription() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.subscription });
     },
+  });
+}
+
+// ============ USER HOOKS ============
+export function useUpdateUser() {
+  return useMutation({
+    mutationFn: usersApi.updateMe,
+  });
+}
+
+export function useDeleteUser() {
+  return useMutation({
+    mutationFn: usersApi.deleteMe,
   });
 }
