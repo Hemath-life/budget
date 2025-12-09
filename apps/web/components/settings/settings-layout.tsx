@@ -1,20 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@repo/ui/components/ui';
-import {
-  ChevronRight,
-  DollarSign,
-  Palette,
-  Settings,
-  User,
-} from 'lucide-react';
+import { DollarSign, Palette, Settings, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -23,67 +10,69 @@ const settingsLinks = [
     name: 'Profile',
     href: '/settings/profile',
     icon: User,
-    description: 'View and manage your profile information',
   },
   {
     name: 'General',
     href: '/settings',
     icon: Settings,
-    description: 'Manage your account settings and preferences',
   },
   {
     name: 'Currency',
     href: '/settings/currency',
     icon: DollarSign,
-    description: 'Set your default currency and exchange rates',
   },
   {
     name: 'Theme',
     href: '/settings/theme',
     icon: Palette,
-    description: 'Customize the app appearance and dark mode',
   },
 ];
 
 export function SettingsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
+  // Get current page title
+  const currentPage = settingsLinks.find((link) => link.href === pathname);
+  const pageTitle = currentPage?.name || 'Settings';
+
   return (
-    <div className="grid gap-6 lg:grid-cols-4">
-      <div className="lg:col-span-1 hidden lg:block">
-        <Card className="sticky top-20">
-          <CardHeader>
-            <CardTitle>Settings</CardTitle>
-            <CardDescription>Manage your preferences</CardDescription>
-          </CardHeader>
-          <CardContent className="p-0">
-            <nav className="space-y-1">
-              {settingsLinks.map((link) => {
-                const isActive = pathname === link.href;
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                      'flex items-center justify-between px-4 py-3 text-sm transition-colors border-l-2',
-                      isActive
-                        ? 'border-primary bg-muted text-foreground'
-                        : 'border-transparent text-muted-foreground hover:bg-muted hover:text-foreground',
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <link.icon className="h-5 w-5" />
-                      <span>{link.name}</span>
-                    </div>
-                    <ChevronRight className="h-4 w-4" />
-                  </Link>
-                );
-              })}
-            </nav>
-          </CardContent>
-        </Card>
+    <div className="space-y-6">
+      {/* Header with Tab Navigation */}
+      <div className="space-y-4">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
+          <p className="text-muted-foreground">
+            Manage your account settings and preferences
+          </p>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="border-b">
+          <nav className="flex gap-1 -mb-px overflow-x-auto scrollbar-hide">
+            {settingsLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={cn(
+                    'flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors whitespace-nowrap',
+                    isActive
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground/30',
+                  )}
+                >
+                  <link.icon className="h-4 w-4" />
+                  <span>{link.name}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
       </div>
-      <div className="lg:col-span-3 overflow-y-auto">{children}</div>
+
+      {/* Main Content */}
+      <main>{children}</main>
     </div>
   );
 }

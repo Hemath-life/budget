@@ -6,17 +6,13 @@ import {
   AvatarFallback,
   AvatarImage,
   Badge,
-  Button,
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   Input,
   Label,
-  Separator,
 } from '@repo/ui/components/ui';
-import { Camera, Mail, Shield, User } from 'lucide-react';
+import { Download, LogOut, Mail, Shield, Trash2, User } from 'lucide-react';
+import Link from 'next/link';
 
 function getInitials(name?: string | null, email?: string): string {
   if (name) {
@@ -33,141 +29,136 @@ function getInitials(name?: string | null, email?: string): string {
 }
 
 export function ProfileSettings() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const displayName = user?.name || 'User';
   const displayEmail = user?.email || '';
   const initials = getInitials(user?.name, user?.email);
 
   return (
-    <div className="space-y-6">
-      {/* Profile Header Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Profile</CardTitle>
-          <CardDescription>
-            Manage your personal information and account settings
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-            {/* Avatar Section */}
-            <div className="relative">
-              <Avatar className="h-24 w-24">
-                <AvatarImage
-                  src={user?.avatar || undefined}
-                  alt={displayName}
-                />
-                <AvatarFallback className="text-2xl">{initials}</AvatarFallback>
-              </Avatar>
-              <Button
-                size="icon"
-                variant="secondary"
-                className="absolute bottom-0 right-0 h-8 w-8 rounded-full"
-                disabled
-                title="Photo upload coming soon"
-              >
-                <Camera className="h-4 w-4" />
-              </Button>
-            </div>
+    <div className="space-y-8">
+      {/* Profile Header */}
+      <div className="relative">
+        {/* Background Gradient */}
+        <div className="h-32 rounded-xl bg-gradient-to-r from-primary/20 via-primary/10 to-transparent" />
 
-            {/* User Info */}
-            <div className="space-y-1">
-              <h3 className="text-xl font-semibold">{displayName}</h3>
-              <p className="text-muted-foreground">{displayEmail}</p>
-              <div className="flex items-center gap-2 mt-2">
-                <Badge variant="secondary" className="gap-1">
-                  <Shield className="h-3 w-3" />
-                  Google Account
-                </Badge>
+        {/* Profile Info */}
+        <div className="absolute -bottom-12 left-6 flex items-end gap-4">
+          <Avatar className="h-24 w-24 border-4 border-background shadow-lg">
+            <AvatarImage src={user?.avatar || undefined} alt={displayName} />
+            <AvatarFallback className="text-2xl bg-primary text-primary-foreground">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+        </div>
+      </div>
+
+      {/* Name and Email */}
+      <div className="pt-14 px-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">{displayName}</h1>
+            <p className="text-muted-foreground">{displayEmail}</p>
+          </div>
+          <Badge
+            variant="secondary"
+            className="gap-1.5 px-3 py-1.5 w-fit text-sm"
+          >
+            <Shield className="h-3.5 w-3.5" />
+            Google Account
+          </Badge>
+        </div>
+      </div>
+
+      {/* Account Details */}
+      <Card>
+        <CardContent className="p-6">
+          <h3 className="font-semibold mb-4 flex items-center gap-2">
+            <User className="h-4 w-4" />
+            Account Details
+          </h3>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-muted-foreground">
+                Full Name
+              </Label>
+              <Input
+                id="name"
+                value={displayName}
+                disabled
+                className="bg-muted/50"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-muted-foreground">
+                Email Address
+              </Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  value={displayEmail}
+                  disabled
+                  className="bg-muted/50 pl-9"
+                />
               </div>
             </div>
           </div>
+          <p className="text-xs text-muted-foreground mt-4">
+            Your account information is managed by Google. To update your name
+            or email, please visit your Google account settings.
+          </p>
         </CardContent>
       </Card>
 
-      {/* Account Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Account Information</CardTitle>
-          <CardDescription>
-            Your account details linked to this profile
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Name Field */}
-          <div className="grid gap-2">
-            <Label htmlFor="name" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              Full Name
-            </Label>
-            <Input
-              id="name"
-              value={displayName}
-              disabled
-              className="bg-muted"
-            />
-            <p className="text-xs text-muted-foreground">
-              Name is managed by your Google account
-            </p>
-          </div>
+      {/* Quick Actions */}
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+          <Link href="/export">
+            <CardContent className="p-6 flex flex-col items-center text-center gap-3">
+              <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <Download className="h-6 w-6 text-blue-500" />
+              </div>
+              <div>
+                <p className="font-medium">Export Data</p>
+                <p className="text-sm text-muted-foreground">
+                  Download your data
+                </p>
+              </div>
+            </CardContent>
+          </Link>
+        </Card>
 
-          <Separator />
-
-          {/* Email Field */}
-          <div className="grid gap-2">
-            <Label htmlFor="email" className="flex items-center gap-2">
-              <Mail className="h-4 w-4" />
-              Email Address
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              value={displayEmail}
-              disabled
-              className="bg-muted"
-            />
-            <p className="text-xs text-muted-foreground">
-              Email is managed by your Google account
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Account Actions */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Account Actions</CardTitle>
-          <CardDescription>Manage your account and data</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <p className="font-medium">Export Data</p>
+        <Card
+          className="hover:shadow-md transition-shadow cursor-pointer"
+          onClick={logout}
+        >
+          <CardContent className="p-6 flex flex-col items-center text-center gap-3">
+            <div className="h-12 w-12 rounded-full bg-orange-500/10 flex items-center justify-center">
+              <LogOut className="h-6 w-6 text-orange-500" />
+            </div>
+            <div>
+              <p className="font-medium">Sign Out</p>
               <p className="text-sm text-muted-foreground">
-                Download all your financial data
+                Log out of your account
               </p>
             </div>
-            <Button variant="outline" asChild>
-              <a href="/export">Export</a>
-            </Button>
-          </div>
+          </CardContent>
+        </Card>
 
-          <Separator />
-
-          <div className="flex items-center justify-between">
-            <div className="space-y-0.5">
-              <p className="font-medium text-destructive">Delete Account</p>
-              <p className="text-sm text-muted-foreground">
-                Permanently delete your account and all data
-              </p>
+        <Card className="opacity-50 cursor-not-allowed">
+          <CardContent className="p-6 flex flex-col items-center text-center gap-3">
+            <div className="h-12 w-12 rounded-full bg-red-500/10 flex items-center justify-center">
+              <Trash2 className="h-6 w-6 text-red-500" />
             </div>
-            <Button variant="destructive" disabled>
-              Delete
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+            <div>
+              <p className="font-medium">Delete Account</p>
+              <p className="text-sm text-muted-foreground">Coming soon</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
