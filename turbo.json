@@ -15,7 +15,15 @@
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*", "tsconfig*.json"],
       "outputs": ["dist/**", "build/**", ".next/**", "storybook-static/**"],
-      "env": ["DATABASE_URL", "JWT_SECRET", "CORS_ORIGINS"]
+      "env": [
+        "DATABASE_URL",
+        "JWT_SECRET",
+        "CORS_ORIGINS",
+        "FRONTEND_URL",
+        "GOOGLE_CALLBACK_URL",
+        "GOOGLE_CLIENT_ID",
+        "GOOGLE_CLIENT_SECRET"
+      ]
     },
     "dev": {
       "dependsOn": ["^build"],
