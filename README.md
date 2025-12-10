@@ -59,8 +59,8 @@ budget-app/
 
 ### Prerequisites
 
-- **Node.js** >= 22.10.0
-- **pnpm** 10.13.1 or later
+- **Node.js** >= 24.x
+- **pnpm** 9.15.0 or later
 
 ### Installation
 
@@ -183,6 +183,7 @@ The app will be available at [http://localhost:3000](http://localhost:3000).
 - **Hosting**: [Vercel](https://vercel.com/) - Frontend and Backend deployment
 - **Database Hosting**: [Supabase](https://supabase.com/) - PostgreSQL database
 - **Monorepo**: [Turborepo](https://turbo.build/) - High-performance build system
+- **Monitoring**: [New Relic](https://newrelic.com/) - Application performance monitoring
 
 ### Tooling
 
@@ -245,9 +246,21 @@ To enable Google Sign-in/Sign-up, configure OAuth credentials:
    ```env
    GOOGLE_CLIENT_ID="your-client-id.apps.googleusercontent.com"
    GOOGLE_CLIENT_SECRET="your-client-secret"
-   GOOGLE_CALLBACK_URL="http://localhost:3001/auth/google/callback"
+   GOOGLE_CALLBACK_URL="http://localhost:3001/api/auth/google/callback"
    FRONTEND_URL="http://localhost:3000"
    ```
+
+### New Relic Monitoring
+
+The API includes New Relic APM for production monitoring:
+
+1. Sign up at [New Relic](https://newrelic.com/)
+2. Get your license key from Account Settings
+3. Add the environment variable to `apps/api/.env`:
+   ```env
+   NEW_RELIC_LICENSE_KEY="your-new-relic-license-key"
+   ```
+4. New Relic is automatically enabled in production (`NODE_ENV=production`)
 
 ### Turborepo
 
