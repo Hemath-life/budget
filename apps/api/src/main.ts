@@ -2,9 +2,7 @@
 import 'dotenv/config';
 
 // New Relic must be required first
-if (process.env.NODE_ENV === 'production') {
-  require('newrelic');
-}
+require('newrelic');
 
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
