@@ -32,6 +32,7 @@ export default {
         'auth', // Authentication
         'db', // Database/Prisma
         'tools', // Tools packages
+        'vercel', // Vercel deployment
       ],
     ],
     'scope-empty': [1, 'never'], // Warn if scope is empty
