@@ -5,9 +5,9 @@
   "private": true,
   "type": "module",
   "license": "MIT",
-  "packageManager": "pnpm@10.0.0",
+  "packageManager": "pnpm@9.15.0",
   "engines": {
-    "node": "24.x"
+    "node": ">=20"
   },
   "scripts": {
     "dev": "turbo watch dev",
