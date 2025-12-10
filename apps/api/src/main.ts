@@ -1,3 +1,8 @@
+// New Relic must be required first
+if (process.env.NODE_ENV === 'production') {
+  require('newrelic');
+}
+
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';

@@ -22,7 +22,8 @@
         "FRONTEND_URL",
         "GOOGLE_CALLBACK_URL",
         "GOOGLE_CLIENT_ID",
-        "GOOGLE_CLIENT_SECRET"
+        "GOOGLE_CLIENT_SECRET",
+        "NEW_RELIC_LICENSE_KEY"
       ]
     },
     "dev": {
