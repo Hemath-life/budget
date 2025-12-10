@@ -1,13 +1,16 @@
 // Load environment variables first
 import 'dotenv/config';
 
-// New Relic must be required first
-require('newrelic');
+// New Relic must be required first in production
+if (process.env.NODE_ENV === 'production') {
+  require('newrelic');
+}
 
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import compression from 'compression';
 import { AppModule } from './app.module';
 
 let app: NestExpressApplication;
@@ -16,8 +19,11 @@ async function bootstrap() {
   if (!app) {
     app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+    // Enable gzip compression for better performance
+    app.use(compression());
+
     app.enableCors({
-      origin: '*',
+      origin: process.env.CORS_ORIGINS?.split(',') || '*',
       credentials: true,
     });
     app.setGlobalPrefix('api');
@@ -25,6 +31,7 @@ async function bootstrap() {
       new ValidationPipe({
         whitelist: true,
         transform: true,
+        forbidNonWhitelisted: true,
       }),
     );
 
