@@ -3,8 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
+import { Prisma, PrismaService } from '../prisma';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 
@@ -44,14 +43,14 @@ export class TransactionsService {
 
     if (!category) {
       throw new NotFoundException(
-        `Category with ID "${createTransactionDto.categoryId}" not found`
+        `Category with ID "${createTransactionDto.categoryId}" not found`,
       );
     }
 
     // Verify category type matches transaction type
     if (category.type !== createTransactionDto.type) {
       throw new BadRequestException(
-        `Category type "${category.type}" does not match transaction type "${createTransactionDto.type}"`
+        `Category type "${category.type}" does not match transaction type "${createTransactionDto.type}"`,
       );
     }
 
@@ -77,7 +76,7 @@ export class TransactionsService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2003') {
           throw new BadRequestException(
-            `Invalid foreign key reference. Please ensure the user and category exist.`
+            `Invalid foreign key reference. Please ensure the user and category exist.`,
           );
         }
       }
@@ -164,7 +163,7 @@ export class TransactionsService {
   update(
     id: string,
     userId: string,
-    updateTransactionDto: UpdateTransactionDto
+    updateTransactionDto: UpdateTransactionDto,
   ) {
     const data: Record<string, unknown> = {};
 
