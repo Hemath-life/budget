@@ -10,14 +10,12 @@ exports.config = {
   /**
    * Array of application names.
    */
-  app_name: ['Budget App API'],
+  app_name: [process.env.NEW_RELIC_APP_NAME || 'Budget App API'],
 
   /**
    * Your New Relic license key.
    */
-  license_key:
-    process.env.NEW_RELIC_LICENSE_KEY ||
-    'eu01xx6e61f3d3902664d505207ebd38FFFFNRAL',
+  license_key: process.env.NEW_RELIC_LICENSE_KEY,
 
   /**
    * This setting controls distributed tracing.

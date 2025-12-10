@@ -23,7 +23,9 @@
         "GOOGLE_CALLBACK_URL",
         "GOOGLE_CLIENT_ID",
         "GOOGLE_CLIENT_SECRET",
-        "NEW_RELIC_LICENSE_KEY"
+        "NEW_RELIC_LICENSE_KEY",
+        "NEW_RELIC_APP_NAME",
+        "NODE_ENV"
       ]
     },
     "dev": {
