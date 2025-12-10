@@ -35,7 +35,7 @@ export default {
       ],
     ],
     'scope-empty': [1, 'never'], // Warn if scope is empty
-    'subject-case': [2, 'always', 'lower-case'],
+    'subject-case': [0], // Disable case check to allow proper nouns like PostgreSQL
     'subject-empty': [2, 'never'],
     'subject-full-stop': [2, 'never', '.'],
     'header-max-length': [2, 'always', 100],
