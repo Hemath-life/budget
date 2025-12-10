@@ -26,7 +26,7 @@
     "db:push": "turbo push -F @repo/api",
     "knip": "knip",
     "ui-add": "turbo ui-add -F @repo/ui --",
-    "prepare": "husky || true"
+    "prepare": "node -e \"if (process.env.CI || process.env.VERCEL) process.exit(0); require('child_process').execSync('husky', {stdio: 'inherit'})\""
   },
   "devDependencies": {
     "@commitlint/cli": "^20.2.0",
