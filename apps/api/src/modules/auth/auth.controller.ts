@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
@@ -37,13 +38,36 @@ export class AuthController {
 
   @Get('google/callback')
   @UseGuards(GoogleAuthGuard)
-  async googleAuthRedirect(@Req() req: any, @Res() res: Response) {
-    const result = await this.authService.googleLogin(req.user);
-
-    // Redirect to frontend with token (trim to remove any trailing newlines)
+  async googleAuthRedirect(
+    @Query('error') error: string,
+    @Req() req: any,
+    @Res() res: Response,
+  ) {
     const frontendUrl = (
       process.env.FRONTEND_URL || 'http://localhost:3000'
     ).trim();
+
+    // Handle OAuth errors (user denied access or other errors)
+    if (error) {
+      const errorMessage =
+        error === 'access_denied'
+          ? 'You denied access to your Google account'
+          : `Authentication failed: ${error}`;
+      return res.redirect(
+        `${frontendUrl}/auth/callback?error=${encodeURIComponent(errorMessage)}`,
+      );
+    }
+
+    // If no user (guard didn't run or failed), redirect with error
+    if (!req.user) {
+      return res.redirect(
+        `${frontendUrl}/auth/callback?error=${encodeURIComponent('Authentication failed')}`,
+      );
+    }
+
+    const result = await this.authService.googleLogin(req.user);
+
+    // Redirect to frontend with token
     const redirectUrl = `${frontendUrl}/auth/callback?token=${result.access_token}&user=${encodeURIComponent(JSON.stringify(result.user))}`;
 
     return res.redirect(redirectUrl);
